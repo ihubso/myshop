@@ -1021,7 +1021,7 @@ function updateTable(items, sales, history) {
             class: 'bg-green-100 text-base'
         };
         
-        if (item.quantity === 0) {
+        if (item.quantity === 0 && item.hasbeensold) {
             status = {
                 text: translate('outOfStock') || 'Out of Stock',
                 class: 'bg-red-100 text-base'

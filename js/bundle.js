@@ -10814,17 +10814,11 @@ function scrollModalToTop() {
       });
       scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
-function isMobileOrTablet() {
-    // Matches your CSS breakpoint. Change 1024 if you prefer 768.
-    return window.matchMedia('(max-width: 1024px)').matches;
-}
-
-function goToTop() {
-    if (!isMobileOrTablet()) return;   // desktop → do nothing
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    function goToTop() {
+  window.scrollTo({ 
+    top: 0, 
+    behavior: 'smooth' 
+  });
 }
 
 // ===== aditemsectino.js =====
@@ -36264,7 +36258,7 @@ function updateTable(items, sales, history) {
             class: 'bg-green-100 text-base'
         };
         
-        if (item.quantity === 0) {
+        if (item.quantity === 0 && item.hasbeensold) {
             status = {
                 text: translate('outOfStock') || 'Out of Stock',
                 class: 'bg-red-100 text-base'
