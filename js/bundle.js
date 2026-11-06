@@ -10814,11 +10814,17 @@ function scrollModalToTop() {
       });
       scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
-    function goToTop() {
-  window.scrollTo({ 
-    top: 0, 
-    behavior: 'smooth' 
-  });
+function isMobileOrTablet() {
+    // Matches your CSS breakpoint. Change 1024 if you prefer 768.
+    return window.matchMedia('(max-width: 1024px)').matches;
+}
+
+function goToTop() {
+    if (!isMobileOrTablet()) return;   // desktop → do nothing
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 // ===== aditemsectino.js =====
@@ -35450,7 +35456,7 @@ function renderGroupedBySubcategory() {
                 </td>
                 <td class="px-4 py-3 text-sm">${escapeHtml(item.category || '—')}</td>
                 <td class="px-3 py-3 text-sm">
-                    ${item.quantity < 1
+                    ${item.quantity < 1 && item.hasbeensold
                         ? `<span class="text-red-600 font-bold">${translate('common.outOfStock') || 'Out of Stock'}</span>`
                         : item.quantity}
                 </td>
@@ -35926,7 +35932,7 @@ function updateInsights(items, sales, history) {
     `);
 
     // Stock status
-    const lowStockItems = items.filter(i => i.quantity < 3).length;
+    const lowStockItems = items.filter(i => i.quantity < 3 && i.hasBeenSold).length;
     const outOfStockItems = items.filter(i => i.quantity === 0).length;
     
     insights.push(`
