@@ -6,79 +6,8 @@
     <title>View Receipt - StocksalesApp</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="image/icon.ico">
-      <link rel="manifest" href="/manifest.webmanifest">
-    <script>
-        (function () {
-            let deferredReceiptInstallPrompt = null;
-            let receiptLoaded = false;
+      
 
-            function isAppInstalled() {
-                return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-            }
-
-            function showReceiptInstallPrompt() {
-                receiptLoaded = true;
-                if (isAppInstalled()) return;
-
-                const modal = document.getElementById('receiptInstallModal');
-                if (!modal) return;
-                modal.classList.remove('hidden');
-                document.getElementById('receiptInstallButton')?.focus();
-            }
-
-            function closeReceiptInstallPrompt() {
-                document.getElementById('receiptInstallModal')?.classList.add('hidden');
-            }
-
-            window.addEventListener('receiptloaded', showReceiptInstallPrompt);
-            window.addEventListener('beforeinstallprompt', function (event) {
-                event.preventDefault();
-                deferredReceiptInstallPrompt = event;
-                if (receiptLoaded) showReceiptInstallPrompt();
-            });
-            window.addEventListener('appinstalled', function () {
-                deferredReceiptInstallPrompt = null;
-                closeReceiptInstallPrompt();
-            });
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const modal = document.getElementById('receiptInstallModal');
-                const closeButton = document.getElementById('receiptInstallClose');
-                const installButton = document.getElementById('receiptInstallButton');
-                let showingInstallInstructions = false;
-
-                closeButton?.addEventListener('click', closeReceiptInstallPrompt);
-                modal?.addEventListener('click', function (event) {
-                    if (event.target === modal) closeReceiptInstallPrompt();
-                });
-                document.addEventListener('keydown', function (event) {
-                    if (event.key === 'Escape') closeReceiptInstallPrompt();
-                });
-                installButton?.addEventListener('click', async function () {
-                    if (!deferredReceiptInstallPrompt) {
-                        if (showingInstallInstructions) {
-                            closeReceiptInstallPrompt();
-                            return;
-                        }
-
-                        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
-                        document.getElementById('receiptInstallMessage').textContent = isIOS
-                            ? 'To install, tap the Share button, then choose “Add to Home Screen”.'
-                            : 'To install, open your browser menu and choose “Install app” or “Add to Home Screen”.';
-                        installButton.textContent = 'Close';
-                        showingInstallInstructions = true;
-                        return;
-                    }
-
-                    const installPrompt = deferredReceiptInstallPrompt;
-                    deferredReceiptInstallPrompt = null;
-                    await installPrompt.prompt();
-                    await installPrompt.userChoice;
-                    closeReceiptInstallPrompt();
-                });
-            });
-        })();
-    </script>
     
     <!-- ============ CDN STYLESHEETS ============ -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -169,7 +98,7 @@
 .receipt-install-overlay {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: 99999999999999999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -199,6 +128,39 @@
     cursor: pointer;
 }
 
+.receipt-install-loading {
+    margin: 20px 0 8px;
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.receipt-install-progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e5e7eb;
+}
+
+.receipt-install-progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: #2563eb;
+    transition: width 180ms ease;
+}
+
+.receipt-install-progress-bar.indeterminate {
+    width: 35%;
+    animation: receiptProgress 1.2s ease-in-out infinite;
+}
+
+@keyframes receiptProgress {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(310%); }
+}
+
 .receipt-install-primary {
     width: 100%;
     margin-top: 18px;
@@ -216,6 +178,49 @@
     background: transparent;
     color: #6b7280;
     font-size: 22px;
+}
+
+.receipt-install-store-link {
+    display: block;
+    margin-top: 18px;
+    padding: 11px 16px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.receipt-install-store-link.hidden {
+    display: none;
+}
+
+.receipt-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    z-index: 11000;
+    width: min(440px, calc(100vw - 32px));
+    padding: 14px 18px;
+    border-radius: 10px;
+    background: #1f2937;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+}
+
+.receipt-notification[data-type="success"] {
+    background: #166534;
+}
+
+.receipt-notification[data-type="error"] {
+    background: #b91c1c;
+}
+
+.receipt-notification.hidden {
+    display: none;
 }
 
 @keyframes badgePulse {
@@ -291,25 +296,16 @@
                     style="padding: 12px 24px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
                 Search Receipt
             </button>
-            <button onclick="window.location.href='/login/'" 
-                    style="padding: 12px 24px; background-color: #6b7280; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px;">
-                Create your shop now
-            </button>
+       <button onclick="window.location.href='https://myshop.stocksalesapp.store/setup/'"
+    style="padding: 12px 24px; background-color: #6b7280; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px;">
+    Create your shop now
+</button>
         </div>
     </div>
 </div>
 
-<div id="receiptInstallModal" class="receipt-install-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="receiptInstallTitle">
-    <div class="receipt-install-dialog">
-        <button id="receiptInstallClose" class="receipt-install-close" type="button" aria-label="Close install prompt">&times;</button>
-        <div style="font-size: 32px; color: #2563eb; margin-bottom: 8px;">
-            <i class="fas fa-mobile-screen-button" aria-hidden="true"></i>
-        </div>
-        <h2 id="receiptInstallTitle" style="margin: 0 0 8px; font-size: 20px; font-weight: 700;">Install StocksalesApp</h2>
-        <p id="receiptInstallMessage" style="margin: 0; color: #6b7280; font-size: 14px;">Install the app for quicker access to your shop tools.</p>
-        <button id="receiptInstallButton" class="receipt-install-primary" type="button">Install app</button>
-    </div>
-</div>
+
+<div id="receiptNotification" class="receipt-notification hidden" role="status" aria-live="polite" aria-atomic="true"></div>
     
     <!-- Receipt Modal -->
     <div id="receiptModal" class="modal-overlay hidden">
@@ -553,8 +549,155 @@
             </div>
         </div>
     </div>
+    <div id="receiptInstallModal" class="receipt-install-overlay "
+     role="dialog" aria-modal="true" aria-labelledby="receiptInstallTitle">
+    <div class="receipt-install-dialog">
+        <button id="receiptInstallClose" class="receipt-install-close"
+                type="button" aria-label="Close">&times;</button>
+        <div id="receiptInstallLoading" class="receipt-install-loading hidden"
+             role="status" aria-live="polite">
+            <span>Loading receipt...</span>
+            <div class="receipt-install-progress" role="progressbar"
+                 aria-label="Receipt loading progress" aria-valuemin="0"
+                 aria-valuemax="100" aria-valuenow="0">
+                <div id="receiptInstallProgressBar" class="receipt-install-progress-bar"></div>
+            </div>
+        </div>
+        <div id="receiptInstallContent" class="receipt-install-content hidden">
+            <div style="font-size: 32px; color: #2563eb; margin-bottom: 8px;">
+                <i class="fas fa-mobile-screen-button" aria-hidden="true"></i>
+            </div>
+            <h2 id="receiptInstallTitle"
+                style="margin: 0 0 8px; font-size: 20px; font-weight: 700;"
+                data-translate="receiptInstallTitle">Get the StocksalesApp</h2>
+            <p id="receiptInstallMessage"
+               style="margin: 0; color: #6b7280; font-size: 14px;"
+               data-translate="receiptInstallMessage">
+                Open this receipt inside the app for faster access to your shop tools.
+            </p>
+            <button id="receiptInstallButton" class="receipt-install-primary" type="button">
+                Open in StocksalesApp
+            </button>
+            <a id="receiptInstallStoreLink" class="receipt-install-store-link hidden"
+               href="https://apps.microsoft.com/detail/9nnxf7bhxt6x?hl=en-US&gl=BZ"
+               target="_blank" rel="noopener noreferrer">
+                Get it from Microsoft Store
+            </a>
+        </div>
+    </div>
+</div>
 <script src="script2.js"></script>
 <script src="script202.js"></script>
+    <script>
+(function () {
+    const APP_ORIGIN = 'https://myshop.stocksalesapp.store/install/';
+    const STORE_URL  = 'https://apps.microsoft.com/detail/9nnxf7bhxt6x?hl=en-US&gl=BZ';
 
+    function isAppInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches
+            || navigator.standalone === true;
+    }
+
+    function isMobile() {
+        return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    }
+
+    function buildInstallUrl() {
+        const p = new URLSearchParams(location.search);
+        const u = new URL(APP_ORIGIN + '/');
+        if (p.get('receipt')) u.searchParams.set('receipt', p.get('receipt'));
+        if (p.get('bid'))     u.searchParams.set('bid', p.get('bid'));
+        u.searchParams.set('from', 'receipt');
+        return u.toString();
+    }
+
+    function translateSafe(key, fallback) {
+        try { return (typeof translate === 'function' ? translate(key) : '') || fallback; }
+        catch { return fallback; }
+    }
+
+    function showReceiptInstallPrompt() {
+        if (isAppInstalled()) return;
+        const modal = document.getElementById('receiptInstallModal');
+        if (!modal) return;
+
+        document.getElementById('receiptInstallLoading')?.classList.add('hidden');
+        document.getElementById('receiptInstallContent')?.classList.remove('hidden');
+        const installButton = document.getElementById('receiptInstallButton');
+        const storeLink     = document.getElementById('receiptInstallStoreLink');
+        const message       = document.getElementById('receiptInstallMessage');
+        const title         = document.getElementById('receiptInstallTitle');
+        const mobile        = isMobile();
+
+        if (title)   title.textContent   = translateSafe('receiptInstallTitle', 'Get the StocksalesApp');
+        if (message) message.textContent = translateSafe('receiptInstallMessage',
+            'Open this receipt inside the app for faster access to your shop tools.');
+
+        if (storeLink) {
+            storeLink.href = STORE_URL;
+            storeLink.textContent = translateSafe('openMicrosoftStore', 'Get it from Microsoft Store');
+            storeLink.classList.toggle('hidden', mobile);
+        }
+
+        if (installButton) {
+            installButton.textContent = translateSafe('openInApp', 'Open in StocksalesApp');
+            installButton.onclick = () => { window.location.href = buildInstallUrl(); };
+            installButton.classList.remove('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        (mobile ? installButton : storeLink)?.focus();
+    }
+
+    function startReceiptInstallLoading() {
+        if (isAppInstalled()) return;
+        const modal = document.getElementById('receiptInstallModal');
+        const loading = document.getElementById('receiptInstallLoading');
+        const content = document.getElementById('receiptInstallContent');
+        if (!modal || !loading || !content) return;
+
+        content.classList.add('hidden');
+        loading.classList.remove('hidden');
+        modal.classList.remove('hidden');
+        window.updateReceiptInstallProgress(0);
+    }
+
+    function updateReceiptInstallProgress(progress) {
+        const progressBar = document.getElementById('receiptInstallProgressBar');
+        const progressTrack = progressBar?.parentElement;
+        if (!progressBar || !progressTrack) return;
+
+        if (typeof progress !== 'number' || !Number.isFinite(progress)) {
+            progressTrack.removeAttribute('aria-valuenow');
+            progressTrack.setAttribute('aria-valuetext', 'Loading receipt');
+            progressBar.classList.add('indeterminate');
+            progressBar.style.width = '';
+            return;
+        }
+
+        const value = Math.max(0, Math.min(100, Math.round(progress)));
+        progressTrack.setAttribute('aria-valuenow', String(value));
+        progressTrack.setAttribute('aria-valuetext', `${value}%`);
+        progressBar.classList.remove('indeterminate');
+        progressBar.style.width = `${value}%`;
+    }
+
+    function closeReceiptInstallPrompt() {
+        document.getElementById('receiptInstallModal')?.classList.add('hidden');
+    }
+    window.closeReceiptInstallPrompt = closeReceiptInstallPrompt;
+    window.startReceiptInstallLoading = startReceiptInstallLoading;
+    window.updateReceiptInstallProgress = updateReceiptInstallProgress;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const closeButton  = document.getElementById('receiptInstallClose');
+
+        closeButton?.addEventListener('click', closeReceiptInstallPrompt);
+    });
+
+    window.addEventListener('receiptloaded', showReceiptInstallPrompt);
+    window.showReceiptInstallPrompt = showReceiptInstallPrompt;
+})();
+</script>
 </body>
 </html>

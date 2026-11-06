@@ -26,7 +26,37 @@ async function callGetReceipt(receiptId, businessId) {
             })
         });
 
-        const data = await response.json();
+        let data;
+        if (response.body?.getReader) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            const contentLength = Number(response.headers.get('Content-Length'));
+            const hasContentLength = Number.isFinite(contentLength) && contentLength > 0;
+            let receivedLength = 0;
+            let responseText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                receivedLength += value.length;
+                responseText += decoder.decode(value, { stream: true });
+                if (hasContentLength) {
+                    window.updateReceiptInstallProgress?.(
+                        Math.min(90, 5 + (receivedLength / contentLength) * 85)
+                    );
+                } else {
+                    window.updateReceiptInstallProgress?.(null);
+                }
+            }
+
+            responseText += decoder.decode();
+            data = JSON.parse(responseText);
+        } else {
+            window.updateReceiptInstallProgress?.(null);
+            data = await response.json();
+        }
+        window.updateReceiptInstallProgress?.(90);
         return { success: response.ok, data, status: response.status };
     } catch (error) {
         console.error('❌ Edge Function error:', error);
@@ -146,9 +176,22 @@ function translate(key) {
             return paymentTypes[type] || type;
         }
         
-        function showMessageModal(message) {
-            alert(message);
+        function showMessageModal(message, type = 'info') {
+            const notification = document.getElementById('receiptNotification');
+            if (!notification) {
+                console.error('Receipt notification element is unavailable:', message);
+                return;
+            }
+
+            notification.textContent = message;
+            notification.dataset.type = type;
+            notification.classList.remove('hidden');
+            clearTimeout(showMessageModal.timeoutId);
+            showMessageModal.timeoutId = setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 4000);
         }
+        window.showReceiptNotification = showMessageModal;
         
     function closeReceiptModal() {
     const modal = document.getElementById('receiptModal');
@@ -215,7 +258,7 @@ function showEngagementOptions() {
                 <!-- Buttons -->
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <!-- Primary Action -->
-                    <button onclick="window.location.href='/setup/'" style="
+                    <button onclick="window.location.href='https://myshop.stocksalesapp.store/setup/'" style="
                         padding: 14px 24px;
                         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
                         color: white; border: none; border-radius: 12px;
@@ -230,7 +273,7 @@ function showEngagementOptions() {
                     </button>
                     
                     <!-- Secondary Action -->
-                    <button onclick="window.location.href='/shop/'" style="
+                    <button onclick="window.location.href='https://myshop.stocksalesapp.store/shop/'" style="
                         padding: 14px 24px;
                         background: rgba(255, 255, 255, 0.05);
                         color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.1);
@@ -321,9 +364,90 @@ function dismissEngagement() {
             
             const downloadPdfBtn = document.getElementById('downloadPdfBtn');
             if (downloadPdfBtn) {
-                downloadPdfBtn.onclick = function() {
-                    alert('PDF download functionality to be implemented');
-                };
+           downloadPdfBtn.onclick = async function () {
+    if (typeof html2canvas !== 'function' || typeof window.jspdf?.jsPDF !== 'function') {
+        showMessageModal(translate('pdfDownloadFailed'), 'error');
+        return;
+    }
+    const receipt = document.getElementById('receiptPrintArea');
+    if (!receipt) {
+        showMessageModal(translate('pdfDownloadFailed'), 'error');
+        return;
+    }
+
+    const originalText = downloadPdfBtn.textContent;
+    downloadPdfBtn.disabled = true;
+    downloadPdfBtn.textContent = translate('pdfPreparing');
+
+    try {
+        // Wait for fonts and images → fixes garbled/blank PDFs
+        if (document.fonts?.ready) await document.fonts.ready;
+        await Promise.all(
+            Array.from(receipt.querySelectorAll('img')).map(img =>
+                img.complete ? Promise.resolve()
+                             : new Promise(res => { img.onload = img.onerror = res; })
+            )
+        );
+
+        const canvas = await html2canvas(receipt, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+            imageTimeout: 20000,
+            windowWidth: receipt.scrollWidth,
+            windowHeight: receipt.scrollHeight
+        });
+        if (!canvas.width || !canvas.height) throw new Error('Empty canvas');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pdfW = pdf.internal.pageSize.getWidth();
+        const pdfH = pdf.internal.pageSize.getHeight();
+        const margin = 10;
+        const contentW = pdfW - margin * 2;
+        const contentH = pdfH - margin * 2;
+
+        const imgWmm = contentW;
+        const imgHmm = (canvas.height / canvas.width) * imgWmm;
+
+        if (imgHmm <= contentH) {
+            // Single page — no slicing (fixes most "weird" PDFs)
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin, imgWmm, imgHmm);
+        } else {
+            // Multi-page — slice by mm-ratio, not a pixel guess
+            const pageHpx = Math.floor(canvas.width * (contentH / contentW));
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.width = canvas.width;
+            const ctx = pageCanvas.getContext('2d');
+            let offsetY = 0, page = 0;
+            while (offsetY < canvas.height) {
+                const sliceH = Math.min(pageHpx, canvas.height - offsetY);
+                pageCanvas.height = sliceH;
+                ctx.clearRect(0, 0, pageCanvas.width, pageCanvas.height);
+                ctx.drawImage(canvas, 0, offsetY, canvas.width, sliceH,
+                                      0, 0, canvas.width, sliceH);
+                if (page > 0) pdf.addPage();
+                const sliceHmm = (sliceH / canvas.width) * contentW;
+                pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG',
+                    margin, margin, contentW, sliceHmm);
+                offsetY += sliceH; page++;
+            }
+        }
+
+        const receiptId = document.getElementById('receiptSaleId')?.textContent?.trim() || 'receipt';
+        const safeId = receiptId.replace(/[<>:"/\\|?*\x00-\x1f]/g, '-');
+        pdf.save(`${safeId}.pdf`);
+        showMessageModal(translate('pdfDownloadSuccess'), 'success');
+    } catch (err) {
+        console.error('PDF error:', err);
+        showMessageModal(translate('pdfDownloadFailed'), 'error');
+    } finally {
+        downloadPdfBtn.disabled = false;
+        downloadPdfBtn.textContent = originalText;
+    }
+};
             }
         }
         
@@ -521,7 +645,7 @@ async function loadBusinessInfoById(businessId) {
             const receiptModal = document.getElementById('receiptModal');
             if (!receiptModal) {
                 console.error('Receipt modal element not found');
-                showMessageModal(translate('receiptModalNotAvailable'));
+                showMessageModal(translate('receiptModalUnavailable'), 'error');
                 return;
             }
             receiptModal.classList.remove('hidden');
@@ -740,7 +864,7 @@ async function loadBusinessInfoById(businessId) {
                         qrImg.title = 'Scan to view receipt or click to copy link';
                         qrImg.onclick = function() {
                             navigator.clipboard.writeText(viewUrl).then(() => {
-                                showMessageModal('Receipt link copied!');
+                                showMessageModal(translate('receiptLinkCopied'), 'success');
                             });
                         };
                     }
@@ -765,16 +889,16 @@ async function loadBusinessInfoById(businessId) {
                     });
                 } else {
                     navigator.clipboard.writeText(viewUrl).then(() => {
-                        showMessageModal('Receipt link copied! Share it to view this receipt.');
+                        showMessageModal(translate('receiptLinkShared'), 'success');
                     }).catch(() => {
-                        showMessageModal('Failed to copy link. Please copy manually.');
+                        showMessageModal(translate('receiptLinkCopyFailed'), 'error');
                     });
                 }
             });
             
         } catch (error) {
             console.error('❌ Error showing receipt:', error);
-            showMessageModal((translate('errorShowingReceiptFromData') || 'Error showing receipt') + ': ' + error.message);
+            showMessageModal(translate('receiptLoadError'), 'error');
         }
     }
  window.addEventListener('popstate', async function(event) {
@@ -805,6 +929,7 @@ async function loadReceipt() {
     document.getElementById('loadingState').classList.remove('hidden');
     document.getElementById('receiptContent').classList.add('hidden');
     document.getElementById('notFoundState').classList.add('hidden');
+    window.startReceiptInstallLoading?.();
     
     try {
         // 🔥 STEP 1: Get receipt data STRICTLY via Edge Function
@@ -841,6 +966,7 @@ async function loadReceipt() {
             document.getElementById('receiptContent').classList.remove('hidden');
             await loadFestiveBadgeOnReceipt();
             await applyTranslations();
+            window.updateReceiptInstallProgress?.(100);
             window.dispatchEvent(new Event('receiptloaded'));
             return;
         }
@@ -859,6 +985,7 @@ async function loadReceipt() {
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('receiptContent').classList.add('hidden');
             document.getElementById('notFoundState').classList.remove('hidden');
+            window.closeReceiptInstallPrompt?.();
         }
         
         function searchManualReceipt() {
