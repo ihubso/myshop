@@ -6,12 +6,19 @@ newfeature/
 
 # Environment variables (DO NOT UPLOAD THESE TO GITHUB!)
 .env
+.env.*
+!.env.example
+rmd.env
 
 # OS files
 .DS_Store
 
 # Logs
 *.logc
+
+# Local tooling and backups
+.vercel/
+*.bak
 
 public/newfeture/
  .package.json
