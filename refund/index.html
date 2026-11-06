@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Refund Policy · StocksalesApp</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" href="../image/logo.jpg">
+  <link rel="apple-touch-icon" href="../image/logo.jpg">
+  <link rel="manifest" href="/manifest.webmanifest">
+     <script src="/meiou.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, Arial, sans-serif;
+      background: #f1f5f9;
+      color: #0b1a33;
+      padding: 32px 20px;
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 40px 48px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      border: 1px solid #e9eef3;
+    }
+
+    /* header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #eef2f6;
+      flex-wrap: wrap;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      color: #0a1e3c;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: #476085;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    .badge-legal {
+      margin-left: auto;
+      background: #eef4ff;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1a4c8a;
+      border: 1px solid #d6e2f5;
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0a1e3c;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .legal-subhead {
+      font-size: 1rem;
+      color: #3a5670;
+      background: #f8faff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      border-left: 4px solid #2563eb;
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      border: 1px solid #e6edf6;
+      border-left-width: 6px;
+    }
+
+    .legal-subhead span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legal-subhead .dot {
+      width: 5px;
+      height: 5px;
+      background: #8ba3c7;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 650;
+      color: #0f2942;
+      margin-top: 36px;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid #eef2f6;
+      padding-bottom: 8px;
+    }
+
+    h2:first-of-type {
+      margin-top: 8px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #1d2d44;
+    }
+
+    ul, ol {
+      margin: 10px 0 18px 24px;
+      color: #1d2d44;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .highlight-box {
+      background: #fafcff;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin: 22px 0 24px;
+      border: 1px solid #dfe9f2;
+      border-left: 5px solid #2563eb;
+    }
+
+    .highlight-box strong {
+      color: #10345e;
+    }
+
+    .legal-footer {
+      margin-top: 44px;
+      padding-top: 28px;
+      border-top: 1px solid #e2eaf2;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.95rem;
+    }
+
+    .footer-links a {
+      color: #1f4e8a;
+      text-decoration: none;
+      font-weight: 500;
+      margin-right: 20px;
+      transition: color 0.1s;
+      border-bottom: 1px solid transparent;
+    }
+
+    .footer-links a:hover {
+      color: #0b2b55;
+      border-bottom-color: #8eb0d9;
+    }
+
+    .footer-meta {
+      color: #587294;
+      font-size: 0.85rem;
+    }
+
+    .footer-meta time {
+      font-weight: 500;
+    }
+
+    .small-print {
+      font-size: 0.85rem;
+      color: #4a6688;
+      margin-top: 6px;
+    }
+
+    .financial assistance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eef3fa;
+      padding: 4px 16px 4px 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #1e3f68;
+      border: 1px solid #d4e0ed;
+      margin-left: 4px;
+    }
+
+    .legal-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #d0dceb, transparent);
+      margin: 8px 0 20px;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 24px 18px;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      .brand-name {
+        font-size: 1.3rem;
+      }
+      .badge-legal {
+        margin-left: 0;
+        margin-top: 6px;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: start;
+      }
+      .legal-subhead {
+        flex-direction: column;
+        align-items: start;
+        gap: 4px;
+      }
+      .legal-footer {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px;
+      }
+      .container {
+        padding: 20px 14px;
+        border-radius: 20px;
+      }
+      .logo-img {
+        width: 46px;
+        height: 46px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER with logo from /image/logo.jpg -->
+  <header class="app-header">
+    <div class="logo-wrapper">
+      <img 
+        class="logo-img" 
+        src="/image/logo.jpg" 
+        alt="StocksalesApp logo" 
+  
+      >
+      <div class="brand-text">
+        <span class="brand-name">StocksalesApp</span>
+        <span class="brand-sub">inventory · sales · cloud</span>
+      </div>
+    </div>
+    <div class="badge-legal">↩️ refund policy</div>
+          <a href="/shop/" class="back-to-login">
+        <i class="fas fa-arrow-left"></i> <span>Back to Login</span>
+      </a>
+  </header>
+
+  <h1>Refund Policy</h1>
+
+  <div class="legal-subhead">
+    <span>📅 <strong>Effective:</strong> June 29, 2026</span>
+    <span class="dot"></span>
+    <span>⚡ <strong>Version:</strong> 1.3.0</span>
+    <span class="dot"></span>
+    <span>🏢 <strong>Merchant:</strong> financial assistance</span>
+    <span style="margin-left:auto; font-size:0.9rem;">⏳ last review: June 2026</span>
+  </div>
+
+  <p style="font-size:1.05rem; font-weight:450; color:#1a3455;">This Refund Policy applies to all subscriptions, one‑time purchases, and services provided by StocksalesApp. We want you to be completely satisfied with your experience.</p>
+
+  <!-- 1. Digital Products -->
+  <h2>1. Digital Products &amp; Subscription Access</h2>
+  <p>StocksalesApp is a <strong>digital SaaS product</strong> delivered via subscription. Access to the platform is granted immediately upon successful payment. Because of the instantaneous nature of digital delivery, our refund policy is designed to be fair while protecting the integrity of our service.</p>
+
+  <!-- 2. Refund Conditions -->
+  <h2>2. Refund Eligibility</h2>
+  <p>Refunds may be issued <strong>only</strong> in the following limited circumstances:</p>
+  <ul>
+    <li><strong>Technical failure</strong> — recurring, unresolved technical issues that prevent you from accessing the service for a significant period (more than 48 consecutive hours).</li>
+    <li><strong>Duplicate payments</strong> — accidental double‑charging for the same subscription period.</li>
+    <li><strong>Service not as described</strong> — if the core functionality materially differs from what was advertised at the time of purchase, and we are unable to remedy the discrepancy.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <p><strong>✅ How to request a refund:</strong> Contact our support team at <strong>support@stocksalesapp.com</strong> within 14 days of the charge date. Include your account email, transaction ID, and a clear explanation of the issue. All refund requests are reviewed within 5 business days.</p>
+  </div>
+
+  <!-- 3. Non-Refundable Cases -->
+  <h2>3. Non‑Refundable Situations</h2>
+  <p>Refunds are <strong>not</strong> provided in the following cases:</p>
+  <ul>
+    <li>Change of mind or buyer’s remorse after access has been granted.</li>
+    <li>Misuse, abuse, or violation of our <a href="/terms/" style="font-weight:500;">Terms of Service</a>.</li>
+    <li>Failure to use the service (inactivity) — we do not offer refunds for unused subscription time.</li>
+    <li>Compatibility issues with your hardware, browser, or third‑party integrations that are outside our control.</li>
+    <li>Requests made more than 14 days after the transaction date.</li>
+  </ul>
+
+  <p><strong>Due to the digital nature of our product, refunds are generally not issued once access is granted.</strong> We encourage you to explore our free trial or demo before committing to a paid plan.</p>
+
+  <!-- 4. Processing -->
+  <h2>4. Processing &amp; Timeline</h2>
+  <p>All refunds are processed exclusively through <strong>financial assistance</strong>, our Merchant of Record. Once approved:</p>
+  <ul>
+    <li>Refunds are credited to the original payment method used during checkout.</li>
+    <li>Processing time varies by bank and payment provider — typically <strong>3–10 business days</strong>.</li>
+    <li>You will receive a confirmation email from financial assistance once the refund is initiated.</li>
+  </ul>
+  <p>If a refund is issued, your subscription will be terminated, and access to the platform will be disabled.</p>
+
+  <!-- 5. Cancellations -->
+  <h2>5. Cancellations &amp; Pro‑rata Refunds</h2>
+  <p>You may cancel your subscription at any time from your account settings. Cancellation will stop future billing, but <strong>no pro‑rata refunds</strong> are provided for the remaining period of your current billing cycle. You will retain access until the end of the paid term.</p>
+
+  <!-- 6. Contact -->
+  <h2>6. Questions &amp; Support</h2>
+  <p>If you have any questions about this Refund Policy or need assistance with a payment issue, please reach out to us at:</p>
+  <ul style="list-style:none; margin-left:0; padding-left:0;">
+    <li>📧 <a href="mailto:support@stocksalesapp.com" style="font-weight:500;">support@stocksalesapp.com</a></li>
+    <li>🛟 <a href="/support/" style="font-weight:500;">Visit our Help Center</a></li>
+  </ul>
+
+  <!-- footer -->
+  <div class="legal-divider"></div>
+
+  <div class="legal-footer">
+    <div class="footer-links">
+      <a href="/terms/">📜 Terms of Service</a>
+      <a href="/pricing">💲 Pricing</a>
+      <a href="/privacy/">🔐 Privacy Policy</a>
+      <a href="/support/">🛟 Support</a>
+    </div>
+    <div class="footer-meta">
+      <span>📌 Last revised: <time datetime="2026-06-29">June 29, 2026</time></span>
+      <span style="display:inline-block; margin-left: 18px;">© 2026 StocksalesApp</span>
+    </div>
+  </div>
+
+  <div class="small-print" style="margin-top: 18px; border-top: 1px solid #ecf0f5; padding-top: 18px;">
+    <span>⚙️ <strong>StocksalesApp</strong> — inventory &amp; sales platform. This Refund Policy is part of our commitment to transparency and fairness. It does not affect your statutory rights.</span>
+  </div>
+
+</div>
+<!-- end container -->
+
+</body>
+</html>

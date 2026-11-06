@@ -1,0 +1,28 @@
+  "databases": [
+    {
+      "$id": "6a19d87b000b4f938d29",
+      "name": "6a19d87b000b4f938d29",
+      "collections": [
+        {
+          "$id": "feedback",
+          "name": "feedback",
+          "enabled": true,
+          "documentSecurity": false,
+          "attributes": [
+            { "key": "device_id", "type": "string", "size": 255, "required": true, "array": false, "default": null },
+            { "key": "username", "type": "string", "size": 255, "required": false, "array": false, "default": "Anonymous" },
+            { "key": "sentiment", "type": "string", "size": 50, "required": true, "array": false, "default": "Neutral" },
+            { "key": "feedback_type", "type": "string", "size": 50, "required": true, "array": false, "default": "general" },
+            { "key": "suggestions", "type": "string", "size": 1000, "required": false, "array": false, "default": "" },
+            { "key": "status", "type": "string", "size": 50, "required": true, "array": false, "default": "new" },
+            { "key": "country", "type": "string", "size": 100, "required": false, "array": false, "default": null },
+            { "key": "city", "type": "string", "size": 100, "required": false, "array": false, "default": null },
+            { "key": "latitude", "type": "float", "required": false, "array": false, "default": null },
+            { "key": "longitude", "type": "float", "required": false, "array": false, "default": null },
+            { "key": "user_agent", "type": "string", "size": 500, "required": false, "array": false, "default": null }
+          ],
+          "indexes": []
+        }
+      ]
+    }
+  ]

@@ -1,0 +1,492 @@
+
+
+
+async function initializePostLoginApp() {
+    
+    // ========================================
+    // NOTIFICATION FUNCTIONS
+    // ========================================
+    async function syncLanguageToServiceWorker() {
+        if (!('serviceWorker' in navigator)) {
+            return;
+        }
+        
+        // Standardized to lowercase 'language'
+        const currentLanguage = localStorage.getItem('language') || 'en';
+        
+        // SAFE FIX: Use .ready to target registration.active, bypassing the null controller race condition
+        navigator.serviceWorker.ready.then(registration => {
+            if (registration.active) {
+                registration.active.postMessage({
+                    type: 'UPDATE_LANGUAGE',
+                    language: currentLanguage
+                });
+                console.log('🌐 Language successfully synced to active service worker:', currentLanguage);
+            }
+        });
+    }
+
+    async function askNotificationPermission() {
+        if (!('Notification' in window)) {
+            console.log('Notifications are not supported by this browser.');
+            return 'unsupported';
+        }
+
+        if (Notification.permission === 'granted') {
+            return 'granted';
+        }
+
+        if (Notification.permission === 'denied') {
+            console.log('Notification permission already denied.');
+            return 'denied';
+        }
+
+        try {
+            const permission = await Notification.requestPermission();
+            console.log('Notification permission:', permission);
+            return permission;
+        } catch (error) {
+            console.error('Notification permission request failed:', error);
+            return 'default';
+        }
+    }
+
+    async function sendLocalNotification(title, body, data = {}) {
+        if (!('Notification' in window) || Notification.permission !== 'granted') {
+            console.warn('Cannot send notification: permission not granted or unsupported.');
+            return;
+        }
+
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                await registration.showNotification(title, {
+                    body,
+                    icon: '/image/logo.jpg',
+                    badge: '/image/logo.jpg',
+                    data: { ...data, url: data.url || '/shop/' },
+                    vibrate: [100, 50, 100],
+                    tag: data.tag || 'stockapp-notification'
+                });
+            } catch (error) {
+                console.error('Service worker notification failed:', error);
+            }
+        } else {
+            try {
+                new Notification(title, {
+                    body,
+                    icon: '/image/logo.jpg',
+                    data
+                });
+            } catch (error) {
+                console.error('Notification creation failed:', error);
+            }
+        }
+    }
+
+    window.sendLocalNotification = sendLocalNotification;
+    window.askNotificationPermission = askNotificationPermission;
+
+
+    // ========================================
+    // UNINSTALL DETECTION LOGIC
+    // ========================================
+    
+    // Check if app is running in standalone mode (installed PWA)
+    function isAppInstalled() {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                             window.matchMedia('(display-mode: fullscreen)').matches ||
+                             window.navigator.standalone === true;
+        
+        const isFromHomeScreen = window.navigator.standalone === true;
+        const wasInstalledFlag = localStorage.getItem('pwaInstalled') === 'true';
+        
+        return isStandalone || isFromHomeScreen || wasInstalledFlag;
+    }
+    
+    // Track installation status
+    let wasPreviouslyInstalled = localStorage.getItem('pwaInstalled') === 'true';
+    let isCurrentlyInstalled = isAppInstalled();
+    
+    // Detect uninstall
+    const wasUninstalled = wasPreviouslyInstalled && !isCurrentlyInstalled;
+    
+    if (wasUninstalled) {
+        console.log('🔴 App was uninstalled! Resetting banner state...');
+        localStorage.removeItem('pwaInstalled');
+        localStorage.removeItem('pwaBannerDismissed');
+        localStorage.removeItem('pwaBannerDismissedAt');
+        localStorage.removeItem('pwaInstallCompleted');
+        localStorage.removeItem('pwaInstallShown');
+        wasPreviouslyInstalled = false;
+    }
+    
+    if (isCurrentlyInstalled && !wasPreviouslyInstalled) {
+        console.log('✅ App is installed (display mode: standalone)');
+        localStorage.setItem('pwaInstalled', 'true');
+    }
+    
+    // ========================================
+    // BANNER DISMISSAL WITH EXPIRY
+    // ========================================
+    
+    const BANNER_DISMISSAL_DAYS = 7;
+    const BANNER_DISMISSAL_KEY = 'pwaBannerDismissed';
+    const BANNER_DISMISSAL_TIME_KEY = 'pwaBannerDismissedAt';
+    
+    function isBannerDismissedValid() {
+        const dismissedAt = localStorage.getItem(BANNER_DISMISSAL_TIME_KEY);
+        if (!dismissedAt) return false;
+        const daysSinceDismissal = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+        return daysSinceDismissal < BANNER_DISMISSAL_DAYS;
+    }
+    
+    function shouldShowBanner() {
+        if (isAppInstalled()) return false;
+        const isDismissed = localStorage.getItem(BANNER_DISMISSAL_KEY) === 'true';
+        const isDismissalValid = isBannerDismissedValid();
+        if (isDismissed && isDismissalValid) return false;
+        if (isDismissed && !isDismissalValid) {
+            localStorage.removeItem(BANNER_DISMISSAL_KEY);
+            localStorage.removeItem(BANNER_DISMISSAL_TIME_KEY);
+        }
+        return true;
+    }
+    
+    // ========================================
+    // SERVICE WORKER COMMUNICATION
+    // ========================================
+    
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CHECK_INSTALL_STATUS' });
+    }
+    
+    navigator.serviceWorker.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'INSTALL_STATUS') {
+            if (!event.data.installed && localStorage.getItem('pwaInstalled') === 'true') {
+                localStorage.removeItem('pwaInstalled');
+                console.log('🔄 Sync: Uninstall detected via service worker');
+                localStorage.removeItem('pwaBannerDismissed');
+                localStorage.removeItem('pwaBannerDismissedAt');
+                if (deferredInstallPrompt && shouldShowBanner()) {
+                    pwaInstallBanner?.classList.add('show');
+                }
+            }
+        }
+    });
+    
+    // ========================================
+    // PERIODIC INSTALL STATUS CHECK
+    // ========================================
+    
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            setTimeout(() => {
+                const currentlyInstalled = isAppInstalled();
+                const storedInstalled = localStorage.getItem('pwaInstalled') === 'true';
+                
+                if (storedInstalled && !currentlyInstalled) {
+                    console.log('🔴 Uninstall detected on visibility change');
+                    localStorage.removeItem('pwaInstalled');
+                    localStorage.removeItem('pwaBannerDismissed');
+                    localStorage.removeItem('pwaBannerDismissedAt');
+                    if (deferredInstallPrompt && shouldShowBanner()) {
+                        pwaInstallBanner?.classList.add('show');
+                    }
+                } else if (currentlyInstalled && !storedInstalled) {
+                    console.log('✅ Install detected on visibility change');
+                    localStorage.setItem('pwaInstalled', 'true');
+                    pwaInstallBanner?.classList.remove('show');
+                }
+            }, 500);
+        }
+    });
+    
+    window.addEventListener('focus', function() {
+        setTimeout(() => {
+            const currentlyInstalled = isAppInstalled();
+            const storedInstalled = localStorage.getItem('pwaInstalled') === 'true';
+            
+            if (storedInstalled && !currentlyInstalled) {
+                console.log('🔴 Uninstall detected on window focus');
+                localStorage.removeItem('pwaInstalled');
+                localStorage.removeItem('pwaBannerDismissed');
+                localStorage.removeItem('pwaBannerDismissedAt');
+                if (deferredInstallPrompt && shouldShowBanner()) {
+                    pwaInstallBanner?.classList.add('show');
+                }
+            }
+        }, 300);
+    });
+    
+    // ========================================
+    // PWA INSTALL BANNER LOGIC
+    // ========================================
+    
+    let deferredInstallPrompt = null;
+    const pwaInstallBanner = document.getElementById('pwaInstallBanner');
+    const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+    const pwaInstallCloseBtn = document.getElementById('pwaInstallCloseBtn');
+    
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }
+    
+    if (shouldShowBanner()) {
+        window.addEventListener('beforeinstallprompt', function(event) {
+            event.preventDefault();
+            deferredInstallPrompt = event;
+            if (shouldShowBanner() && !isAppInstalled()) {
+                pwaInstallBanner?.classList.add('show');
+                console.log('📱 Showing install banner');
+            }
+        });
+    }
+    
+    pwaInstallBtn?.addEventListener('click', async function() {
+        if (!deferredInstallPrompt) {
+            if (isIOS()) {
+                alert('To install: Tap the Share button (box with arrow) then select "Add to Home Screen"');
+            } else {
+                alert('To install, open this site in Chrome/Firefox and look for the install icon in the address bar.');
+            }
+            return;
+        }
+        
+        pwaInstallBanner?.classList.remove('show');
+        deferredInstallPrompt.prompt();
+        const choiceResult = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        
+        if (choiceResult.outcome === 'accepted') {
+            console.log('✅ User accepted installation');
+        } else {
+            console.log('❌ User dismissed installation');
+            localStorage.setItem(BANNER_DISMISSAL_KEY, 'true');
+            localStorage.setItem(BANNER_DISMISSAL_TIME_KEY, Date.now().toString());
+        }
+    });
+    
+    pwaInstallCloseBtn?.addEventListener('click', function() {
+        pwaInstallBanner?.classList.remove('show');
+        localStorage.setItem(BANNER_DISMISSAL_KEY, 'true');
+        localStorage.setItem(BANNER_DISMISSAL_TIME_KEY, Date.now().toString());
+        console.log('📱 User dismissed banner for', BANNER_DISMISSAL_DAYS, 'days');
+    });
+    
+    window.addEventListener('appinstalled', function() {
+        deferredInstallPrompt = null;
+        pwaInstallBanner?.classList.remove('show');
+        localStorage.setItem('pwaInstalled', 'true');
+        localStorage.removeItem(BANNER_DISMISSAL_KEY);
+        localStorage.removeItem(BANNER_DISMISSAL_TIME_KEY);
+        console.log('🎉 PWA was installed successfully!');
+        
+        if (typeof showMessageModal === 'function') {
+            showMessageModal('✅ StocksalesApp installed! Check your home screen.', 3000);
+        }
+    });
+    
+    // iOS specific banner
+    if (isIOS() && !isAppInstalled() && shouldShowBanner()) {
+        setTimeout(() => {
+            if (pwaInstallBanner && !pwaInstallBanner.classList.contains('show')) {
+                pwaInstallBanner.classList.add('show');
+                const bannerText = pwaInstallBanner.querySelector('.pwa-install-text p');
+                if (bannerText) {
+                    bannerText.textContent = 'Tap Share → Add to Home Screen';
+                }
+                const installBtn = document.getElementById('pwaInstallBtn');
+                if (installBtn) {
+                    installBtn.textContent = 'How to Install';
+                }
+            }
+        }, 1000);
+    }
+    
+    // ========================================
+    // FORCE SERVICE WORKER UPDATE CHECKER
+    // ========================================
+    
+    function forceServiceWorkerUpdate() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'INIT_ENGAGEMENT_SYSTEM'
+                    });
+                }
+                
+                // FIXED: Moved syncStockToServiceWorker inside the then block
+                syncStockToServiceWorker();
+                
+                // Check for updates every minute
+                setInterval(() => {
+                    registration.update();
+                    console.log('🔄 Checking for Service Worker updates...');
+                }, 60000);
+            });
+            
+            // Listen for new service worker
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('🔄 New Service Worker activated! Reloading...');
+                window.location.reload();
+            });
+        }
+    }
+    
+    // FIXED: Added missing syncStockToServiceWorker function
+    function syncStockToServiceWorker() {
+        if (!navigator.serviceWorker.controller) return;
+        
+        // Get local stock items
+        const items = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('stock_item_')) {
+                try {
+                    const item = JSON.parse(localStorage.getItem(key));
+                    if (item) items.push(item);
+                } catch (e) {
+                    console.warn('Error parsing stock item:', key);
+                }
+            }
+        }
+        
+        if (items.length > 0 && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'UPDATE_STOCK',
+                items: items
+            });
+            console.log('📦 Synced', items.length, 'stock items to service worker');
+        }
+    }
+
+function syncSessionToServiceWorker() {
+    // ✅ FIX: Use .ready instead of checking controller directly
+    if (!('serviceWorker' in navigator)) {
+        console.warn('⚠️ Service Worker not supported');
+        return false;
+    }
+    
+    console.log('🔄 Syncing session metrics to Service Worker...');
+    
+    // ✅ Use navigator.serviceWorker.ready which waits for activation
+    navigator.serviceWorker.ready.then(registration => {
+        const controller = registration.active;
+        
+        if (!controller) {
+            console.warn('⚠️ Service Worker not active yet');
+            return false;
+        }
+        
+        try {
+            // 1. Calculate Metrics
+            let lowStockCount = 0;
+            let hadSalesToday = false;
+            let pendingCreditsCount = 0;
+            const today = new Date().toISOString().split('T')[0];
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                try {
+                    const value = localStorage.getItem(key);
+                    if (!value) continue;
+
+                    if (key.startsWith('stock_item_')) {
+                        const item = tryParseJSON(value);
+                        if (item && item.quantity <= (item.min_stock || 5)) {
+                            lowStockCount++;
+                        }
+                    } else if (key === `sales_${today}`) {
+                        const sales = tryParseJSON(value);
+                        if (sales && sales.count > 0) hadSalesToday = true;
+                    } else if (key.includes('credit') && value.includes('unpaid')) {
+                        pendingCreditsCount++;
+                    }
+                } catch (e) {
+                    // Ignore parse errors
+                }
+            }
+
+            // 2. User Data & Settings
+            const userData = {
+                language: localStorage.getItem('language') || 'en',
+                businessId: localStorage.getItem('businessId') || null,
+                businessName: localStorage.getItem('businessName') || null,
+                userId: localStorage.getItem('userId') || null,
+                userName: localStorage.getItem('userName') || null,
+                theme: localStorage.getItem('theme') || 'light',
+                currency: localStorage.getItem('currency') || 'USD',
+                syncTimestamp: Date.now(),
+                lastActivityTime: localStorage.getItem('lastAppActivity') || Date.now()
+            };
+
+            // 3. Send payload to Service Worker
+            controller.postMessage({
+                type: 'SYNC_SESSION_DATA',
+                payload: {
+                    metrics: {
+                        lowStockCount,
+                        hadSalesToday,
+                        pendingCreditsCount
+                    },
+                    userData: userData,
+                    syncedAt: new Date().toISOString()
+                }
+            });
+            
+            console.log('✅ Session metrics sync complete!', { lowStockCount, hadSalesToday, pendingCreditsCount });
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Session sync failed:', error);
+            return false;
+        }
+    }).catch(error => {
+        console.warn('⚠️ Service Worker not ready:', error.message);
+        return false;
+    });
+}
+
+// Helper function to safely parse JSON
+function tryParseJSON(str) {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        return str;
+    }
+}
+
+// Expose globally for manual calls
+ window.syncSessionToServiceWorker = syncSessionToServiceWorker;
+    
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log('👀 App returned to focus - syncing session...');
+        setTimeout(() => {
+            syncSessionToServiceWorker();
+        }, 900);
+    }
+});
+    
+window.addEventListener('beforeunload', function() {
+    // ✅ Only sync if Service Worker is ready
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        syncSessionToServiceWorker();
+    }
+     forceServiceWorkerUpdate();
+});
+    
+
+   
+    
+    console.log('🚀 PWA System Ready - Uninstall detection active');
+    
+}
+
+window.initializePostLoginApp = initializePostLoginApp;
+
+
+

@@ -1,0 +1,1430 @@
+// Sidebar Component - Injects a responsive left sidebar navigation
+(function() {
+    'use strict';
+
+    // Global variable to track current open modal (for back button)
+    window.currentModalId = window.currentModalId || null;
+    window._logoutTimer = null;
+    window.currentStockSubsection = null;  // Track which stock subsection is open
+window.currentSalesSubsection = null;
+window.closeCurrentStockSubsection = closeCurrentStockSubsection;
+window.closeCurrentSalesSubsection = closeCurrentSalesSubsection;
+  window.updateMobileLowStock = updateMobileLowStockDot;
+
+// Safe fixImagePath function that doesn't break if the original isn't available
+function safeFixImagePath(path) {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('data:')) return path;
+    if (path.startsWith('/')) return path; // 👈 ADDED: Preserve absolute server paths
+
+    // If it's a Supabase storage path (logos/, photos/, images/, public/)
+    if (path.includes('logos/') || path.includes('photos/') || path.includes('images/') || path.includes('public/')) {
+        return `${path}`;
+    }
+    
+    return path;
+}
+    // ========== MODAL HISTORY HELPERS ==========
+
+    /**
+     * Hide modal with history cleanup
+     */
+    function hideModalWithHistory(modalId, isFromBackButton = false) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return false;
+        
+        // Hide the modal
+        modal.classList.add('hidden');
+        
+        // Handle scale classes if they exist
+        const content = modal.querySelector('.scale-100');
+        if (content) {
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        }
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        
+        // Update history if not from back button
+        if (!isFromBackButton && window.currentModalId === modalId) {
+            window.history.pushState({ modal: null }, '', window.location.href);
+            window.currentModalId = null;
+        } else if (isFromBackButton) {
+            window.currentModalId = null;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Close current modal (generic)
+     */
+    function closeCurrentModal() {
+        if (window.currentModalId) {
+            const modal = document.getElementById(window.currentModalId);
+            if (modal && !modal.classList.contains('hidden')) {
+                hideModalWithHistory(window.currentModalId);
+            }
+        }
+    }
+
+    /**
+     * Navigate app views using history state
+     */
+function navigateToView(viewName) {
+    const dashboardContainer = document.getElementById('main-dashboard-container');
+    const dashcontainer = document.getElementById('dashcontainer');
+    const stockManagementSection = document.getElementById('stockManagementSection');
+    const salesManagementSection = document.getElementById('salesManagementSection');
+    const stockOptionsModal = document.getElementById('stockOptionsModal');
+    const salesOptionsModal = document.getElementById('salesOptionsModal');
+    const addItemSection = document.getElementById('addItemSection');
+    const currentStockSection = document.getElementById('currentStockSection');
+    const stockHistorySection = document.getElementById('stock-history-section');
+    const profitLossSection = document.getElementById('profitLossSection');
+    const weeklySalesSection = document.getElementById('weeklySalesSection');
+    const monthlySalesSection = document.getElementById('monthlySalesSection');
+    const creditSalesSection = document.getElementById('creditSalesSection');
+    const groupedBySubcategorySection = document.getElementById('groupedBySubcategorySection');
+    const recordNewSaleSection = document.getElementById('recordNewSaleSection');
+    const salesHistorySection = document.getElementById('sales-history-section');
+    const expensesSection = document.getElementById('expensesSection');
+    const refundHistoryModal = document.getElementById('refundHistoryModal');
+        const supermarketModeModal = document.getElementById('supermarketModeModal');
+   
+
+    if (viewName === 'stock') {
+        // Hide all subsections first
+        if (addItemSection) addItemSection.classList.add('hidden');
+        if (currentStockSection) currentStockSection.classList.add('hidden');
+        if (stockHistorySection) stockHistorySection.classList.add('hidden');
+        if (profitLossSection) profitLossSection.classList.add('hidden');
+        if (weeklySalesSection) weeklySalesSection.classList.add('hidden');
+        if (monthlySalesSection) monthlySalesSection.classList.add('hidden');
+        if (creditSalesSection) creditSalesSection.classList.add('hidden');
+        if (groupedBySubcategorySection) groupedBySubcategorySection.classList.add('hidden');
+        if (recordNewSaleSection) recordNewSaleSection.classList.add('hidden');
+        if (salesHistorySection) salesHistorySection.classList.add('hidden');
+        if (expensesSection) expensesSection.classList.add('hidden');
+        if (refundHistoryModal) refundHistoryModal.classList.add('hidden');
+          supermarketModeModal.classList.add('hidden'); 
+        if (stockOptionsModal) stockOptionsModal.classList.remove('hidden');
+        if (salesOptionsModal) salesOptionsModal.classList.add('hidden');
+        if (stockManagementSection) stockManagementSection.classList.remove('hidden');
+        if (salesManagementSection) salesManagementSection.classList.add('hidden');
+        if (dashboardContainer) { 
+            dashboardContainer.classList.add('nosee'); 
+            dashboardContainer.classList.remove('see'); 
+        }
+        if (dashcontainer) dashcontainer.classList.add('hidden');
+        
+        // Reset tracking
+        window.currentStockSubsection = null;
+        window.currentSalesSubsection = null;
+        window.currentModalId = 'stockOptionsModal';
+        
+        if (typeof hideHomeOverlay === 'function') hideHomeOverlay();
+        document.title = "StocksalesApp -> Let's take a look at the shop inventory items";
+        
+    } else if (viewName === 'sales') {
+        // Hide all subsections first
+        if (addItemSection) addItemSection.classList.add('hidden');
+        if (currentStockSection) currentStockSection.classList.add('hidden');
+        if (stockHistorySection) stockHistorySection.classList.add('hidden');
+        if (profitLossSection) profitLossSection.classList.add('hidden');
+        if (weeklySalesSection) weeklySalesSection.classList.add('hidden');
+        if (monthlySalesSection) monthlySalesSection.classList.add('hidden');
+        if (creditSalesSection) creditSalesSection.classList.add('hidden');
+        if (groupedBySubcategorySection) groupedBySubcategorySection.classList.add('hidden');
+        if (recordNewSaleSection) recordNewSaleSection.classList.add('hidden');
+        if (salesHistorySection) salesHistorySection.classList.add('hidden');
+        if (expensesSection) expensesSection.classList.add('hidden');
+         supermarketModeModal.classList.add('hidden'); closeSupermarketMode();
+        if (refundHistoryModal) refundHistoryModal.classList.add('hidden');
+        if (stockOptionsModal) stockOptionsModal.classList.add('hidden');
+        if (salesOptionsModal) salesOptionsModal.classList.remove('hidden');
+        if (stockManagementSection) stockManagementSection.classList.add('hidden');
+        if (salesManagementSection) salesManagementSection.classList.remove('hidden');
+        closeRefundHistoryModal();
+        if (dashboardContainer) { 
+            dashboardContainer.classList.add('nosee'); 
+            dashboardContainer.classList.remove('see'); 
+        }
+        if (dashcontainer) dashcontainer.classList.add('hidden');
+        
+        // Reset tracking
+        window.currentStockSubsection = null;
+        window.currentSalesSubsection = null;
+        window.currentModalId = 'salesOptionsModal';
+        
+        if (typeof hideHomeOverlay === 'function') hideHomeOverlay();
+        document.title = "StocksalesApp -> Sales Registry";
+        
+    } else {
+        // Hide all sections
+        if (addItemSection) addItemSection.classList.add('hidden');
+        if (currentStockSection) currentStockSection.classList.add('hidden');
+        if (stockHistorySection) stockHistorySection.classList.add('hidden');
+        if (profitLossSection) profitLossSection.classList.add('hidden');
+        if (weeklySalesSection) weeklySalesSection.classList.add('hidden');
+        if (monthlySalesSection) monthlySalesSection.classList.add('hidden');
+        if (creditSalesSection) creditSalesSection.classList.add('hidden');
+        if (groupedBySubcategorySection) groupedBySubcategorySection.classList.add('hidden');
+        if (recordNewSaleSection) recordNewSaleSection.classList.add('hidden');
+        if (salesHistorySection) salesHistorySection.classList.add('hidden');
+        if (expensesSection) expensesSection.classList.add('hidden');
+        if (supermarketModeModal) supermarketModeModal.classList.add('hidden'); 
+        // Hide modals
+        if (stockOptionsModal) stockOptionsModal.classList.add('hidden');
+        if (salesOptionsModal) salesOptionsModal.classList.add('hidden');
+        if (stockManagementSection) stockManagementSection.classList.add('hidden');
+        if (salesManagementSection) salesManagementSection.classList.add('hidden');
+        // Reset tracking
+        window.currentStockSubsection = null;
+        window.currentSalesSubsection = null;
+        window.currentModalId = null;
+        
+        if (typeof showHomeOverlay === 'function') showHomeOverlay();
+        document.title = "StocksalesApp";
+    }
+}
+// Replace your closeCurrentStockSubsection function:
+
+function closeCurrentStockSubsection() {
+    // Get all section elements safely
+    const addItemSection = document.getElementById('addItemSection');
+    const currentStockSection = document.getElementById('currentStockSection');
+    const stockHistorySection = document.getElementById('stockHistorySection');
+    const profitLossSection = document.getElementById('profitLossSection');
+    const weeklySalesSection = document.getElementById('weeklySalesSection');
+    const monthlySalesSection = document.getElementById('monthlySalesSection');
+    const creditSalesSection = document.getElementById('creditSalesSection');
+    const groupedBySubcategorySection = document.getElementById('groupedBySubcategorySection');
+  
+    if (addItemSection) addItemSection.classList.add('hidden');
+    if (currentStockSection) currentStockSection.classList.add('hidden');
+    if (stockHistorySection) stockHistorySection.classList.add('hidden');
+    if (profitLossSection) profitLossSection.classList.add('hidden');
+    if (weeklySalesSection) weeklySalesSection.classList.add('hidden');
+    if (monthlySalesSection) monthlySalesSection.classList.add('hidden');
+    if (creditSalesSection) creditSalesSection.classList.add('hidden');
+     const supermarketModeModal = document.getElementById('supermarketModeModal');
+    if (supermarketModeModal) supermarketModeModal.classList.add('hidden'); 
+    if (groupedBySubcategorySection) groupedBySubcategorySection.classList.add('hidden');
+    
+    // Show stock management
+    if (typeof showStockManagement === 'function') {
+        showStockManagement();
+    }
+    
+    // Show stock options modal
+    const stockOptionsModal = document.getElementById('stockOptionsModal');
+    if (stockOptionsModal) {
+        stockOptionsModal.classList.remove('hidden');
+    }
+    
+    // Reset tracking
+    window.currentStockSubsection = null;
+}
+
+function closeCurrentSalesSubsection() {
+    // Get all section elements safely with null checks
+    const creditSalesSection = document.getElementById('creditSalesSection');
+    const expensesSection = document.getElementById('expensesSection');
+    const recordNewSaleSection = document.getElementById('recordNewSaleSection');
+    const salesHistorySection = document.getElementById('salesHistorySection');
+    
+    // Hide each section if it exists
+    if (creditSalesSection) creditSalesSection.classList.add('hidden');
+    if (expensesSection) expensesSection.classList.add('hidden');
+    if (recordNewSaleSection) recordNewSaleSection.classList.add('hidden');
+    if (salesHistorySection) salesHistorySection.classList.add('hidden');
+     const supermarketModeModal = document.getElementById('supermarketModeModal');
+    if (supermarketModeModal) supermarketModeModal.classList.add('hidden'); closeSupermarketMode();
+    if (typeof hideAllSalesSubSections === 'function') {
+        hideAllSalesSubSections();
+    }
+    
+    // Show sales options modal if it exists
+    const salesOptionsModal = document.getElementById('salesOptionsModal');
+    if (salesOptionsModal) {
+        salesOptionsModal.classList.remove('hidden');
+    }
+    
+    // Reset tracking
+    window.currentSalesSubsection = null;
+}
+
+
+
+
+// Add these missing functions
+function closeStockOptionsModalWithHistory(isFromBackButton = false) {
+             addItemSection.classList.add('hidden');
+        currentStockSection.classList.add('hidden');
+        stockHistorySection.classList.add('hidden');
+        profitLossSection.classList.add('hidden');
+        weeklySalesSection.classList.add('hidden'); // NEW: Added weekly sales section
+        monthlySalesSection.classList.add('hidden'); // NEW: Added monthly sales section
+        creditSalesSection.classList.add('hidden'); // NEW: Added credit sales section
+        groupedBySubcategorySection.classList.add('hidden'); 
+    const stockOptionsModal = document.getElementById('stockOptionsModal');
+    if (!stockOptionsModal) return;
+    
+    // Hide the modal
+    stockOptionsModal.classList.add('hidden');
+    
+    // Clear tracking
+    if (isFromBackButton) {
+        window.currentModalId = null;
+        window.currentStockSubsection = null;
+    } else {
+        if (window.currentModalId === 'stockOptionsModal') {
+            window.currentModalId = null;
+        }
+        window.currentStockSubsection = null;
+    }
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+}
+
+function closeSalesOptionsModalWithHistory(isFromBackButton = false) {
+           creditSalesSection.classList.add('hidden');
+        document.getElementById('expensesSection').classList.add('hidden');
+         recordNewSaleSection.classList.add('hidden');
+        salesHistorySection.classList.add('hidden');
+
+        const supermarketModeModal = document.getElementById('supermarketModeModal');
+    if (supermarketModeModal) supermarketModeModal.classList.add('hidden'); closeSupermarketMode();
+    if (isFromBackButton) {
+        window.currentModalId = null;
+        window.currentSalesSubsection = null;
+    } else {
+        if (window.currentModalId === 'salesOptionsModal') {
+            window.currentModalId = null;
+        }
+        window.currentSalesSubsection = null;
+    }
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+}
+
+// Expose them globally
+
+    function initializeAppHistoryState() {
+        // Reset any stale history state on page load so old popstate data doesn't persist.
+        window.history.replaceState({ view: 'dashboard' }, '', window.location.href);
+        window.currentModalId = null;
+        window.currentStockSubsection = null;
+        window.currentSalesSubsection = null;
+    }
+
+    window.navigateToView = navigateToView;
+    window.initializeAppHistoryState = initializeAppHistoryState;
+    window.closeStockOptionsModalWithHistory = closeStockOptionsModalWithHistory;
+window.closeSalesOptionsModalWithHistory = closeSalesOptionsModalWithHistory;
+
+    /**
+     * Setup global back button handler for all modals
+     */
+    window.addEventListener('popstate', function(event) {
+    console.log('POPSTATE FIRED');
+    console.log(event.state);
+});
+function setupGlobalBackButtonHandler() {
+    if (window._backButtonHandlerSetup) return;
+    window._backButtonHandlerSetup = true;
+    
+    window.addEventListener('popstate', function(event) {
+
+        // Close modal if one is open
+        if (window.currentModalId) {
+            const modal = document.getElementById(window.currentModalId);
+            if (modal && !modal.classList.contains('hidden')) {
+                closeModal(window.currentModalId);
+                event.preventDefault();
+                return;
+            }
+        }
+            if (currentModalId) {
+        hideModal(currentModalId, true);
+    }
+  if (event.state && event.state.modal === 'notes') {
+        // User pressed back from notes - close the modal
+        closeNotesModal();
+    } else if (!event.state && notesModal && !notesModal.classList.contains('hidden')) {
+        // Back to original state - close modal
+        closeNotesModal();
+    }
+
+        const supermarketModeModal = document.getElementById('supermarketModeModal');
+        if (supermarketModeModal && !supermarketModeModal.classList.contains('hidden')) {
+            supermarketModeModal.classList.add('hidden');
+            closeSupermarketMode() 
+            const salesOptionsModal = document.getElementById('salesOptionsModal');
+              salesOptionsModal.classList.remove('hidden');
+            event.preventDefault();
+            return;
+        }
+
+                const recordNewSaleSection = document.getElementById('recordNewSaleSection');
+        if (recordNewSaleSection && !recordNewSaleSection.classList.contains('hidden')) {
+            recordNewSaleSection.classList.add('hidden');
+             const salesOptionsModal = document.getElementById('salesOptionsModal');
+              salesOptionsModal.classList.remove('hidden');
+            showSalesManagement();
+            event.preventDefault();
+            return;
+        }
+        const salesHistorySection = document.getElementById('sales-history-section');
+        if (salesHistorySection && !salesHistorySection.classList.contains('hidden')) {
+            salesHistorySection.classList.add('hidden');
+            const salesOptionsModal = document.getElementById('salesOptionsModal');
+              salesOptionsModal.classList.remove('hidden');
+                showSalesManagement();
+            event.preventDefault();
+            return;
+        }
+
+        // Close print preview modal
+        const printPreviewModal = document.getElementById('printPreviewModal');
+        if (printPreviewModal && !printPreviewModal.classList.contains('hidden')) {
+            printPreviewModal.classList.add('hidden');
+            closePrintPreviewModal();
+            event.preventDefault();
+            return;
+        }
+        
+        // Close expenses section
+        const expensesSection = document.getElementById('expensesSection');
+        if (expensesSection && !expensesSection.classList.contains('hidden')) {
+            expensesSection.classList.add('hidden');
+            const salesHistorySection = document.getElementById('sales-history-section');
+            if (salesHistorySection) {
+                salesHistorySection.classList.remove('hidden');
+                salesHistorySection.classList.add('MODAL-LOCK-OPEN');
+            }
+            const expenseModal = document.getElementById('expenseModal');
+            if (expenseModal) {
+                expenseModal.classList.add('hidden');
+            }
+            console.log('Expenses section hidden, sales history shown');
+            event.preventDefault();
+            return;
+        }
+                        const salesOptionsModal = document.getElementById('salesOptionsModal');
+        if (salesOptionsModal && !salesOptionsModal.classList.contains('hidden')) {
+            salesOptionsModal.classList.add('hidden');
+            closeSalesOptionsModal();
+            event.preventDefault();
+            return;
+        }
+        // Close credit sales section
+        const creditSalesSection = document.getElementById('creditSalesSection');
+        if (creditSalesSection && !creditSalesSection.classList.contains('hidden')) {
+            creditSalesSection.classList.add('hidden');
+            const salesHistorySection = document.getElementById('sales-history-section');
+            if (salesHistorySection) {
+                salesHistorySection.classList.remove('hidden');
+                salesHistorySection.classList.add('MODAL-LOCK-OPEN');
+            }
+            event.preventDefault();
+            return;
+        }
+        
+        // Close receipt modal
+        const receiptModal = document.getElementById('receiptModal');
+        if (receiptModal && !receiptModal.classList.contains('hidden')) {
+            receiptModal.classList.add('hidden');
+            closeReceiptModal();
+            event.preventDefault();
+            return;
+        }
+        
+        // Clean up custom receipt modal
+        const customReceiptModal = document.getElementById('customReceiptModal');
+        if (customReceiptModal && !customReceiptModal.classList.contains('hidden')) {
+            // Clone and replace buttons to remove event listeners
+            document.querySelectorAll('.add-to-custom-receipt, .remove-custom-item').forEach(btn => {
+                btn.replaceWith(btn.cloneNode(true));
+            });
+            
+            // Clone and replace quantity inputs
+            document.querySelectorAll('.custom-receipt-qty').forEach(input => {
+                input.replaceWith(input.cloneNode(true));
+            });
+            
+            // Clear form fields
+            ['customReceiptCustomerFilter', 'customReceiptDateFilter'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            
+            // Clear tables
+            ['customReceiptProductTable', 'customReceiptSelectedTable'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '';
+            });
+            
+            // Reset totals and headers
+            const total = document.getElementById('customReceiptTotal');
+            if (total) total.textContent = '0.00';
+            
+            const headerDate = document.getElementById('customReceiptHeaderDate');
+            if (headerDate) headerDate.textContent = '';
+            
+            // Clear suggestions
+            const suggestions = document.getElementById('customCustomerSuggestions');
+            if (suggestions) {
+                suggestions.innerHTML = '';
+                suggestions.classList.add('hidden');
+            }
+            
+            // Reset data - declare if not already global
+            if (typeof window.currentCustomReceiptData !== 'undefined') {
+                window.currentCustomReceiptData = null;
+            }
+            if (typeof window.customReceiptItems !== 'undefined') {
+                window.customReceiptItems = [];
+            }
+            
+            // Hide modal
+            customReceiptModal.classList.add('hidden');
+            
+            console.log('Custom receipt modal cleaned and hidden');
+            event.preventDefault();
+            return;
+        }
+        
+        // Close customer transactions modal
+        const customerTransactionsModal = document.getElementById('customerTransactionsModal');
+        if (customerTransactionsModal && !customerTransactionsModal.classList.contains('hidden')) {
+            customerTransactionsModal.classList.add('hidden');
+            window.customerTransactionsData = null;
+            window.currentCustomerName = null;
+            if (typeof closeCustomerTransactionsModal === 'function') {
+                closeCustomerTransactionsModal();
+            }
+            event.preventDefault();
+            return;
+        }
+        
+
+        // Close mobile drawer
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        if (mobileDrawer && !mobileDrawer.classList.contains('hidden')) {
+            if (typeof window.closeMobileDrawer === 'function') {
+                window.closeMobileDrawer();
+            } else {
+                mobileDrawer.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+            event.preventDefault();
+            return;
+        }
+        
+        // Close quantity modal
+        const quantityActionModal = document.getElementById('quantityActionModal');
+        if (quantityActionModal && !quantityActionModal.classList.contains('hidden')) {
+            quantityActionModal.classList.add('hidden');
+            if (typeof closeQuantityActionModal === 'function') {
+                closeQuantityActionModal();
+            }
+            event.preventDefault();
+            return;
+        }
+        
+        // Close QR generation modal
+        const qrGenerationModal = document.getElementById('qrGenerationModal');
+        if (qrGenerationModal && !qrGenerationModal.classList.contains('hidden')) {
+            qrGenerationModal.classList.add('hidden');
+            if (typeof closeQrGenerationModal === 'function') {
+                closeQrGenerationModal();
+            }
+            event.preventDefault();
+            return;
+        }
+        
+        // Close item details modal
+        const itemDetailsModal = document.getElementById('itemDetailsModal');
+        if (itemDetailsModal && !itemDetailsModal.classList.contains('hidden')) {
+            itemDetailsModal.classList.add('hidden');
+            if (typeof closeItemDetailsModal === 'function') {
+                closeItemDetailsModal();
+            }
+            event.preventDefault();
+            return;
+        }
+
+        // Handle open modals
+        if (window.currentModalId) {
+            const modal = document.getElementById(window.currentModalId);
+            if (modal && !modal.classList.contains('hidden')) {
+                // Stock subsection
+                if (window.currentModalId === 'stockOptionsModal' && window.currentStockSubsection) {
+                    if (typeof showStockManagement === 'function') showStockManagement();
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Sales subsection
+                if (window.currentModalId === 'salesOptionsModal' && window.currentSalesSubsection) {
+                    if (typeof closeCurrentSalesSubsection === 'function') closeCurrentSalesSubsection();
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Stock options modal
+                if (window.currentModalId === 'stockOptionsModal') {
+                    if (typeof closeStockOptionsModalWithHistory === 'function') {
+                        closeStockOptionsModalWithHistory(true);
+                    } else {
+                        const stockOptionsModal = document.getElementById('stockOptionsModal');
+                        if (stockOptionsModal) {
+                            stockOptionsModal.classList.add('hidden');
+                            document.body.style.overflow = '';
+                            window.currentModalId = null;
+                            window.currentStockSubsection = null;
+                        }
+                    }
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Sales options modal
+                if (window.currentModalId === 'salesOptionsModal') {
+                    if (typeof closeSalesOptionsModalWithHistory === 'function') {
+                        closeSalesOptionsModalWithHistory(true);
+                    } else {
+                        const salesOptionsModal = document.getElementById('salesOptionsModal');
+                        if (salesOptionsModal) {
+                            salesOptionsModal.classList.add('hidden');
+                            document.body.style.overflow = '';
+                            window.currentModalId = null;
+                            window.currentSalesSubsection = null;
+                        }
+                    }
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Logout modal
+                if (window.currentModalId === 'logoutModal') {
+                    if (window._logoutTimer) {
+                        clearInterval(window._logoutTimer);
+                        window._logoutTimer = null;
+                    }
+                    if (typeof hideModalWithHistory === 'function') hideModalWithHistory(window.currentModalId, true);
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Image zoom modal
+                if (window.currentModalId === 'imageZoomModal' && typeof closeImageZoom === 'function') {
+                    closeImageZoom(true);
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Business settings modal
+                if (window.currentModalId === 'businessSettingsModal' && typeof closeBusinessSettingsModal === 'function') {
+                    closeBusinessSettingsModal(true);
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Admin profile modal
+                if (window.currentModalId === 'adminProfileModal' && typeof closeAdminProfileModal === 'function') {
+                    closeAdminProfileModal(true);
+                    event.preventDefault();
+                    return;
+                }
+                
+                // Default modal close
+                if (typeof hideModalWithHistory === 'function') {
+                    hideModalWithHistory(window.currentModalId, true);
+                } else {
+                    const modalToClose = document.getElementById(window.currentModalId);
+                    if (modalToClose) {
+                        modalToClose.classList.add('hidden');
+                        document.body.style.overflow = '';
+                        window.currentModalId = null;
+                    }
+                }
+                event.preventDefault();
+                return;
+            }
+        }
+        
+        // Navigate between app views
+        const view = event.state && event.state.view ? event.state.view : 'dashboard';
+        if (view && typeof navigateToView === 'function') {
+            navigateToView(view);
+            event.preventDefault();
+            return;
+        }
+    });
+}
+    // Sidebar configuration
+const sidebarConfig = {
+    appName: 'StocksalesApp',
+    logo: '/image/logo.jpg',
+    items: [
+        { label: 'Home', href: '#', icon: 'fas fa-home', translate: 'home' },
+        { label: 'Dashboard', href: '#', icon: 'fas fa-chart-line', translate: 'dashboard' },
+        { label: 'Shop', href: '#', icon: 'fas fa-store', translate: 'salesManagement' },
+        { label: 'Inventory', href: '#', icon: 'fas fa-box', translate: 'stockManagement', notificationDot: true },
+        { label: 'My Customers', href: '#', icon: 'fas fa-users', translate: 'mycustomers' },
+        { label: 'Settings', href: '#', icon: 'fas fa-cog', translate: 'settings_button' },
+        { label: 'Admin Panel', href: '#', icon: 'fas fa-admin', translate: 'admin_panel' }, // Fixed capitalization
+        { label: 'My Reminders', href: '#', icon: 'fas fa-bell', translate: 'Reminders' }   // Fixed capitalization
+    ]
+};
+    /**
+     * Initialize sidebar and inject into page
+     */
+    function initSidebar() {
+        if (document.getElementById('sidebar-container')) {
+                    return;
+                }
+
+                const sidebarContainer = createSidebarHTML();
+                document.body.insertBefore(sidebarContainer, document.body.firstChild);
+                  setupMobileNavigation();
+                setupEventListeners();
+                adjustBodyPadding();
+                setupGlobalBackButtonHandler();
+                initializeAppHistoryState();
+                window.addEventListener('resize', function() {
+                    const mobileNav = document.getElementById('mobile-bottom-nav');
+                    if (window.innerWidth <= 768) {
+                        if (mobileNav && mobileNav.style.display !== 'flex') {
+                            mobileNav.style.display = 'flex';
+                        }
+                        setupMobileNavigation();
+                    } else {
+                        if (mobileNav) mobileNav.style.display = 'none';
+                        const drawer = document.getElementById('mobile-drawer');
+                        if (drawer) drawer.classList.add('hidden');
+                    }
+                });
+                
+                // Initial resize check
+                if (window.innerWidth > 768) {
+                    const mobileNav = document.getElementById('mobile-bottom-nav');
+                    if (mobileNav) mobileNav.style.display = 'none';
+                }
+        }
+
+    /**
+     * Create sidebar HTML structure
+     */
+function createSidebarHTML() {
+    const container = document.createElement('div');
+    container.id = 'sidebar-container';
+    container.className = 'sidebar-wrapper';
+
+    // Professional SVG Icons
+const icons = {
+    home: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+    </svg>`,
+    dashboard: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+    </svg>`,
+    sales: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+    </svg>`,
+    inventory: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+    </svg>`,
+    customers: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+    </svg>`,
+    reports: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 1m5.5-1-1 1M3.75 6h16.5" />
+    </svg>`,
+    settings: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 0 1 0 .255c-.007.378.138.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281Z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+    </svg>`,
+    crown: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0-4.5-4.5m4.5 4.5 4.5-4.5M3.75 6.75h16.5M3.75 6.75 5.25 9.75M3.75 6.75 5.25 3.75M20.25 6.75l-1.5 3M20.25 6.75 18.75 3.75" />
+    </svg>`,
+    logout: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+    </svg>`,
+    user: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+    </svg>`,
+    bars: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>`,
+    
+    // ✨ NEW ICONS ADDED FOR SIDEBAR
+    store: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+    </svg>`,
+    admin: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+    </svg>`,
+    bell: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+    </svg>`
+};
+
+    // Map Font Awesome classes to our SVG icons
+const iconMap = {
+    'fas fa-home': icons.home,
+    'fas fa-chart-line': icons.dashboard,
+    'fas fa-shopping-cart': icons.sales,
+    'fas fa-box': icons.inventory,
+    'fas fa-users': icons.customers,
+    'fas fa-file-alt': icons.reports,
+    'fas fa-cog': icons.settings,
+    'fas fa-crown': icons.crown,
+    'fas fa-sign-out-alt': icons.logout,
+    'fas fa-user': icons.user,
+    'fas fa-bars': icons.bars,
+    // ✨ NEW MAPPINGS
+    'fas fa-store': icons.store,
+    'fas fa-admin': icons.admin,   // Custom mapping for Admin Panel
+    'fas fa-bell': icons.bell
+};
+
+    // Helper to get icon by class
+    function getIcon(iconClass) {
+        return iconMap[iconClass] || icons.home;
+    }
+
+    container.innerHTML = `
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        
+        <!-- Main Sidebar -->
+        <aside class="sidebar-main" id="sidebar-main">
+            <!-- Sidebar Header / Brand -->
+            <div class="sidebar-header">
+                <a class="sidebar-brand" href="#">
+                    <div class="brand-logo-wrapper">
+                        <img id="homeBusinessLogo" src="/image/logo.jpg" alt="Business Logo" class="sidebar-logo" onerror="this.src='/image/logo.jpg'">
+                    </div>
+                    <span id="homeBusinessname" class="sidebar-app-name" data-translate="app_name">StockSales</span>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    ${sidebarConfig.items.map((item, index) => `
+                        <li class="nav-item" data-nav-item="${index}">
+                            <a href="${item.href}" class="nav-link" data-nav-item="${index}">
+                                <span class="nav-icon">${getIcon(item.icon)}</span>
+                                <span class="nav-label" data-translate="${item.translate}">${item.label}</span>
+                                ${item.notificationDot ? '<span class="notification-dot"></span>' : ''}
+                            </a>
+                        </li>
+                    `).join('')}
+                </ul>
+            </nav>
+
+            <!-- Plan / Subscription Section -->
+            <div class="sidebar-plan-section">
+                <a href="/pricing/" class="plan-link" id="plan-badge-link">
+                    <span class="plan-icon">${icons.crown}</span>
+                    <span id="current-plan-badge">Loading...</span>
+                </a>
+            </div>
+
+            <!-- Sidebar Footer - User & Logout -->
+            <div class="sidebar-footer">
+                <div class="user-section" id="sidebar-user-section">
+                    <div class="user-avatar" id="sidebar-user-avatar">
+                        ${icons.user}
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebar-user-name">User</div>
+                        <div class="user-role" id="sidebar-user-role">Active</div>
+                    </div>
+                </div>
+                <button id="sidebar-logout-btn" class="sidebar-logout-btn" type="button" title="Logout" data-translate-title="logout">
+                    <span class="logout-icon">${icons.logout}</span>
+                    <span class="logout-label" data-translate="logout">Logout</span>
+                </button>
+                     <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" aria-label="Toggle sidebar text" title="Toggle text">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+            </div>
+        </aside>
+
+
+
+        <!-- Mobile Toggle Button -->
+        <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Toggle sidebar" data-translate-aria-label="toggle_sidebar">
+            <span class="menu-icon">${icons.bars}</span>
+        </button>
+    `;
+
+    const planLink = container.querySelector('#plan-badge-link');
+    if (planLink) {
+        const pricingUrl = new URL('/pricing/', window.location.origin);
+        pricingUrl.search = window.location.search;
+        planLink.href = pricingUrl.href;
+    }
+
+    return container;
+}
+
+    /**
+     * Update plan badge from business_info (not licenses table)
+     */
+async function updatePlanBadgeFromBusinessInfo() {
+    const planBadge = document.getElementById('current-plan-badge'); 
+    if (!planBadge) return;
+
+    // 1. First check localStorage for cached license info (Instant UI)
+    let licensePlan = localStorage.getItem('licensePlan');
+    let licenseStatus = localStorage.getItem('licenseStatus');
+    let licenseExpires = localStorage.getItem('licenseExpires');
+
+    if (licensePlan && licenseStatus) {
+        updateBadgeDisplay(planBadge, licensePlan, licenseStatus, licenseExpires);
+        if (typeof updateMobileDrawerLicenseStatus === 'function') updateMobileDrawerLicenseStatus();
+    }
+
+    // 2. Then try to get fresh data from Supabase using the SECURE RPC
+    const client = typeof getSB === 'function' ? getSB() : null;
+    const businessId = typeof getBusinessId === 'function' ? await getBusinessId() : (currentUser?.business_id || businessInfo?.id);
+    
+    if (client && businessId) {
+        try {
+            // 🔥 Use the secure RPC function to bypass PgBouncer connection drops
+            const { data: bizInfoArray, error } = await client.rpc('get_business_info_secure', {
+                p_business_id: businessId
+            });
+
+            // get_business_info_secure returns SETOF, so data is an array. We take the first item.
+            const bizInfo = bizInfoArray && bizInfoArray.length > 0 ? bizInfoArray[0] : null;
+
+            if (!error && bizInfo) {
+                const freshPlan = bizInfo.license_plan || 'trial';
+                const freshStatus = bizInfo.license_status || 'trial';
+                const freshExpires = bizInfo.license_expires_at || null;
+
+                // Update localStorage with fresh data
+                localStorage.setItem('licensePlan', freshPlan);
+                localStorage.setItem('licenseStatus', freshStatus);
+                if (freshExpires) {
+                    localStorage.setItem('licenseExpires', freshExpires);
+                }
+                
+                // Update badge display
+                updateBadgeDisplay(planBadge, freshPlan, freshStatus, freshExpires);
+                if (typeof updateMobileDrawerLicenseStatus === 'function') updateMobileDrawerLicenseStatus();
+                
+            } else if (error) {
+                console.warn('Error fetching license from business_info:', error);
+                // Fallback to localStorage if already displayed
+                if (!licensePlan) {
+                    planBadge.textContent = 'Free Trial';
+                    planBadge.style.color = '#f59e0b';
+                }
+                if (typeof updateMobileDrawerLicenseStatus === 'function') updateMobileDrawerLicenseStatus();
+            }
+        } catch (err) {
+            console.error('Failed to fetch business_info license:', err);
+        }
+    } else if (!licensePlan) {
+        // No license info available
+        planBadge.textContent = 'Free Trial';
+        planBadge.style.color = '#f59e0b';
+        if (typeof updateMobileDrawerLicenseStatus === 'function') updateMobileDrawerLicenseStatus();
+    }
+}
+    /**
+     * Update badge display with plan and status
+     */
+    function updateBadgeDisplay(badgeElement, plan, status, expiresAt) {
+        if (!badgeElement) return;
+        
+        const planColors = {
+            starter: '#10b981',
+            professional: '#3b82f6',
+            enterprise: '#8b5cf6',
+            trial: '#f59e0b'
+        };
+        
+        const planNames = {
+            starter: 'Starter',
+            professional: 'Pro',
+            enterprise: 'Enterprise',
+            trial: 'Trial'
+        };
+        
+        const displayPlan = planNames[plan] || (plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Trial');
+        const color = planColors[plan] || planColors.trial;
+        
+        if (status === 'trial' || status === 'trialing') {
+            let daysLeft = 7; // Default trial days
+            if (expiresAt) {
+                try {
+                    const expiryDate = new Date(expiresAt);
+                    const now = new Date();
+                    daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                    daysLeft = Math.max(0, daysLeft);
+                } catch(e) {
+                    console.warn('Failed to parse expiry date:', e);
+                }
+            }
+            badgeElement.textContent = `Trial (${daysLeft}d left)`;
+            badgeElement.style.color = planColors.trial;
+        } else if (status === 'active') {
+            badgeElement.textContent = displayPlan;
+            badgeElement.style.color = color;
+        } else if (status === 'expired') {
+            badgeElement.textContent = 'Expired';
+            badgeElement.style.color = '#ef4444';
+        } else if (status === 'inactive') {
+            badgeElement.textContent = 'Inactive';
+            badgeElement.style.color = '#6b7280';
+        } else {
+            badgeElement.textContent = displayPlan;
+            badgeElement.style.color = color;
+        }
+    }
+
+    /**
+     * Setup event listeners for sidebar interactions
+     */
+
+    function setupEventListeners() {
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sidebar = document.getElementById('sidebar-main');
+        const navLinks = document.querySelectorAll('.nav-link');
+         const collapseBtn = document.getElementById('sidebar-collapse-btn');
+
+        const functionMapping = {
+            0: () => { if (typeof showHomeOverlay === 'function') showHomeOverlay(); },
+            1: () => { if (typeof showDashboard === 'function') showDashboard(); },
+            2: () => { if (typeof showSalesManagement === 'function') showSalesManagement(); },
+            3: () => { if (typeof showStockManagement === 'function') showStockManagement(); },
+            4: () => { if (typeof openCustomerSearchModal === 'function') openCustomerSearchModal(); },
+            5: () => { if (typeof handleSettingsClick === 'function') handleSettingsClick(); },
+            6: () => { if (typeof showReminderListPanel === 'function') openReminderList(); },
+             7: () => { if (typeof showReminderListPanel === 'function') openNewReminderModal(); }
+        };
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+                sidebarToggle.classList.toggle('active');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                if (sidebarToggle) sidebarToggle.classList.remove('active');
+            });
+        }
+
+        if (collapseBtn) {
+            collapseBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+
+                sidebar.classList.toggle("collapsed");
+
+                const icon = collapseBtn.querySelector("i");
+
+                if (sidebar.classList.contains("collapsed")) {
+                    collapseBtn.classList.add("collapsed");
+                    icon.classList.replace("fa-chevron-left", "fa-chevron-right");
+                } else {
+                    collapseBtn.classList.remove("collapsed");
+                    icon.classList.replace("fa-chevron-right", "fa-chevron-left");
+                }
+
+                adjustBodyPadding();
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const itemIndex = parseInt(this.getAttribute('data-nav-item'));
+                if (functionMapping[itemIndex]) {
+                    functionMapping[itemIndex]();
+                } else {
+                    const href = this.getAttribute('href');
+                    if (href && !href.startsWith('#')) window.location.href = href;
+                }
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    if (sidebarToggle) sidebarToggle.classList.remove('active');
+                }
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (sidebar && sidebarToggle && sidebarOverlay) {
+                const isClickInside = sidebar.contains(e.target) || 
+                                     sidebarToggle.contains(e.target) || 
+                                     sidebarOverlay.contains(e.target);
+                if (!isClickInside && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            }
+        });
+
+        // Setup logout button with history support
+        const logoutBtn = document.getElementById('sidebar-logout-btn');
+
+        if (logoutBtn) {
+            // Listens for a click to start the logout process
+            logoutBtn.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevents the default HTML link behavior
+                setupLogoutWithHistory();
+            });
+        }
+
+
+        setupUserSectionClickHandler();
+        updateUserDisplay();
+        
+        updatePlanBadgeFromBusinessInfo();
+        
+        // Also listen for visibility change to refresh badge when tab becomes active
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updatePlanBadgeFromBusinessInfo();
+            }
+        });
+    }
+
+
+
+    /**
+     * Helper function to create logout modal if it doesn't exist
+     */
+
+    function setupUserSectionClickHandler() {
+        const userSection = document.getElementById('sidebar-user-section');
+        const sidebar = document.getElementById('sidebar-main');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+
+        if (userSection) {
+            userSection.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                AdminProgressBar.start();
+                if (typeof window.onProfileInfoClick === 'function') {
+                    window.onProfileInfoClick();
+                } else {
+                    handleProfileClick();
+                }
+                
+                if (window.innerWidth <= 768 && sidebar) {
+                    sidebar.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+                    if (sidebarToggle) sidebarToggle.classList.remove('active');
+                }
+            });
+            userSection.style.cursor = 'pointer';
+        }
+    }
+
+    function handleProfileClick() {
+
+        if (!window.currentUser) {
+            if (typeof showMessageModal === 'function') showMessageModal('Please log in first.');
+            AdminProgressBar.error();
+            return;
+        }
+        
+        const role = window.currentUser.role;
+        const user = window.currentUser;
+        
+        removeExistingFloatingCards();
+        
+        switch(role) {
+            case 'administrator':
+                if (typeof window.showAdminProfileModal === 'function') {
+                    window.showAdminProfileModal(user.username);
+                } else if (typeof showAdminProfileModal === 'function') {
+                    showAdminProfileModal(user.username);
+                }
+                break;
+            case 'manager':
+                if (typeof showManagerInfo === 'function') showManagerInfo(user);
+                break;
+            case 'sales':
+                if (typeof showSalesAssociateInfo === 'function') showSalesAssociateInfo(user);
+                break;
+            default:
+                console.warn('Unknown user role:', role);
+        }
+    }
+
+    function removeExistingFloatingCards() {
+        if (typeof removeSalesAssociateInfo === 'function') removeSalesAssociateInfo();
+        const existingManagerInfo = document.getElementById('managerInfoButton');
+        if (existingManagerInfo) existingManagerInfo.remove();
+        const salesAssociateInfo = document.getElementById('salesAssociateInfo');
+        if (salesAssociateInfo) salesAssociateInfo.remove();
+    }
+
+    function updateOtherUserDisplays(userName, userPhoto, userRole) {
+        const topBarUserName = document.getElementById('top-bar-username');
+        if (topBarUserName) topBarUserName.textContent = userName;
+        
+        const userProfileBtn = document.getElementById('userProfileBtn');
+        if (userProfileBtn) {
+            const avatarContainer = userProfileBtn.querySelector('.user-avatar');
+            if (avatarContainer) {
+                if (userPhoto) {
+                    const photoSrc = safeFixImagePath(userPhoto);
+                    avatarContainer.innerHTML = `<img src="${photoSrc}" alt="${userName}" class="w-8 h-8 rounded-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML='<i class=\'fas fa-user-circle text-2xl\'></i>';">`;
+                } else {
+                    avatarContainer.innerHTML = '<i class="fas fa-user-circle text-2xl"></i>';
+                }
+            }
+            const nameSpan = userProfileBtn.querySelector('.user-name');
+            if (nameSpan) nameSpan.textContent = userName;
+        }
+    }
+
+ 
+
+
+function adjustBodyPadding() {
+    const sidebar = document.getElementById("sidebar-main");
+
+    if (!sidebar) return;
+
+    document.body.style.paddingLeft =
+        sidebar.classList.contains("collapsed") ? "80px" : "280px";
+}
+
+    // Expose functions globally
+    window.setUserPhoto = setUserPhoto;
+    window.updateSidebarUserDisplay = updateUserDisplay;
+    window.refreshPlanBadge = updatePlanBadgeFromBusinessInfo;
+    window.hideModalWithHistory = hideModalWithHistory;
+    window.closeCurrentModal = closeCurrentModal;
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSidebar);
+    } else {
+        initSidebar();
+    }
+
+    // ────────────────────────────────────────────
+    // Wait for the gatekeeper to finish, THEN paint user info
+    // ────────────────────────────────────────────
+    function refreshFromGatekeeper() {
+        console.log('🔄 Sidebar refreshing from gatekeeper:passed event');
+        try {
+            if (typeof updateUserDisplay === 'function') {
+                updateUserDisplay();
+            } else if (typeof window.updateSidebarUserDisplay === 'function') {
+                window.updateSidebarUserDisplay();
+            }
+
+            // Re-paint the avatar explicitly (in case updateUserDisplay skips it)
+            const avatarEl = document.getElementById('sidebar-user-avatar');
+            const nameEl   = document.getElementById('sidebar-user-name');
+            const roleEl   = document.getElementById('sidebar-user-role');
+
+            const u = window.currentUser;
+            if (u) {
+                if (nameEl) nameEl.textContent = u.full_name || u.username || 'User';
+
+                if (roleEl) {
+                    const roleMap = { administrator: 'Admin', manager: 'Manager', sales: 'Sales Associate', cashier: 'Cashier' };
+                    roleEl.textContent = roleMap[u.role] || u.role || 'Active';
+                }
+
+                if (avatarEl) {
+                    const photo = u.photo || u.photo_url;
+                    if (photo) {
+                        const src = (typeof safeFixImagePath === 'function')
+                            ? safeFixImagePath(photo)
+                            : photo;
+                        avatarEl.innerHTML = `<img src="${src}" alt="${u.username}" class="w-8 h-8 rounded-full object-cover" onerror="this.onerror=null;this.parentElement.innerHTML='<i class=\\'fas fa-user\\'></i>';">`;
+                    } else {
+                        avatarEl.innerHTML = icons.user;
+                    }
+                }
+            }
+
+            // Also refresh the plan badge with fresh data
+            if (typeof updatePlanBadgeFromBusinessInfo === 'function') {
+                updatePlanBadgeFromBusinessInfo();
+            }
+        } catch (e) {
+            console.warn('Sidebar refresh failed:', e);
+        }
+    }
+
+    window.addEventListener('gatekeeper:passed', refreshFromGatekeeper);
+
+    // Also expose so upadte.js can call it manually if it ever needs to
+    window.refreshSidebarFromGate = refreshFromGatekeeper;
+})();
+
+// Global function for profile click handler
+window.onProfileInfoClick = function() {
+    if (!window.currentUser) {
+        if (typeof showMessageModal === 'function') showMessageModal('Please log in first.');
+        return;
+    }
+    
+    const role = window.currentUser.role;
+    const user = window.currentUser;
+    
+    if (typeof removeSalesAssociateInfo === 'function') removeSalesAssociateInfo();
+    const existingManagerInfo = document.getElementById('managerInfoButton');
+    if (existingManagerInfo) existingManagerInfo.remove();
+    const salesAssociateInfo = document.getElementById('salesAssociateInfo');
+    if (salesAssociateInfo) salesAssociateInfo.remove();
+    
+    switch(role) {
+        case 'administrator':
+            if (typeof window.showAdminProfileModal === 'function') {
+                window.showAdminProfileModal(user.username);
+            } else if (typeof showAdminProfileModal === 'function') {
+                showAdminProfileModal(user.username);
+            }
+            break;
+        case 'manager':
+            if (typeof showManagerInfo === 'function') showManagerInfo(user);
+            break;
+        case 'sales':
+            if (typeof showSalesAssociateInfo === 'function') showSalesAssociateInfo(user);
+            break;
+        default:
+            console.warn('Unknown user role:', role);
+    }
+};
+
+async function handleSettingsClick() {
+    if (currentUser && currentUser.role === 'administrator') {
+        showLoading(translate('loading_settings'));
+        
+        try {
+            const dashboardContainer = document.getElementById('main-dashboard-container');
+            if (dashboardContainer) {
+                dashboardContainer.classList.add('nosee');
+                dashboardContainer.classList.remove('see');
+            }
+            
+            stopUnifiedDashboard();
+            
+            const dashcontainer = document.getElementById('dashcontainer');
+            if (dashcontainer) dashcontainer.classList.add('hidden');
+            stockManagementSection.classList.add('hidden');
+            salesManagementSection.classList.add('hidden');
+            stockOptionsModal.classList.add('hidden');
+            salesOptionsModal.classList.add('hidden');
+            const panel = document.getElementById('reminderListPanel');
+            panel.classList.add('hidden');
+            await showBusinessSettingsModal();
+           
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            showMessageModal(translate('error_loading_settings'));
+        } finally {
+            const checkInterval = setInterval(() => { checkCancelled(); }, 100);
+            resetCancellation();
+            clearInterval(checkInterval);
+            checkCancelled();
+            hideLoading();
+        }
+    } else {
+        showMessageModal(translate('only_admins_modify_settings'));
+    }
+}
+
+function showShopSection() {
+    document.title = "StocksalesApp → Shop";
+        creditSalesSection.classList.add('hidden');
+            creditSalesSection.classList.add('hidden');
+        document.getElementById('expensesSection').classList.add('hidden');
+         recordNewSaleSection.classList.add('hidden');
+        salesHistorySection.classList.add('hidden');
+    if (typeof hideAllStockSubSections === 'function') hideAllStockSubSections();
+    if (typeof hideAllSalesSubSections === 'function') hideAllSalesSubSections();
+    if (typeof cleanupMemory === 'function') cleanupMemory();
+    if (typeof showHomeOverlay === 'function') showHomeOverlay();
+    if (typeof salesOptionsModal !== 'undefined' && salesOptionsModal) salesOptionsModal.classList.remove('hidden');
+ 
+}
+
+function showInventorySection() {
+    document.title = "StocksalesApp → Inventory";
+    if (typeof hideAllStockSubSections === 'function') hideAllStockSubSections();
+    if (typeof hideAllSalesSubSections === 'function') hideAllSalesSubSections();
+    if (typeof cleanupMemory === 'function') cleanupMemory();
+    if (typeof showHomeOverlay === 'function') showHomeOverlay();
+    if (typeof closeBusinessModal === 'function') closeBusinessModal();
+    if (typeof stockOptionsModal !== 'undefined' && stockOptionsModal) stockOptionsModal.classList.remove('hidden');
+     creditSalesSection.classList.add('hidden');
+     
+}
+
+function showReportsSection() {
+    document.title = "StocksalesApp → Reports";
+    if (typeof hideAllStockSubSections === 'function') hideAllStockSubSections();
+    if (typeof hideAllSalesSubSections === 'function') hideAllSalesSubSections();
+    if (typeof showHomeOverlay === 'function') showHomeOverlay();
+     creditSalesSection.classList.add('hidden');
+}
+
+function showSettingsSection() {
+    document.title = "StocksalesApp → Settings";
+}
+
+async function showReminderListPanel() {
+    AdminProgressBar.start();
+    stockManagementSection.classList.add('hidden');
+    salesManagementSection.classList.add('hidden');
+    stockOptionsModal.classList.add('hidden');
+    salesOptionsModal.classList.add('hidden');
+    closeBusinessModal();
+    const dashboardContainer = document.getElementById('main-dashboard-container');
+    if (dashboardContainer) {
+        dashboardContainer.classList.add('nosee');
+        dashboardContainer.classList.remove('see');
+    }
+    stopUnifiedDashboard();
+    const dashcontainer = document.getElementById('dashcontainer');
+    if (dashcontainer) dashcontainer.classList.add('hidden');
+        if (!currentUser) {
+        showMessageModal(translations[currentLanguage]?.please_login_first || 'Please log in first.');
+         setTimeout(() => {
+            window.location.href = '/login/';
+        }, 1000);
+        return;
+    }
+    
+    if (!canAccessAdminPanel()) {
+        showMessageModal(translations[currentLanguage]?.only_admins_can_access || 'You do not have permission to access the admin panel.');
+        return;
+    }
+    
+    await renderAdminInfo();
+    openReminderList();
+    AdminProgressBar. complete();
+}

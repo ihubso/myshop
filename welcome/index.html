@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>StocksalesApp - Inventory Management</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/image/icon.ico">
+  <meta name="theme-color" content="#0f172a">
+     <script src="/meiou.js"></script>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/image/logo.jpg">
+  <link rel="stylesheet" href="/ibs/font-awesome/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      position: relative;
+      background: #0a0e14;
+    }
+
+    /* ---------- FULLSCREEN SLIDER ---------- */
+    .hero-slider {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .slides-track {
+      display: flex;
+      width: 700%;
+      height: 100%;
+      transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .slide {
+      width: 14.2857%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    .slide-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10, 14, 20, 0.5) 0%, rgba(10, 14, 20, 0.85) 100%);
+    }
+
+    .slide-content {
+      position: absolute;
+      bottom: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      z-index: 2;
+      padding: 0 20px;
+    }
+
+    .slide-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #64748b;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .slide-content h3 {
+      font-size: clamp(1.3rem, 4vw, 1.6rem);
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .slide-content p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      max-width: 450px;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+
+    /* ---------- MAIN CARD ---------- */
+    .landing-container {
+      text-align: center;
+      padding: 42px 38px;
+      max-width: 430px;
+      width: 90%;
+      background: rgba(15, 17, 22, 0.75);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+      z-index: 10;
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(25px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-icon {
+      width: 68px;
+      height: 68px;
+      background: #1a1f2b;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 26px;
+      font-size: 28px;
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+.logo-icon img {
+    max-width: 60%; /* Adjust this % to change how much 'padding' is around the logo */
+    max-height: 60%;
+    object-fit: contain;
+    border-radius: 4px; /* Optional: rounds the corners of the logo itself */
+}
+
+    h1 {
+      font-size: clamp(1.9rem, 7vw, 2.3rem);
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.7px;
+      color: #f1f5f9;
+    }
+
+    h1 span {
+      font-weight: 300;
+      color: #64748b;
+    }
+
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 40px;
+      font-size: 0.88rem;
+      font-weight: 400;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 13px;
+      font-weight: 500;
+      font-size: 0.93rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      margin-bottom: 13px;
+      gap: 10px;
+    }
+
+    .btn i {
+      font-size: 0.95rem;
+      opacity: 0.65;
+    }
+
+    .btn-login {
+      background: #1e2530;
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-login:hover {
+      background: #252d3a;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-setup {
+      background: transparent;
+      color: #64748b;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .btn-setup:hover {
+      color: #94a3b8;
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+      color: #3b4252;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 500;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Slider dots */
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .slider-dot {
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      transition: all 0.35s ease;
+      cursor: pointer;
+    }
+
+    .slider-dot.active {
+      width: 20px;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    footer {
+      margin-top: 28px;
+      color: #3b4252;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.4px;
+    }
+
+    @media screen and (max-width: 500px) {
+      .landing-container {
+        padding: 30px 20px;
+        border-radius: 24px;
+      }
+      .slide-content {
+        bottom: 12%;
+      }
+      .btn {
+        padding: 13px 20px;
+        font-size: 0.88rem;
+      }
+      .logo-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fullscreen Feature Slider -->
+  <div class="hero-slider">
+    <div class="slides-track" id="heroTrack">
+      <!-- Slide 1 -->
+      <div class="slide active" style="background-image: url('/images/image.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Dashboard</span>
+          <h3>Streamlined Operations</h3>
+          <p>Get a bird's eye view of your business performance, recent transactions, and key alerts the moment you log in.</p>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="slide" style="background-image: url('/images/stock section.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Inventory</span>
+          <h3>Precise Stock Control</h3>
+          <p>Manage thousands of items with ease. Categorize by sub-groups and set automated low-stock warnings.</p>
+        </div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="slide"  style="background-image: url('/images/ITEMVIEW.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Item Lookup</span>
+          <h3>Fast Search Technology</h3>
+          <p>Find any product instantly. Review pricing, stock levels, and historical movement in a single click.</p>
+        </div>
+      </div>
+      <!-- Slide 4 -->
+      <div class="slide"style="background-image: url('/images/emailsetings.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Cloud Alerts</span>
+          <h3>Automated Notifications</h3>
+          <p>Configure automated email summaries for sales reps, managers, and owners to stay informed 24/7.</p>
+        </div>
+      </div>
+      <!-- Slide 5 -->
+      <div class="slide"  style="background-image: url('/images/SALES ANLISTCY.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Analytics</span>
+          <h3>Data-Driven Growth</h3>
+          <p>Visualize your revenue and profit trends with advanced charting. Identify your top-performing products.</p>
+        </div>
+      </div>
+      <!-- Slide 6 -->
+      <div class="slide" style="background-image: url('/images/recipt.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Documentation</span>
+          <h3>Professional Receipts</h3>
+          <p>Generate high-quality digital and physical receipts. Standardized formatting for all thermal printers.</p>
+        </div>
+      </div>
+      <!-- Slide 7 -->
+      <div class="slide"  style="background-image: url('/images/full action area.png');">
+        <div class="slide-overlay"></div>
+        <div class="slide-content">
+          <span class="slide-label">Management</span>
+          <h3>Enterprise Control</h3>
+          <p>Full administrative tools for user management, historical data export, and global system settings.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Landing Card -->
+  <div class="landing-container">
+<div class="logo-icon">
+  <img src="/images/logo.jpg" alt="Stock Sales App Logo">
+</div>
+
+    
+    <h1>Stocksales<span>App*</span></h1>
+    <p class="subtitle">Inventory Management Simplified</p>
+
+    <a href="/login/" class="btn btn-login" onclick="handleLoginClick()">
+      <i class="fas fa-sign-in-alt"></i> Login to Your Account
+    </a>
+
+    <div class="divider">or</div>
+
+    <a href="/setup/" class="btn btn-setup" onclick="handleSetupClick()">
+      <i class="fas fa-store-alt"></i> Setup a New Shop
+    </a>
+
+    <div class="slider-dots" id="sliderDots">
+      <span class="slider-dot active" data-index="0"></span>
+      <span class="slider-dot" data-index="1"></span>
+      <span class="slider-dot" data-index="2"></span>
+      <span class="slider-dot" data-index="3"></span>
+      <span class="slider-dot" data-index="4"></span>
+      <span class="slider-dot" data-index="5"></span>
+      <span class="slider-dot" data-index="6"></span>
+    </div>
+
+    <footer>
+      StocksalesApp v5.3.5
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const track = document.getElementById('heroTrack');
+      const dots = document.querySelectorAll('.slider-dot');
+      const totalSlides = 7;
+      let currentIndex = 0;
+      let slideInterval;
+
+      function goToSlide(index) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        currentIndex = index;
+        const percentage = -(currentIndex * (100 / totalSlides));
+        track.style.transform = `translateX(${percentage}%)`;
+        
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentIndex);
+        });
+      }
+
+      function nextSlide() {
+        goToSlide(currentIndex + 1);
+      }
+
+      function startAutoSlide() {
+        slideInterval = setInterval(nextSlide, 5000);
+      }
+
+      function resetAutoSlide() {
+        clearInterval(slideInterval);
+        startAutoSlide();
+      }
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'), 10);
+          goToSlide(index);
+          resetAutoSlide();
+        });
+      });
+
+      // Touch swipe support
+      let touchStartX = 0;
+      const slider = document.querySelector('.hero-slider');
+      
+      slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, {passive: true});
+      
+      slider.addEventListener('touchend', (e) => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) {
+          goToSlide(currentIndex + (diff > 0 ? 1 : -1));
+          resetAutoSlide();
+        }
+      });
+
+      goToSlide(0);
+      startAutoSlide();
+
+      // Pause on card hover
+      const card = document.querySelector('.landing-container');
+      card.addEventListener('mouseenter', () => clearInterval(slideInterval));
+      card.addEventListener('mouseleave', startAutoSlide);
+
+      // Button handlers
+      window.handleLoginClick = function() {
+        localStorage.setItem('cameFromLogin', 'true');
+        localStorage.setItem('userChoseLogin', 'true');
+      };
+
+      window.handleSetupClick = function() {
+        localStorage.removeItem('setup_completed');
+        localStorage.removeItem('StockApp_setup');
+        localStorage.removeItem('cameFromLogin');
+        localStorage.removeItem('userChoseLogin');
+        localStorage.removeItem('rememberedUser');
+        localStorage.removeItem('userSession');
+        localStorage.removeItem('currentRole');
+        localStorage.removeItem('currentUsername');
+        localStorage.removeItem('userSession');
+        localStorage.removeItem('rememberedUser');
+        localStorage.removeItem('currentUsername');
+        localStorage.removeItem('currentRole');
+        localStorage.removeItem('currentUserId');
+      };
+
+      // Update for returning users
+      const hasSession = localStorage.getItem('userSession') || 
+                         localStorage.getItem('rememberedUser') ||
+                         localStorage.getItem('setup_completed');
+      if (hasSession) {
+        const loginBtn = document.querySelector('.btn-login');
+        if (loginBtn) {
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Continue to Shop';
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

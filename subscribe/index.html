@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="/envofgethoing.js"></script>
+  <title>Subscribe · StocksalesApp</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 440px; }
+    h1 { font-size: 1.6rem; margin-bottom: 8px; color: #0f172a; }
+    p { color: #64748b; margin-bottom: 24px; }
+    input { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 1rem; margin-bottom: 16px; box-sizing: border-box; }
+    button { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .status { margin-top: 16px; font-size: 0.9rem; }
+    .success { color: #059669; }
+    .error { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Join our waitlist</h1>
+    <p>Get product updates and early access.</p>
+    <form id="subscribeForm">
+      <input type="text" id="name" placeholder="Your name (optional)" />
+      <input type="email" id="email" placeholder="you@example.com" required />
+      <button type="submit">Subscribe</button>
+    </form>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('subscribeForm');
+    const status = document.getElementById('status');
+    
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const name = document.getElementById('name').value;
+      status.textContent = 'Subscribing...';
+      status.className = 'status';
+
+      try {
+        const res = await fetch(`${window.ENV?.MYSHOPSUPABASE_URL}/functions/v1/subscribe`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${window.ENV?.MYSHOPSUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ email, name }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          status.textContent = '✅ You are subscribed! Check your inbox.';
+          status.className = 'status success';
+          form.reset();
+        } else {
+          status.textContent = '❌ ' + (data.error || 'Something went wrong');
+          status.className = 'status error';
+        }
+      } catch (err) {
+        status.textContent = '❌ Network error. Please try again.';
+        status.className = 'status error';
+      }
+    });
+  </script>
+</body>
+</html>

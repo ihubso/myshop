@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>FAQ - StockApp</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/image/icon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="../js/env.js"></script>
+    <script src="../js/lan.js"></script>
+    <script src="../translations.js"></script>
+    <link rel="stylesheet" href="/styles/language-direction.css">
+    <link href="/ibs/fonts/inter.css" rel="stylesheet">
+    <link rel="stylesheet" href="/ibs/font-awesome/css/all.min.css">
+    <link rel="stylesheet" href="../css/fontawesome/css/all.min.css">
+    <link href="../styles/output.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../styles/index.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+        }
+body {
+  /* Enable scrolling */
+  overflow: auto; 
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(29, 78, 216, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .faq-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideInDown 0.8s ease;
+        }
+
+        .faq-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .faq-header p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Search Bar */
+        .faq-search {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            padding-left: 45px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
+
+        /* Category Tabs */
+        .faq-categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 0.95rem;
+        }
+
+        .category-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .category-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* FAQ Items */
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .faq-item:nth-child(1) { animation-delay: 0.1s; }
+        .faq-item:nth-child(2) { animation-delay: 0.2s; }
+        .faq-item:nth-child(3) { animation-delay: 0.3s; }
+        .faq-item:nth-child(4) { animation-delay: 0.4s; }
+        .faq-item:nth-child(5) { animation-delay: 0.5s; }
+        .faq-item:nth-child(6) { animation-delay: 0.6s; }
+
+        .faq-item:hover {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .question-text {
+            flex: 1;
+            font-weight: 600;
+            font-size: 1.05rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .question-icon {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .toggle-icon {
+            color: var(--primary);
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .faq-item.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .answer-text {
+            color: var(--text-dim);
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .answer-text strong {
+            color: var(--primary);
+        }
+
+        .answer-list {
+            list-style: none;
+            padding-top: 10px;
+        }
+
+        .answer-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-dim);
+        }
+
+        .answer-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Support Section */
+        .faq-support {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .support-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .support-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .support-text {
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .support-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .support-btn {
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .support-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .support-btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .support-btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-dim);
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            gap: 12px;
+            color: var(--primary-dark);
+        }
+
+        /* Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .faq-container {
+                padding: 20px 15px;
+            }
+
+            .faq-header h1 {
+                font-size: 2rem;
+            }
+
+            .support-buttons {
+                flex-direction: column;
+            }
+
+            .support-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="faq-container">
+        <a href="../index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <div class="faq-header">
+            <h1><i class="fas fa-question-circle"></i> Frequently Asked Questions</h1>
+            <p>Find answers to common questions about StockApp</p>
+        </div>
+
+        <div class="faq-search">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search FAQs...">
+        </div>
+
+        <div class="faq-categories" id="categoriesContainer">
+            <button class="category-btn active" onclick="filterByCategory('all')">All Questions</button>
+            <button class="category-btn" onclick="filterByCategory('general')"><i class="fas fa-info-circle"></i> General</button>
+            <button class="category-btn" onclick="filterByCategory('getting-started')"><i class="fas fa-play-circle"></i> Getting Started</button>
+            <button class="category-btn" onclick="filterByCategory('sales')"><i class="fas fa-shopping-cart"></i> Sales</button>
+            <button class="category-btn" onclick="filterByCategory('stock')"><i class="fas fa-boxes"></i> Stock</button>
+            <button class="category-btn" onclick="filterByCategory('payments')"><i class="fas fa-credit-card"></i> Payments</button>
+            <button class="category-btn" onclick="filterByCategory('technical')"><i class="fas fa-cogs"></i> Technical</button>
+        </div>
+
+        <div id="faqContainer"></div>
+
+        <div class="faq-support">
+            <div class="support-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3 class="support-title">Can't Find Your Answer?</h3>
+            <p class="support-text">Our support team is ready to help you. Get in touch with us for immediate assistance.</p>
+            <div class="support-buttons">
+                <button class="support-btn" onclick="window.location.href='/support/'">Contact Support</button>
+                <button class="support-btn support-btn-secondary" onclick="window.location.href='/guides/'">View Guides</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const faqData = [
+            // General
+            {
+                category: 'general',
+                icon: 'fas fa-info-circle',
+                question: 'What is StockApp?',
+                answer: 'StockApp is a comprehensive Smart Inventory & Sales Management System designed for small to medium businesses. It helps you manage stock, track sales, handle payments, and generate insights all in one platform.'
+            },
+            {
+                category: 'general',
+                icon: 'fas fa-lock',
+                question: 'Is my data secure in StockApp?',
+                answer: 'Yes, security is our top priority. We use industry-standard encryption (SSL/TLS) for data in transit and Supabase backend for secure data storage with regular backups and compliance measures.'
+            },
+            {
+                category: 'general',
+                icon: 'fas fa-globe',
+                question: 'Can I access StockApp from multiple devices?',
+                answer: 'Absolutely! StockApp is a web-based application accessible from any device with a browser and internet connection. Your data syncs across all devices in real-time.'
+            },
+            {
+                category: 'general',
+                icon: 'fas fa-language',
+                question: 'What languages does StockApp support?',
+                answer: 'StockApp is designed with multilingual support. You can change the language from the settings panel. Currently supported languages include English, French, Spanish, and Arabic.'
+            },
+
+            // Getting Started
+            {
+                category: 'getting-started',
+                icon: 'fas fa-user-plus',
+                question: 'How do I create an account?',
+                answer: 'Visit the StockApp homepage and click "Sign Up". Fill in your business name, email, and password. Verify your email address and you\'re ready to go!'
+            },
+            {
+                category: 'getting-started',
+                icon: 'fas fa-key',
+                question: 'How do I reset my password?',
+                answer: 'Click on "Forgot Password" on the login page. Enter your registered email and we\'ll send you a password reset link. Follow the instructions in the email to create a new password.'
+            },
+            {
+                category: 'getting-started',
+                icon: 'fas fa-users',
+                question: 'How do I add team members?',
+                answer: 'Go to Settings > Team Management. Click "Invite Team Member" and enter their email. They\'ll receive an invitation and can set up their account with specified permissions.'
+            },
+            {
+                category: 'getting-started',
+                icon: 'fas fa-crown',
+                question: 'What are different user roles?',
+                answer: '<strong>Admin:</strong> Full access to all features. <strong>Manager:</strong> Can manage stock, sales, and reports. <strong>Cashier:</strong> Limited to sales and payment processing. <strong>Viewer:</strong> Read-only access to reports and analytics.'
+            },
+
+            // Sales
+            {
+                category: 'sales',
+                icon: 'fas fa-receipt',
+                question: 'How do I create a new receipt?',
+                answer: 'Navigate to Sales Management > Create New Receipt. Select items, enter quantities, choose payment method, and click "Generate Receipt". The system will create a printable receipt with QR code.'
+            },
+            {
+                category: 'sales',
+                icon: 'fas fa-undo',
+                question: 'How do I process a refund?',
+                answer: 'Go to Sales Management > Refund History. Find the original receipt and click "Process Refund". Enter the reason and amount. The system will deduct from stock and credit the payment method.'
+            },
+            {
+                category: 'sales',
+                icon: 'fas fa-search-dollar',
+                question: 'Can I view sales history?',
+                answer: 'Yes! Go to Sales Management and you\'ll see a searchable sales history. Filter by date, payment method, customer, or item type. Export data to Excel for further analysis.'
+            },
+            {
+                category: 'sales',
+                icon: 'fas fa-users',
+                question: 'How do I track customers?',
+                answer: 'Use the "My Customers" section to manage customer information. Add new customers manually or they\'re automatically created from receipts. Track purchase history and contact details for each customer.'
+            },
+
+            // Stock Management
+            {
+                category: 'stock',
+                icon: 'fas fa-plus-circle',
+                question: 'How do I add items to stock?',
+                answer: 'Go to Stock Management > Restock Item. Fill in item name, category, quantity, cost price, and selling price. Add product images and QR codes. Click "Add to Stock".'
+            },
+            {
+                category: 'stock',
+                icon: 'fas fa-edit',
+                question: 'How do I edit item information?',
+                answer: 'Find the item in Stock Management, click "Edit Item". Modify details like price, quantity, or description. Changes take effect immediately across all sections.'
+            },
+            {
+                category: 'stock',
+                icon: 'fas fa-exclamation-triangle',
+                question: 'What is low stock alert?',
+                answer: 'You can set a minimum stock level for each item. When stock reaches this level, you\'ll receive alerts via email or dashboard notification. This helps you reorder before running out.'
+            },
+            {
+                category: 'stock',
+                icon: 'fas fa-barcode',
+                question: 'How does barcode scanning work?',
+                answer: 'StockApp supports barcode and QR code scanning. Use the HID Scanner feature to quickly add items to receipts. Point your scanner or camera at the code and it automatically adds the item.'
+            },
+
+            // Payments
+            {
+                category: 'payments',
+                icon: 'fas fa-credit-card',
+                question: 'What payment methods are supported?',
+                answer: '<strong>Cash:</strong> Accepted directly. <strong>Card:</strong> Via Paystack integration. <strong>Mobile Money:</strong> Available in supported regions. <strong>Credit/Loan:</strong> Track credit sales and payment schedules.'
+            },
+            {
+                category: 'payments',
+                icon: 'fas fa-wallet',
+                question: 'How do I set up Paystack?',
+                answer: 'Go to Settings > Payment Configuration. Enter your Paystack Public and Secret keys. Test the connection and enable it. All card payments will be processed through Paystack securely.'
+            },
+            {
+                category: 'payments',
+                icon: 'fas fa-hand-holding-usd',
+                question: 'How does credit sale work?',
+                answer: 'Select "Credit Sale" as payment type when creating receipt. The customer owes money to your business. Track credit in "Credit Sales" section and create payment schedules with reminders.'
+            },
+            {
+                category: 'payments',
+                icon: 'fas fa-receipt',
+                question: 'Can I generate credit book?',
+                answer: 'Yes! Go to Sales Management > Credit Book. It shows all credit sales, outstanding amounts, and payment schedules. Print or export for record keeping.'
+            },
+
+            // Technical
+            {
+                category: 'technical',
+                icon: 'fas fa-download',
+                question: 'How do I export data to Excel?',
+                answer: 'Most report pages have an "Export to Excel" button. Click it to download current data. Works for Sales History, Stock List, Expenses, and more. Compatible with Excel and Google Sheets.'
+            },
+            {
+                category: 'technical',
+                icon: 'fas fa-print',
+                question: 'How do I print receipts?',
+                answer: 'Open a receipt and click "Print History" or use the print icon. You can customize receipt format in Settings > Printer Configuration. Set paper size, layout, and logo.'
+            },
+            {
+                category: 'technical',
+                icon: 'fas fa-cloud',
+                question: 'Does StockApp work offline?',
+                answer: 'StockApp uses Service Workers for offline functionality. Basic features work without internet. Data syncs when connection is restored. Download data regularly for backup.'
+            },
+            {
+                category: 'technical',
+                icon: 'fas fa-mobile-alt',
+                question: 'Is StockApp mobile-friendly?',
+                answer: 'Yes! StockApp is fully responsive and works on smartphones and tablets. Install as PWA (Progressive Web App) for app-like experience with offline access and home screen shortcut.'
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        function renderFAQ(items) {
+            const container = document.getElementById('faqContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon"><i class="fas fa-search"></i></div>
+                        <p>No FAQs found. Try different keywords or select another category.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map((item, index) => `
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="question-text">
+                            <span class="question-icon"><i class="${item.icon}"></i></span>
+                            <span>${item.question}</span>
+                        </div>
+                        <div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="answer-text">${item.answer}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleFAQ(element) {
+            const allItems = document.querySelectorAll('.faq-item');
+            allItems.forEach(item => {
+                if (item !== element) item.classList.remove('active');
+            });
+            element.classList.toggle('active');
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter and render
+            let filtered = faqData;
+            if (category !== 'all') {
+                filtered = faqData.filter(item => item.category === category);
+            }
+            renderFAQ(filtered);
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            let filtered = faqData.filter(item => {
+                const matchesQuery = item.question.toLowerCase().includes(query) || 
+                                     item.answer.toLowerCase().includes(query);
+                const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+                return matchesQuery && matchesCategory;
+            });
+            renderFAQ(filtered);
+        });
+
+        // Initial render
+        renderFAQ(faqData);
+    </script>
+</body>
+</html>

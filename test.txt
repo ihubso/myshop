@@ -1,0 +1,85 @@
+window.ENV = {
+    MYSHOPSUPABASE_URL: 'https://narcwtnbubafzccweinm.supabase.co',
+    MYSHOPSUPABASE_ANON_KEY: 'sb_publishable_oK7hop9hFxVHqq-tKDzqmw_DDxprXw4',
+     CLOUDINARY_CLOUD_NAME: 'dwivufadw',
+       MYSHOPSUPABASE_TRACK_ANON_KEY: '',
+     MYSHOPSUPABASE_TRACK_URL: '',
+     PAYSTACK_PUBLIC_KEY: 'pk_live_0747bda8581b11ccc03c3acb726860c35c4aba08',
+     VAPIDPUBLICKEY: 'BGsnVtE_LX3ZR7w1eQteqQ8ehFSRkrPdV_KRZZ8169TLa4wZcC6M6ApMEMiFsMW-dnsDH9icUycPRTqUKxwJwWo'
+};
+window.ENV?.MYSHOPSUPABASE_ANON_KEY 
+window.ENV?.MYSHOPSUPABASE_URL 
+window.ENV?.CLOUDINARY_CLOUD_NAME
+window.ENV?.MYSHOPSUPABASE_TRACK_ANON_KEY
+window.ENV?.MYSHOPSUPABASE_TRACK_URL
+window.ENV?.PAYSTACK_PUBLIC_KEY
+window.ENV?.VAPIDPUBLICKEY
+
+
+
+
+
+
+
+
+///////////////////////////
+////////////////////////////
+/////////////////////////////////////
+//////////////////////////////////////
+/////////////////////////////////////////
+                                        ////////////
+                                        //////////////
+                                        //////////////
+
+
+  window.ENV = {
+    MYSHOPSUPABASE_URL: 'https://zexxdoxuzvkovszfqcio.supabase.co',
+    MYSHOPSUPABASE_ANON_KEY: 'sb_publishable_svIdBFlhG9fG8zlOsMcs-g_kqUWBT8W',
+     CLOUDINARY_CLOUD_NAME: 'dwivufadw',
+       MYSHOPSUPABASE_TRACK_ANON_KEY: 'sb_publishable_oK7hop9hFxVHqq-tKDzqmw_DDxprXw4',
+     MYSHOPSUPABASE_TRACK_URL: 'https://narcwtnbubafzccweinm.supabase.co',
+     PAYSTACK_PUBLIC_KEY: 'pk_live_0747bda8581b11ccc03c3acb726860c35c4aba08',
+     VAPIDPUBLICKEY: 'BGsnVtE_LX3ZR7w1eQteqQ8ehFSRkrPdV_KRZZ8169TLa4wZcC6M6ApMEMiFsMW-dnsDH9icUycPRTqUKxwJwWo'
+};
+window.ENV?.MYSHOPSUPABASE_ANON_KEY 
+window.ENV?.MYSHOPSUPABASE_URL 
+window.ENV?.CLOUDINARY_CLOUD_NAME
+window.ENV?.MYSHOPSUPABASE_TRACK_ANON_KEY
+window.ENV?.MYSHOPSUPABASE_TRACK_URL
+window.ENV?.PAYSTACK_PUBLIC_KEY
+window.ENV?.VAPIDPUBLICKEY
+
+
+
+
+
+
+
+///////////////////////////////////////////
+/////////
+//////////////
+
+
+
+
+{
+  "publicKey":"BGsnVtE_LX3ZR7w1eQteqQ8ehFSRkrPdV_KRZZ8169TLa4wZcC6M6ApMEMiFsMW-dnsDH9icUycPRTqUKxwJwWo",
+"privateKey":"ZKcB5Jsy_a5xu_NONYHy2_F2KJHQR9hw4sjaPYBSKoU"
+}
+
+//////////////////////
+////////////////Microsoft Windows [version 10.0.19045.6466]
+(c) Microsoft Corporation. Tous droits réservés.
+
+C:\Users\user>npx web-push generate-vapid-keys --json
+{"publicKey":"BGsnVtE_LX3ZR7w1eQteqQ8ehFSRkrPdV_KRZZ8169TLa4wZcC6M6ApMEMiFsMW-dnsDH9icUycPRTqUKxwJwWo","privateKey":"ZKcB5Jsy_a5xu_NONYHy2_F2KJHQR9hw4sjaPYBSKoU"}
+
+C:\Users\user>
+/////////////////////////Microsoft Windows [version 10.0.19045.6466]
+(c) Microsoft Corporation. Tous droits réservés.
+
+C:\Users\user>npx web-push generate-vapid-keys --json
+{"publicKey":"BGsnVtE_LX3ZR7w1eQteqQ8ehFSRkrPdV_KRZZ8169TLa4wZcC6M6ApMEMiFsMW-dnsDH9icUycPRTqUKxwJwWo","privateKey":"ZKcB5Jsy_a5xu_NONYHy2_F2KJHQR9hw4sjaPYBSKoU"}
+
+C:\Users\user>
+//////////////////////////////

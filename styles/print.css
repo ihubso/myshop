@@ -1,0 +1,412 @@
+#printPreviewBody {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+#printPreviewWatermark {
+    visibility: visible !important;
+    opacity: 0.15 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important; /* Lower z-index to stay behind content */
+    pointer-events: none !important;
+    display: block !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 60% auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+#printPreviewBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f8faff;
+    color: black !important;
+    padding: 24px 0;
+    min-height: 100vh;
+    gap: 32px;
+    z-index: 2 !important;
+}
+
+.print-preview-page {
+    background: white;
+    width: 794px;    /* A4 width at 96dpi */
+    min-height: 1123px; /* A4 height at 96dpi */
+    box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    margin: 0 auto 32px auto;
+    padding: 80px 16px 100px 16px; /* Increased padding for header/footer space */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-after: page;
+    break-inside: avoid;
+    overflow: hidden;
+}
+
+/* Header styling for print preview */
+.print-preview-page #printHeader {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    padding: 10px 16px !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+}
+
+/* Footer styling for print preview */
+.print-preview-page #printFooter {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    padding: 10px 16px !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+    border-top: 1px solid #ccc !important;
+}
+
+.print-preview-page table {
+    position: relative !important;
+    display: table !important;
+    width: auto !important;
+    max-width: 90% !important;
+    min-width: 600px !important;
+    margin: 0 auto !important;
+    margin-top: 60px !important; /* Increased for header space */
+    z-index: 5 !important;
+}
+
+.print-preview-page .overflow-x-auto {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    position: relative !important;
+    height: auto !important;
+    margin-top: 80px !important; /* Increased for header space */
+}
+
+.table-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin: 80px 0 12px 0; /* Increased top margin */
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 6px;
+    page-break-after: avoid;
+    background-color: blue;
+}
+
+#printPreviewBody .print-preview-page table th:last-child,
+#printPreviewBody .print-preview-page[data-section="sales"] table th:last-child {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    color: #000000 !important;
+}
+
+.print-preview-page:last-child {
+    margin-bottom: 0;
+    page-break-after: auto;
+    break-after: auto;
+}
+
+.print-preview-page table {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+.print-preview-page th,
+.print-preview-page td {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    vertical-align: middle !important;
+    border: 1px solid #ccc !important;
+}
+
+.print-preview-page th {
+    font-size: 11px !important;
+    font-weight: bold !important;
+    background-color: #f8f9fa !important;
+}
+
+.print-preview-page #printHeader h4 {
+    font-size: 30px !important;
+    margin: 5px 0 !important;
+}
+
+.print-preview-page #printHeader img {
+    max-height: 100px !important;
+    max-width: 100px !important;
+}
+
+/* Reduce page number size */
+.print-preview-page div[style*="text-align: right"] {
+    font-size: 10px !important;
+    margin-top: 5px !important;
+}
+
+
+/* REMOVE THIS RULE - it hides footers on all but last page */
+/* #printPreviewBody .print-preview-page:not(:last-child) #printFooter {
+    display: none !important;
+} */
+
+/* Ensure each page has enough space */
+.print-preview-page {
+    padding-bottom: 100px !important; /* Space for footer */
+    padding-top: 80px !important; /* Space for header */
+}
+
+.print-preview-page table tr.bg-indigo-200.font-bold {
+    background-color: black !important;
+    color: rgb(255, 255, 255) !important;
+}
+#printPreviewModal .nodisply {
+  display: none !important;
+}@media print {
+  .nodisply {
+    display: none !important;
+  }
+}
+
+
+@media print {
+    /* Page settings */
+    @page {
+        size: A4;
+        margin: 0; /* Remove margins for full control */
+    }
+
+    /* Hide non-print elements */
+    #homeOverlay, #stockOptionsModal, #salesOptionsModal, #itemDetailsModal, #businessSettingsModal, #messageModal, #weeklySalesDateRangeLabel, #confirmationModal,
+    #backToHomeBtn, #settingsBtn,
+    #printPreviewModal .modal-close-btn,
+    #printPreviewModal .flex.justify-end,
+    #printPreviewModal #executePrintBtn,
+    #printPreviewMenuBtn,#customerTransactionsModal,
+    #customerSearchModal,
+    #convertToPdfBtn, #mainContentContainer ,#saleNotificationBar,#loadingOverlay, #notifBellBtn {
+
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    body.min-h-screen.flex.items-center.justify-center.p-4.night-mode {
+        background-color: #fff !important;
+    }
+.category-heading {
+font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
+  font-size: 1.25rem; /* Adjust font size as needed */
+  text-transform: uppercase;
+  position: center;
+  background-color: #02080c;
+}
+    /* Hide management sections */
+    #stockManagementSection,
+    #salesManagementSection {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    /* Show relevant sections */
+    body[data-print-section="stock"] #stockManagementSection {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    body[data-print-section="sales"] #salesManagementSection {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* FIXED HEADER FOR PRINT - appears on every page */
+    #printHeader {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background-color: white !important;
+        color: #000000 !important;
+        z-index: 1000 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        max-height: 100px !important;
+        font-size: 12px !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        page-break-inside: avoid !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* FIXED FOOTER FOR PRINT - appears on every page */
+    #printFooter {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background-color: white !important;
+        color: #000000 !important;
+        z-index: 1000 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        max-height: 80px !important;
+        font-size: 12px !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        border-top: 1px solid #ccc !important;
+        page-break-inside: avoid !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Adjust print preview pages for fixed header/footer */
+    .print-preview-page {
+        position: relative !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 100px 20px 80px 20px !important; /* Space for fixed header/footer */
+        page-break-after: always !important;
+        break-after: page !important;
+        background: white !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+    }
+
+    /* Ensure content starts below header */
+    .print-preview-page h2,
+    .print-preview-page .print-title,
+    .print-preview-page .table-title {
+        margin-top: 40px !important;
+    }
+
+    /* Ensure tables start below header */
+    .print-preview-page table {
+        margin-top: 50px !important;
+    }
+
+    /* Print preview modal styling */
+    #printPreviewModal,
+    #printPreviewModal .modal-content {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        background: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+    #printPreviewBody {
+        display: block !important;
+        overflow: visible !important;
+        max-height: none !important;
+        height: auto !important;
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        min-height: 0 !important;
+    }
+
+    /* Watermark for print */
+#printPreviewWatermark {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 0.10 !important; /* Keep it light so text is readable */
+        
+        /* THE FIX: position fixed at the body level */
+        position: fixed !important;
+        top: 25% !important; /* Move it down slightly for better centering */
+        left: 0 !important;
+        width: 100vw !important;
+        height: 50vh !important; /* Using vh ensures it repeats across page breaks */
+        
+        z-index: 1000000000000000000000000000000000000000000 !important; /* Put it BEHIND the text */
+        pointer-events: none !important;
+        
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: 80% auto !important; /* Make it large */
+        
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Table styling for print */
+    .print-preview-page table {
+        border: 2px solid #2563eb !important;
+        border-collapse: collapse !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-preview-page th,
+    .print-preview-page td {
+        border: 1px solid #3b82f6 !important;
+        border-collapse: collapse !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-preview-page th {
+        border-bottom: 2px solid #1d4ed8 !important;
+        background-color: #dbeafe !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-preview-page table tr {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .print-preview-page table tr.bg-indigo-200.font-bold {
+        background-color: rgb(0, 0, 0) !important;
+        color: rgb(255, 246, 246) !important;
+    }
+
+    .text-blue-700,
+    .text-white-805 {
+        color: black !important;
+    }
+
+    /* Hide images in print */
+    #printPreviewBody .print-preview-page table img, .item-image {
+        display: none !important;
+    }
+
+ 
+}

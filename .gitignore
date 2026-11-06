@@ -1,0 +1,18 @@
+﻿# Dependencies
+node_modules/
+
+# Specific folder to ignore
+newfeature/
+
+# Environment variables (DO NOT UPLOAD THESE TO GITHUB!)
+.env
+
+# OS files
+.DS_Store
+
+# Logs
+*.logc
+
+public/newfeture/
+ .package.json
+ 

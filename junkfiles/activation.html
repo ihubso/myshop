@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Activation Center · StocksalesApp</title>
+    
+    <!-- Paystack Script -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Plus Jakarta Sans Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+           
+        }
+    .back-link { text-align: center; margin: 20px 0 40px; }
+    .back-link a { color: #3b82f6; text-decoration: none; margin: 0 12px; }
+        /* ----- GLOBAL & ROOT ----- */
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --accent: #7c3aed;
+            --success: #059669;
+            --success-light: #10b981;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --bg-white: #ffffff;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --text-dark: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.10);
+            --radius: 14px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ----- HEADER (refreshed, less cloudy) ----- */
+        .app-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(2px);
+            background: rgba(255,255,255,0.92);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px 8px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .brand .tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-light);
+            padding: 2px 10px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            -webkit-text-fill-color: var(--text-muted);
+            margin-left: 4px;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+            background: var(--bg-light);
+            padding: 6px 14px 6px 18px;
+            border-radius: 60px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.active {
+            background: var(--success);
+        }
+        .status-dot.trial {
+            background: var(--warning);
+        }
+        .status-dot.expired {
+            background: var(--danger);
+        }
+        .status-dot.inactive {
+            background: var(--text-light);
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: var(--text-body);
+        }
+
+        .license-plan-badge {
+            background: white;
+            padding: 2px 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            border: 1px solid var(--border);
+            color: var(--primary-dark);
+        }
+
+        /* ----- BUSINESS CARD (clean) ----- */
+        .business-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin: 20px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .business-card .logo {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            background: white;
+        }
+
+        .business-card .info {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .business-card .info .name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .business-card .info .details {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 4px 0 6px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .status-badge.active {
+            background: rgba(5, 150, 105, 0.08);
+            color: var(--success);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        .status-badge.expired {
+            background: rgba(220, 38, 38, 0.08);
+            color: var(--danger);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .status-badge.trial {
+            background: rgba(217, 119, 6, 0.08);
+            color: var(--warning);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+        }
+
+        .status-badge.inactive {
+            background: rgba(100, 116, 139, 0.08);
+            color: var(--text-muted);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        /* ----- LICENSE DETAILS (compact) ----- */
+        .license-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            background: var(--bg-light);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin: 16px 0;
+        }
+
+        .license-details .item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .license-details .item .label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .license-details .item .value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .license-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        /* ----- PAYMENT METHODS ----- */
+        .payment-methods {
+            display: flex;
+            gap: 12px;
+            margin: 24px 0 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .payment-method-btn {
+            padding: 12px 22px;
+            border-radius: 60px;
+            border: 2px solid var(--border);
+            background: white;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+            box-shadow: var(--shadow-sm);
+            flex: 0 1 auto;
+        }
+
+        .payment-method-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--text-dark);
+            transform: translateY(-2px);
+        }
+
+        .payment-method-btn.active {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.04);
+            color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        }
+
+        .badge-paystack {
+            background: rgba(34, 153, 221, 0.08);
+            color: #1a7bb8;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 40px;
+        }
+        .badge-gumroad {
+            background: rgba(255, 129, 63, 0.08);
+            color: #e96a2a;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 40px;
+        }
+
+        .method-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            margin: 6px 0 18px;
+        }
+
+        /* ----- PLANS ----- */
+        .section-title {
+            margin: 36px 0 6px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .section-sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 16px 0 20px;
+        }
+
+        .plan-card {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px 24px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        .plan-card.popular {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02), rgba(124, 58, 237, 0.01));
+            box-shadow: 0 8px 28px rgba(37, 99, 235, 0.08);
+            position: relative;
+        }
+
+        .plan-card.popular::before {
+            content: '🔥 Popular';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+
+        .plan-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .plan-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 8px 0 2px;
+            letter-spacing: -0.5px;
+        }
+
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: 500;
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .plan-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .price-comparison {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 2px 0 12px;
+        }
+        .price-comparison .save {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 8px 0 20px;
+            flex: 1;
+        }
+
+        .plan-features li {
+            padding: 5px 0;
+            color: var(--text-body);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features li i {
+            color: var(--success);
+            width: 16px;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 11px 12px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            width: 100%;
+            text-align: center;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-paystack {
+            background: linear-gradient(135deg, #2299dd, #1a7bb8);
+            color: white;
+            box-shadow: 0 4px 10px rgba(34, 153, 221, 0.2);
+        }
+        .btn-paystack:hover:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .btn-gumroad {
+            background: linear-gradient(135deg, #ff813f, #e96a2a);
+            color: white;
+            box-shadow: 0 4px 10px rgba(255, 129, 63, 0.2);
+        }
+        .btn-gumroad:hover:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .subscription-badge {
+            font-size: 0.55rem;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-weight: 700;
+        }
+        .method-tag {
+            font-size: 0.6rem;
+            background: rgba(255,255,255,0.25);
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        /* ----- INFO BOX ----- */
+        .info-box {
+            margin: 40px 0 20px;
+            padding: 22px 24px;
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-box h4 {
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .info-box ul {
+            list-style: none;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-body);
+        }
+
+        .info-box ul li {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .info-box ul li i {
+            color: var(--success);
+            margin-top: 4px;
+            width: 18px;
+        }
+
+        /* ----- UTILITIES ----- */
+        .hidden { display: none !important; }
+        .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .alert-success { background: rgba(5,150,105,0.06); border: 1px solid rgba(5,150,105,0.2); color: var(--success); }
+        .alert-danger { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); color: var(--danger); }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px 0;
+            width: 100%;
+            height: fit-content;
+        }
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 8px solid rgba(214, 218, 226, 0.08);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ----- MOBILE TWEAKS (clean header) ----- */
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .brand h1 {
+                font-size: 1.25rem;
+            }
+            .brand .tag {
+                font-size: 0.6rem;
+            }
+            .header-status {
+                justify-content: center;
+                padding: 6px 12px;
+                font-size: 0.7rem;
+                border-radius: 40px;
+                background: white;
+            }
+            .business-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 16px;
+            }
+            .business-card .logo {
+                width: 60px;
+                height: 60px;
+            }
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+            .payment-method-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+            .license-details {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+            .plan-card.popular::before {
+                top: 8px;
+                right: 12px;
+                font-size: 0.55rem;
+                padding: 3px 12px;
+            }
+            .container {
+                padding: 0 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .brand h1 {
+                font-size: 1.1rem;
+            }
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+            }
+        }
+        .payment-options {
+  display: grid;
+  grid-template-columns: 1fr; /* Stacks buttons vertically */
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.payment-options .btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}footer {
+  background-color: #0f172a; /* Slate 900 */
+  color: #94a3b8;           /* Slate 400 */
+  border-top: 1px solid #1e293b; /* Slate 800 */
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+footer a {
+  color: #e2e8f0; /* Slate 200 */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: #38bdf8; /* Sky 400 */
+}
+
+.footer-meta {
+  color: #64748b; /* Slate 500 */
+  font-size: 12px;
+}
+    </style>
+</head>
+<body>
+    <!-- ====== CLEAN HEADER ====== -->
+    <header class="app-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <div class="brand-icon" src="image/logo.jpg" alt="Logo"></div>
+                <div>
+                    <h1>Activation Center <span class="tag">Stocksales</span></h1>
+                </div>
+            </div>
+            <div class="header-status" id="headerStatus" style="display: flex; align-items: center; gap: 6px 14px; flex-wrap: wrap; background: var(--bg-light); padding: 6px 14px 6px 18px; border-radius: 60px; border: 1px solid var(--border); font-size: 0.8rem;">
+                  <a href="/shop/" data-translate="back_to_shop">← Back to Shop</a>
+            </div>
+        </div>
+    </header>
+            <!-- Loading state -->
+        <div id="loadingState" class="loading" style="display: flex; background-color: #0f172a; justify-content: center; align-items: center; height: 100%;">
+            <div class="spinner"></div>
+        </div>
+
+    <div class="container">
+        <!-- Business Card -->
+            <div id="businessCard" class="business-card hidden">
+                <img id="businessLogo" class="logo" src="" alt="Business Logo">
+                <div class="info">
+                    <div class="name" id="businessName">Loading...</div>
+                    <div class="details">
+                        <span id="businessEmail">Loading...</span> · 
+                        <span id="businessPhone">Loading...</span>
+                    </div>
+                    <div>
+                        <span id="licenseBadge" class="status-badge inactive">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+        <!-- License Details -->
+        <div id="licenseDetailsCard" class="hidden">
+            <div class="license-details" id="licenseDetailsContainer">
+                <div class="item"><span class="label">Plan</span> <span class="value" id="licensePlan">—</span></div>
+                <div class="item"><span class="label">Status</span> <span class="value" id="licenseStatus">—</span></div>
+                <div class="item"><span class="label">Expires</span> <span class="value" id="licenseExpiry">—</span></div>
+                <div class="item"><span class="label">Activated</span> <span class="value" id="licenseActivated">—</span></div>
+            </div>
+            <div class="license-actions" id="licenseActions"></div>
+            <hr class="divider">
+        </div>
+
+
+
+        <!-- Main content -->
+        <div id="mainContent" class="hidden">
+            <!-- Payment method selector -->
+            <div style="text-align:center; margin-top:12px;">
+                <div class="payment-methods">
+                    <button class="payment-method-btn active" data-method="paystack" onclick="selectPaymentMethod('paystack')">
+                        <i class="fas fa-mobile-alt"></i> Mobile Money <span class="badge-paystack">Paystack</span>
+                    </button>
+                    <button class="payment-method-btn" data-method="gumroad" onclick="selectPaymentMethod('gumroad')">
+                        <i class="fas fa-credit-card"></i> VisaCard <span class="badge-gumroad">Gumroad</span>
+                    </button>
+                </div>
+                <p class="method-desc" id="methodDescText">Paystack — mobile money, bank transfer & cards.</p>
+            </div>
+
+            <!-- Monthly Plans -->
+            <h2 class="section-title">Monthly Plans</h2>
+            <p class="section-sub">Flexible billing · cancel anytime</p>
+            <div class="plans-grid" id="plansGrid">
+                <!-- Starter -->
+                <div class="plan-card">
+                    <div class="plan-name">Starter</div>
+                    <div class="plan-price">$12<span>/mo</span></div>
+                    <div class="plan-desc">For small businesses</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Up to 100 products</li>
+                        <li><i class="fas fa-check"></i> Basic inventory</li>
+                        <li><i class="fas fa-check"></i> Sales tracking</li>
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('starter',6850,'monthly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('starter',1200,'monthly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+                <!-- Professional -->
+                <div class="plan-card popular">
+                    <div class="plan-name">Professional</div>
+                    <div class="plan-price">$20<span>/mo</span></div>
+                    <div class="plan-desc">Best for growth</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Unlimited products</li>
+                        <li><i class="fas fa-check"></i> Advanced inventory</li>
+                        <li><i class="fas fa-check"></i> Analytics &amp; reports</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('professional',11370,'monthly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('professional',2000,'monthly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+                <!-- Enterprise -->
+                <div class="plan-card">
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">$25<span>/mo</span></div>
+                    <div class="plan-desc">For large orgs</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Everything in Pro</li>
+                        <li><i class="fas fa-check"></i> Custom integrations</li>
+                        <li><i class="fas fa-check"></i> Dedicated manager</li>
+                        <li><i class="fas fa-check"></i> 24/7 phone support</li>
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('enterprise',14210,'monthly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('enterprise',2500,'monthly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yearly Plans -->
+            <h2 class="section-title">Annual Plans <span style="color:var(--success); font-size:1rem;">(save 20%)</span></h2>
+            <p class="section-sub">Pay once · full year · best value</p>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <div class="plan-name">Starter Yearly</div>
+                    <div class="plan-price">$115<span>/yr</span></div>
+                    <div class="price-comparison">Was $144 <span class="save">save $29</span></div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('starter',85350,'yearly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('starter',11500,'yearly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+                <div class="plan-card">
+                    <div class="plan-name">Pro Yearly</div>
+                    <div class="plan-price">$192<span>/yr</span></div>
+                    <div class="price-comparison">Was $240 <span class="save">save $48</span></div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('professional',109160,'yearly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('professional',19200,'yearly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+                <div class="plan-card">
+                    <div class="plan-name">Enterprise Yearly</div>
+                    <div class="plan-price">$240<span>/yr</span></div>
+                    <div class="price-comparison">Was $300 <span class="save">save $60</span></div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('enterprise',136456,'yearly')"><i class="fas fa-mobile-alt"></i> Mobile Money <span class="method-tag">Paystack</span></button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('enterprise',24000,'yearly')"><i class="fas fa-credit-card"></i> VisaCard <span class="method-tag">Gumroad</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info box -->
+            <div class="info-box">
+                <h4><i class="fas fa-circle-info" style="color:var(--primary);"></i> Payment methods</h4>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> <strong>Mobile Money (Paystack):</strong> MTN, Airtel, Vodafone, etc. Auto-renew.</li>
+                    <li><i class="fas fa-check-circle"></i> <strong>VisaCard (Gumroad):</strong> One-time payment, no recurring fees.</li>
+                    <li><i class="fas fa-check-circle"></i> Annual plans save 20% vs monthly.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+   
+   
+   
+   
+    <footer >
+    
+ 
+    <a href="/terms/">Terms of Service</a>
+    <br>
+    <a href="/refund/">↩Refund Policy</a>
+        <br>
+    <a href="/privacy/">Privacy Policy</a>
+        <br>
+
+
+        &copy; 2024 StocksalesApp. All rights reserved.
+    </footer>
+
+  <script src="activation.js"></script>
+</body>
+</html>

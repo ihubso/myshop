@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockApp* - Admin Cleanup</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+        <script src="/envofgethoing.js"></script>
+          <script src="/supabase-rpc-proxy.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: #1e293b; margin-bottom: 10px; }
+        .subtitle { color: #64748b; margin-bottom: 20px; }
+        
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        tr:hover { background: #f8fafc; }
+        
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-expired { background: #fee2e2; color: #dc2626; }
+        .badge-expiring { background: #fef3c7; color: #d97706; }
+        
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-outline { background: white; border: 1px solid #e2e8f0; color: #64748b; }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-sm { padding: 4px 10px; font-size: 11px; }
+        
+        .loading { text-align: center; padding: 40px; color: #64748b; }
+        .empty { text-align: center; padding: 40px; color: #64748b; }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; border-radius: 10px; padding: 15px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 28px; font-weight: bold; color: #1e293b; }
+        .stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; margin-top: 5px; }
+        
+        .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+        .confirm-overlay.show { display: flex; }
+        .confirm-box { background: white; border-radius: 12px; padding: 24px; max-width: 400px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Admin Cleanup - Expired Trials</h1>
+        <p class="subtitle">Remove businesses whose trial expired and didn't upgrade</p>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">-</div>
+                <div class="stat-label">Total Businesses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statExpired">-</div>
+                <div class="stat-label">Expired Trials</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statExpiring">-</div>
+                <div class="stat-label">Expiring Soon</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statActive">-</div>
+                <div class="stat-label">Active/Paying</div>
+            </div>
+        </div>
+        
+        <!-- Expired Trials -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🚨 Expired Trials (7+ days over)</h3>
+                <div>
+                    <button class="btn btn-outline btn-sm" onclick="loadData()">🔄 Refresh</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteAllExpired()">🗑️ Delete All Expired</button>
+                </div>
+            </div>
+            <div id="expiredList">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- All Businesses -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📋 All Businesses</h3>
+            </div>
+            <div id="allList">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirm Modal -->
+    <div class="confirm-overlay" id="confirmModal">
+        <div class="confirm-box">
+            <h3>⚠️ Confirm Deletion</h3>
+            <p id="confirmMsg">Are you sure?</p>
+            <p style="color: #ef4444; font-size: 13px; margin: 10px 0;">This will delete ALL data for this business!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Supabase Config
+const MYSUPABASE_URL = window.ENV?.MYSHOPSUPABASE_URL;
+const MYSUPABASE_ANON_KEY = window.ENV?.MYSHOPSUPABASE_ANON_KEY;
+
+const supabaseClient = window.supabase.createClient(MYSUPABASE_URL, MYSUPABASE_ANON_KEY);
+let pendingDeleteId = null;
+
+async function loadData() {
+    document.getElementById('expiredList').innerHTML = '<div class="loading">Loading...</div>';
+    document.getElementById('allList').innerHTML = '<div class="loading">Loading...</div>';
+    
+    try {
+        // Get all businesses
+        const { data: businesses, error } = await supabaseClient
+            .from('business_info')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        
+        let expiredCount = 0;
+        let expiringCount = 0;
+        let activeCount = 0;
+        const expiredBusinesses = [];
+        
+        // Categorize businesses
+        (businesses || []).forEach(biz => {
+            const expiresAt = biz.license_expires_at ? new Date(biz.license_expires_at) : null;
+            const isTrialOrStarter = biz.license_plan === 'trial' || biz.license_plan === 'starter';
+            
+            if (expiresAt && expiresAt < sevenDaysAgo && isTrialOrStarter) {
+                expiredCount++;
+                expiredBusinesses.push(biz);
+            } else if (expiresAt && expiresAt < now && isTrialOrStarter) {
+                expiredCount++;
+                expiredBusinesses.push(biz);
+            } else if (expiresAt && expiresAt < sevenDaysFromNow && expiresAt > now) {
+                expiringCount++;
+            } else {
+                activeCount++;
+            }
+        });
+        
+        // Update stats
+        document.getElementById('statTotal').textContent = businesses?.length || 0;
+        document.getElementById('statExpired').textContent = expiredCount;
+        document.getElementById('statExpiring').textContent = expiringCount;
+        document.getElementById('statActive').textContent = activeCount;
+        
+        // Render expired list
+        if (expiredBusinesses.length === 0) {
+            document.getElementById('expiredList').innerHTML = '<div class="empty">✅ No expired trials found!</div>';
+        } else {
+            document.getElementById('expiredList').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Email</th>
+                            <th>Plan</th>
+                            <th>Expired</th>
+                            <th>Days Over</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${expiredBusinesses.map(biz => {
+                            const daysOver = Math.ceil((now - new Date(biz.license_expires_at)) / (1000 * 60 * 60 * 24));
+                            return `
+                                <tr>
+                                    <td><b>${biz.name || 'Unnamed'}</b></td>
+                                    <td>${biz.email || '-'}</td>
+                                    <td><span class="badge badge-expired">${biz.license_plan || 'trial'}</span></td>
+                                    <td>${biz.license_expires_at ? new Date(biz.license_expires_at).toLocaleDateString() : '-'}</td>
+                                    <td><span style="color:#dc2626;font-weight:bold;">${daysOver} days</span></td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${biz.id}', '${biz.name}')">🗑️ Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // Render all businesses
+        document.getElementById('allList').innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Business</th>
+                        <th>Email</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Expires</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${(businesses || []).map(biz => {
+                        const expiresAt = biz.license_expires_at ? new Date(biz.license_expires_at) : null;
+                        const isExpired = expiresAt && expiresAt < now;
+                        const daysOver = expiresAt ? Math.ceil((now - expiresAt) / (1000 * 60 * 60 * 24)) : 0;
+                        
+                        return `
+                            <tr>
+                                <td><b>${biz.name || 'Unnamed'}</b></td>
+                                <td>${biz.email || '-'}</td>
+                                <td>${biz.license_plan || 'trial'}</td>
+                                <td>
+                                    <span class="badge ${isExpired ? 'badge-expired' : 'badge-expiring'}">
+                                        ${isExpired ? 'EXPIRED' : biz.license_status || 'active'}
+                                    </span>
+                                </td>
+                                <td>${expiresAt ? expiresAt.toLocaleDateString() + (isExpired ? ` (${daysOver}d over)` : '') : '-'}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('${biz.id}', '${biz.name}')">🗑️</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+        
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('expiredList').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+        document.getElementById('allList').innerHTML = `<div class="error">Error: ${error.message}</div>`;
+    }
+}
+
+function confirmDelete(businessId, businessName) {
+    pendingDeleteId = businessId;
+    document.getElementById('confirmMsg').textContent = `Delete "${businessName}" and ALL its data?`;
+    document.getElementById('confirmModal').classList.add('show');
+}
+
+function closeConfirm() {
+    pendingDeleteId = null;
+    document.getElementById('confirmModal').classList.remove('show');
+}
+
+async function deleteBusiness(businessId) {
+    try {
+        
+        const tables = [
+            'stock_history', 'stock', 'sales', 'credit_sales', 'expenses',
+            'customers', 'tasks', 'reminders', 'notifications', 'notes',
+            'user_backups', 'push_subscriptions', 'user_setups', 'user_feedback',
+            'users', 'business_info'
+        ];
+        
+        for (const table of tables) {
+            const { error } = await supabaseClient
+                .from(table)
+                .delete()
+                .eq('business_id', businessId);
+            
+            if (error) {
+                console.warn(`Warning deleting from ${table}:`, error.message);
+            } else {
+                console.log(`✅ Deleted from ${table}`);
+            }
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Delete error:', error);
+        return false;
+    }
+}
+
+// Confirm delete button
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    if (!pendingDeleteId) return;
+    
+    const btn = document.getElementById('confirmDeleteBtn');
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+    
+    const success = await deleteBusiness(pendingDeleteId);
+    
+    if (success) {
+        alert('✅ Business deleted successfully!');
+    } else {
+        alert('❌ Some items could not be deleted. Check console.');
+    }
+    
+    closeConfirm();
+    btn.disabled = false;
+    btn.textContent = 'Delete';
+    loadData();
+});
+
+// Delete all expired
+async function deleteAllExpired() {
+    if (!confirm('⚠️ Delete ALL expired trial businesses? This cannot be undone!')) return;
+    
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    const { data: expired } = await supabaseClient
+        .from('business_info')
+        .select('id, name')
+        .lt('license_expires_at', sevenDaysAgo.toISOString())
+        .in('license_plan', ['trial', 'starter']);
+    
+    if (!expired || expired.length === 0) {
+        alert('No expired trials to delete.');
+        return;
+    }
+    
+    let count = 0;
+    for (const biz of expired) {
+        const success = await deleteBusiness(biz.id);
+        if (success) count++;
+    }
+    
+    alert(`✅ Deleted ${count} expired businesses!`);
+    loadData();
+}
+
+// Close modal on overlay click
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirm();
+});
+
+// Load on page open
+loadData();
+</script>
+</body>
+</html>

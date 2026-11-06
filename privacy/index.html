@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Privacy Policy · StocksalesApp</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" href="../image/logo.jpg">
+  <link rel="apple-touch-icon" href="../image/logo.jpg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <style>
+    /* === RESET & BASE === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      /* Deep navy background from logo */
+      background: #040b16;
+      color: #e8edf5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, Arial, sans-serif;
+      padding: 32px 20px;
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* === CARD CONTAINER === */
+    .container {
+      width: 100%;
+      max-width: 980px;
+      background: #0f1a2e; /* Slightly lighter navy for contrast */
+      border-radius: 28px;
+      padding: 40px 48px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(30, 80, 255, 0.15);
+      border: 1px solid rgba(30, 80, 255, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    /* === HEADER === */
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid rgba(30, 80, 255, 0.25);
+      flex-wrap: wrap;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: #0b1a33;
+      border: 2px solid #1a4cff;
+      box-shadow: 0 0 15px rgba(26, 76, 255, 0.3);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: #7a9bd6;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    .badge-legal {
+      margin-left: auto;
+      background: rgba(26, 76, 255, 0.15);
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6a9eff;
+      border: 1px solid rgba(26, 76, 255, 0.4);
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+    }
+
+    /* === BACK TO LOGIN === */
+    .back-to-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #b8cce8;
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .back-to-login:hover {
+      background: rgba(26, 76, 255, 0.18);
+      color: #ffffff;
+      border-color: rgba(26, 76, 255, 0.5);
+      border-bottom-color: rgba(26, 76, 255, 0.5);
+    }
+
+    /* === LANGUAGE SELECTOR === */
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px 4px 16px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lang-selector label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8aa9e6;
+    }
+
+    .lang-selector select {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 4px 0;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .lang-selector select option {
+      background: #0f1a2e;
+      color: #ffffff;
+    }
+
+    /* === TYPOGRAPHY === */
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .legal-subhead {
+      font-size: 1rem;
+      color: #b8cce8;
+      background: rgba(26, 76, 255, 0.08);
+      padding: 12px 20px;
+      border-radius: 14px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      border: 1px solid rgba(26, 76, 255, 0.2);
+      border-left: 6px solid #1a4cff;
+    }
+
+    .legal-subhead span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legal-subhead .dot {
+      width: 5px;
+      height: 5px;
+      background: #4a7aff;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 650;
+      color: #ffffff;
+      margin-top: 36px;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid rgba(26, 76, 255, 0.2);
+      padding-bottom: 8px;
+    }
+
+    h2:first-of-type {
+      margin-top: 8px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 650;
+      color: #cfe0ff;
+      margin-top: 22px;
+      margin-bottom: 8px;
+      letter-spacing: -0.005em;
+      line-height: 1.45;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #d0dcec;
+    }
+
+    ul, ol {
+      margin: 10px 0 18px 24px;
+      color: #d0dcec;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    a {
+      color: #6a9eff;
+      text-decoration: none;
+      transition: color 0.2s, border-bottom 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+
+    a:hover {
+      color: #a0c0ff;
+      border-bottom-color: #6a9eff;
+    }
+
+    .highlight-box {
+      background: rgba(26, 76, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin: 22px 0 24px;
+      border: 1px solid rgba(26, 76, 255, 0.25);
+      border-left: 5px solid #1a4cff;
+    }
+
+    .highlight-box strong {
+      color: #ffffff;
+    }
+
+    .financial-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(26, 76, 255, 0.15);
+      padding: 4px 16px 4px 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #8ab0ff;
+      border: 1px solid rgba(26, 76, 255, 0.3);
+      margin-left: 4px;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      margin: 12px 0 18px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(26, 76, 255, 0.15);
+    }
+
+    .data-grid .item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .data-grid .label {
+      font-weight: 600;
+      color: #b0c8f0;
+      min-width: 80px;
+    }
+
+    .data-grid .value {
+      color: #d0dcec;
+    }
+
+    /* === ADDRESS BLOCKS (postal / DMCA) === */
+    .address-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(26, 76, 255, 0.2);
+      border-left: 4px solid #1a4cff;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 16px 0 22px;
+      font-style: normal;
+      color: #d0dcec;
+      line-height: 1.65;
+      font-size: 0.97rem;
+    }
+
+    .address-box strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .address-box a {
+      word-break: break-word;
+    }
+
+    /* === FOOTER === */
+    .legal-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(26, 76, 255, 0.4), transparent);
+      margin: 8px 0 20px;
+    }
+
+    .legal-footer {
+      margin-top: 44px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(26, 76, 255, 0.2);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.95rem;
+    }
+
+    .footer-links a {
+      color: #6a9eff;
+      text-decoration: none;
+      font-weight: 500;
+      margin-right: 20px;
+      transition: color 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+
+    .footer-links a:hover {
+      color: #a0c0ff;
+      border-bottom-color: #6a9eff;
+    }
+
+    .footer-meta {
+      color: #7a9bd6;
+      font-size: 0.85rem;
+    }
+
+    .footer-meta time {
+      font-weight: 500;
+    }
+
+    .small-print {
+      font-size: 0.85rem;
+      color: #6a8bb5;
+      margin-top: 6px;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 820px) {
+      .container {
+        padding: 32px 28px;
+      }
+      .app-header {
+        gap: 12px;
+      }
+      .lang-selector {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 8px;
+      }
+      .badge-legal {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 24px 18px;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      .brand-name {
+        font-size: 1.3rem;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .logo-wrapper {
+        width: 100%;
+      }
+      .badge-legal {
+        align-self: flex-start;
+        margin-top: 4px;
+      }
+      .back-to-login {
+        align-self: flex-start;
+      }
+      .legal-subhead {
+        flex-direction: column;
+        align-items: start;
+        gap: 4px;
+      }
+      .legal-footer {
+        flex-direction: column;
+        align-items: start;
+      }
+      .data-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .lang-selector {
+        width: 100%;
+        margin-top: 12px;
+        padding: 8px 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px 8px;
+      }
+      .container {
+        padding: 20px 14px;
+        border-radius: 20px;
+      }
+      .logo-img {
+        width: 46px;
+        height: 46px;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .footer-links a {
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="logo-wrapper">
+      <img
+        class="logo-img"
+        src="/image/logo.jpg"
+        alt="StocksalesApp logo"
+        loading="lazy"
+      >
+      <div class="brand-text">
+        <span class="brand-name">StocksalesApp</span>
+        <span class="brand-sub">inventory · sales · cloud</span>
+      </div>
+    </div>
+
+    <!-- Language Selector (3 languages) -->
+    <div class="lang-selector">
+      <label for="langSelect">🌐</label>
+      <select id="langSelect" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+
+    <div class="badge-legal">🔒 privacy policy</div>
+    <a href="/shop/" class="back-to-login">
+      <i class="fas fa-arrow-left"></i> <span>Back to Login</span>
+    </a>
+  </header>
+
+  <!-- CONTENT BLOCKS with data-i18n attributes -->
+  <h1 data-i18n="title">Privacy Policy</h1>
+
+  <div class="legal-subhead">
+    <span data-i18n="effective">📅 <strong>Effective:</strong> October 2026</span>
+    <span class="dot"></span>
+    <span data-i18n="version">⚡ <strong>Version:</strong> 2.2.0</span>
+    <span class="dot"></span>
+    <span data-i18n="controller">🏢 <strong>Data Controller:</strong> StocksalesApp</span>
+    <span style="margin-left:auto; font-size:0.9rem;" data-i18n="review">⏳ last review: October 2026</span>
+  </div>
+
+  <p style="font-size:1.05rem; font-weight:450; color:#d0dcec;" data-i18n="intro">Your privacy matters to us. This Privacy Policy explains how StocksalesApp collects, uses, discloses, and safeguards your information when you use our platform. Please read it carefully.</p>
+
+  <!-- 1. Information We Collect -->
+  <h2 data-i18n="section1.title">1. Information We Collect</h2>
+  <p data-i18n="section1.desc">We collect information to provide, maintain, and improve our service. The types of data we gather include:</p>
+
+  <div class="data-grid">
+    <div class="item"><span class="label">📧 Email address</span><span class="value" data-i18n="section1.grid1">Required for account registration, notifications, and support.</span></div>
+    <div class="item"><span class="label">🌐 Usage data</span><span class="value" data-i18n="section1.grid2">Pages visited, features used, session duration, and referral source.</span></div>
+    <div class="item"><span class="label">📱 Device & browser</span><span class="value" data-i18n="section1.grid3">IP address, browser type, operating system, and device identifiers.</span></div>
+    <div class="item"><span class="label">💳 Payment info</span><span class="value" data-i18n="section1.grid4">Processed by financial assistance; we do not store full card details.</span></div>
+  </div>
+
+  <p data-i18n="section1.extra">We also collect information you voluntarily provide, such as feedback, survey responses, and support requests.</p>
+
+  <!-- 2. How We Use Your Data -->
+  <h2 data-i18n="section2.title">2. How We Use Your Data</h2>
+  <p data-i18n="section2.desc">We use the information we collect for the following purposes:</p>
+  <ul>
+    <li data-i18n="section2.li1"><strong>Service delivery</strong> — to provide, maintain, and personalize your access to StocksalesApp.</li>
+    <li data-i18n="section2.li2"><strong>Communications</strong> — to send account notifications, billing receipts, product updates, and security alerts.</li>
+    <li data-i18n="section2.li3"><strong>Improvement & analytics</strong> — to understand usage patterns, diagnose issues, and enhance features.</li>
+    <li data-i18n="section2.li4"><strong>Security</strong> — to monitor for fraudulent activity, unauthorized access, and other threats.</li>
+    <li data-i18n="section2.li5"><strong>Compliance</strong> — to meet legal obligations and enforce our Terms of Service.</li>
+  </ul>
+
+  <!-- 3. Payments & Merchant of Record -->
+  <h2 data-i18n="section3.title">3. Payments &amp; Merchant of Record</h2>
+  <div class="highlight-box">
+    <p data-i18n="section3.p1"><strong>💳 Payment processing</strong> — All transactions are handled by <strong>financial assistance</strong>, our authorized Merchant of Record. financial assistance collects and processes your payment information (such as card details, billing address, and transaction history) on our behalf.</p>
+    <p data-i18n="section3.p2">StocksalesApp <strong>does not store, process, or have access</strong> to your full payment card numbers, CVV, or banking credentials. financial assistance is fully PCI‑DSS compliant and maintains strict security standards.</p>
+    <span class="financial-badge">🔒 financial assistance Merchant of Record</span>
+  </div>
+
+  <!-- 4. Data Sharing -->
+  <h2 data-i18n="section4.title">4. Data Sharing &amp; Disclosure</h2>
+  <p data-i18n="section4.desc"><strong>We do not sell, rent, or trade your personal data.</strong> We may share your information only in the following limited circumstances:</p>
+  <ul>
+    <li data-i18n="section4.li1"><strong>Service providers</strong> — trusted third‑party vendors (e.g., hosting, analytics, email delivery) that help us operate the service, under strict confidentiality obligations.</li>
+    <li data-i18n="section4.li2"><strong>Legal requirements</strong> — if required by law, regulation, or legal process (e.g., court order, government request).</li>
+    <li data-i18n="section4.li3"><strong>Business transfers</strong> — in the event of a merger, acquisition, or sale of assets, your data may be transferred to the new owner, with notice provided.</li>
+  </ul>
+
+  <!-- 5. Data Security -->
+  <h2 data-i18n="section5.title">5. Data Security &amp; Retention</h2>
+  <p data-i18n="section5.p1">We implement industry‑standard technical and organizational measures to protect your data against unauthorized access, alteration, disclosure, or destruction. These include encryption, access controls, and regular security assessments.</p>
+  <p data-i18n="section5.p2">We retain your personal data only as long as necessary to fulfill the purposes outlined in this policy, or as required by law. You may request deletion of your account and associated data at any time.</p>
+
+  <!-- 6. Your Rights -->
+  <h2 data-i18n="section6.title">6. Your Privacy Rights</h2>
+  <p data-i18n="section6.desc">Depending on your jurisdiction, you may have the following rights regarding your personal data:</p>
+  <ul>
+    <li data-i18n="section6.li1"><strong>Access</strong> — request a copy of the data we hold about you.</li>
+    <li data-i18n="section6.li2"><strong>Correction</strong> — update or correct inaccurate information.</li>
+    <li data-i18n="section6.li3"><strong>Deletion</strong> — request deletion of your account and data.</li>
+    <li data-i18n="section6.li4"><strong>Restriction</strong> — limit how we process your data.</li>
+    <li data-i18n="section6.li5"><strong>Portability</strong> — receive your data in a structured, machine‑readable format.</li>
+  </ul>
+  <p data-i18n="section6.contact">To exercise any of these rights, please contact us at <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a>. We will respond within 30 days.</p>
+
+  <!-- 7. Contact -->
+  <h2 data-i18n="section7.title">7. Contact &amp; Jurisdiction</h2>
+  <p data-i18n="section7.desc">If you have any questions, concerns, or requests regarding this Privacy Policy, please reach out to us:</p>
+  <ul style="list-style:none; margin-left:0; padding-left:0;">
+    <li>📧 <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a></li>
+    <li>🛟 <a href="/support/" style="font-weight:500;" data-i18n="section7.help">Visit our Help Center</a></li>
+  </ul>
+  <p style="margin-top:12px;" data-i18n="section7.govern">This policy is governed by applicable data protection laws in the jurisdiction where StocksalesApp operates. By using our service, you consent to the collection and use of your data as described herein.</p>
+
+  <!-- ============================================================ -->
+  <!-- 8. Children's Privacy & Age Restrictions (COPPA)             -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section8.title">8. Children's Privacy &amp; Age Restrictions (COPPA Compliance)</h2>
+
+  <h3 data-i18n="section8.h1">8.1 Age Limits</h3>
+  <p data-i18n="section8.p1">StocksalesApp is designed exclusively for business and organizational inventory management. Our platform is not intended for or directed toward children under 13 years of age. We do not knowingly collect, solicit, or store personal information from anyone under the age of 13.</p>
+
+  <h3 data-i18n="section8.h2">8.2 Notice to Parents and Guardians</h3>
+  <p data-i18n="section8.p2">If you are a parent or legal guardian and believe that your child under age 13 has registered an account or provided personal details (such as an email address) without your consent, please contact us immediately at <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a>. Upon notification, we will take prompt steps to verify and permanently delete such information from our records.</p>
+
+  <!-- ============================================================ -->
+  <!-- 9. Analytics, Session Replay & Keystroke Disclosures         -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section9.title">9. Analytics, Session Replay &amp; Keystroke Disclosures</h2>
+
+  <h3 data-i18n="section9.h1">9.1 Usage &amp; Session Analytics</h3>
+  <p data-i18n="section9.p1">To diagnose performance issues, optimize app navigation, and prevent fraud, StocksalesApp utilizes third-party analytics services. These tools may collect usage metrics, device specifications, and interaction data.</p>
+
+  <h3 data-i18n="section9.h2">9.2 Session Recording Transparency</h3>
+  <p data-i18n="section9.p2">Where session replay or user interaction recording technology is active, sensitive input fields—including credit card details, account passwords, and confidential financial metrics—are strictly masked and obscured from capture. Session recordings are utilized strictly for user interface optimization and security auditing, and are never sold or shared for commercial advertising.</p>
+
+  <!-- ============================================================ -->
+  <!-- 10. Third-Party Web Assets & Font Delivery                   -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section10.title">10. Third-Party Web Assets &amp; Font Delivery</h2>
+
+  <h3 data-i18n="section10.h1">10.1 External Asset Hosting</h3>
+  <p data-i18n="section10.p1">To maintain optimal performance, platform speed, and visual formatting, StocksalesApp may load open-source web assets (such as typography or icon libraries) directly from third-party content delivery networks (CDNs).</p>
+
+  <h3 data-i18n="section10.h2">10.2 IP Address Transmission</h3>
+  <p data-i18n="section10.p2">When your browser requests these external assets, your Internet Protocol (IP) address is automatically transmitted to the asset provider's server as part of standard web communication protocols. We configure our CDN integrations to minimize logging and retain IP data solely for security and performance routing.</p>
+
+  <!-- ============================================================ -->
+  <!-- 11. Marketing Communications & Commercial Email Compliance   -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section11.title">11. Marketing Communications &amp; Commercial Email Compliance (CAN-SPAM)</h2>
+
+  <h3 data-i18n="section11.h1">11.1 Marketing &amp; Waitlist Consent</h3>
+  <p data-i18n="section11.p1">By subscribing to our newsletter, waitlist, or product update notifications, you consent to receive periodic commercial emails from StocksalesApp.</p>
+
+  <h3 data-i18n="section11.h2">11.2 Unsubscribe Mechanism</h3>
+  <p data-i18n="section11.p2">Every commercial and promotional email sent by StocksalesApp includes a clear, automated "Unsubscribe" link at the footer. You may opt out of promotional messaging at any time.</p>
+
+  <h3 data-i18n="section11.h3">11.3 Physical Postal Contact</h3>
+  <p data-i18n="section11.p3">In addition to our electronic support desk (support@stocksalesapp.store), StocksalesApp maintains physical postal address records for regulatory compliance. Physical communications or formal legal notices may be submitted to:</p>
+
+  <address class="address-box">
+    <strong>StocksalesApp Compliance Department</strong><br>
+    Agence E - Passeport, face à SNEDAI, Terminus 82<br>
+    Angré Djibi, Cocody, Abidjan<br>
+    Côte d'Ivoire
+  </address>
+
+  <!-- ============================================================ -->
+  <!-- 12. Recurring Subscriptions & Automatic Renewal Terms        -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section12.title">12. Recurring Subscriptions &amp; Automatic Renewal Terms</h2>
+
+  <h3 data-i18n="section12.h1">12.1 Automatic Renewal Notice</h3>
+  <p data-i18n="section12.p1">All paid software subscriptions (monthly or annual plans) automatically renew at the end of each billing cycle using the payment method on file with our Merchant of Record, unless cancelled prior to the renewal date.</p>
+
+  <h3 data-i18n="section12.h2">12.2 Terms Display &amp; Pre-Checkout Consent</h3>
+  <p data-i18n="section12.p2">The exact renewal price, billing frequency, and cancellation instructions are clearly displayed directly adjacent to the payment checkout button.</p>
+
+  <h3 data-i18n="section12.h3">12.3 Cancellation Procedure</h3>
+  <p data-i18n="section12.p3">You may cancel your subscription at any time via your Account Settings or by contacting support at <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a>. Cancellation stops future automatic charges; past paid fees are governed by our Refund Policy.</p>
+
+  <!-- ============================================================ -->
+  <!-- 13. DMCA Safe Harbor & Takedown Policy                       -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section13.title">13. Digital Millennium Copyright Act (DMCA) Safe Harbor &amp; Takedown Policy</h2>
+
+  <h3 data-i18n="section13.h1">13.1 User-Generated Content Responsibility</h3>
+  <p data-i18n="section13.p1">Users are solely responsible for ensuring that all content uploaded to StocksalesApp—including profile photos, product images, and store logos—does not infringe upon third-party intellectual property rights.</p>
+
+  <h3 data-i18n="section13.h2">13.2 Designated DMCA Agent</h3>
+  <p data-i18n="section13.p2">StocksalesApp respects intellectual property rights and maintains a registered Copyright Agent. If you believe your copyrighted work has been improperly uploaded or displayed on our platform, please send a formal DMCA Notice of Alleged Infringement to our designated agent:</p>
+
+  <address class="address-box">
+    <strong>Designated DMCA Agent:</strong> Legal &amp; Compliance Desk<br>
+    <strong>Email:</strong> <a href="mailto:dmca@stocksalesapp.store">dmca@stocksalesapp.store</a>
+    (or <a href="mailto:support@stocksalesapp.store">support@stocksalesapp.store</a>)<br>
+    <strong>Postal Address:</strong> Agence E - Passeport, face à SNEDAI, Terminus 82,<br>
+    Angré Djibi, Cocody, Abidjan, Côte d'Ivoire
+  </address>
+
+  <h3 data-i18n="section13.h3">13.3 DMCA Notice Requirements</h3>
+  <p data-i18n="section13.p3">To be effective, your notice must include: (a) physical or electronic signature of the copyright owner; (b) identification of the copyrighted work claimed to be infringed; (c) exact URL or location of the infringing material; (d) your contact details; and (e) a good-faith statement that the use is unauthorized.</p>
+
+  <!-- footer -->
+  <div class="legal-divider"></div>
+
+  <div class="legal-footer">
+    <div class="footer-links">
+      <a href="/terms/" data-i18n="footer.terms">📜 Terms of Service</a>
+      <a href="/refund/" data-i18n="footer.refund">↩️ Refund Policy</a>
+      <a href="pricing" data-i18n="footer.pricing">💲 Pricing</a>
+      <a href="/support/" data-i18n="footer.support">🛟 Support</a>
+    </div>
+    <div class="footer-meta">
+      <span data-i18n="footer.revised">📌 Last revised: <time datetime="2026-10">October 2026</time></span>
+      <span style="display:inline-block; margin-left: 18px;">© 2026 StocksalesApp</span>
+    </div>
+  </div>
+
+  <div class="small-print" style="margin-top: 18px; border-top: 1px solid rgba(26, 76, 255, 0.2); padding-top: 18px;">
+    <span data-i18n="footer.smallprint">⚙️ <strong>StocksalesApp</strong> — inventory &amp; sales platform. This Privacy Policy is part of our commitment to transparency and data protection. We may update it periodically; the latest version will always be available here.</span>
+  </div>
+
+</div>
+
+<!-- === TRANSLATION SCRIPT === -->
+<script>
+  const translations = {
+    en: {
+      "title": "Privacy Policy",
+      "effective": "📅 <strong>Effective:</strong> October 2026",
+      "version": "⚡ <strong>Version:</strong> 2.2.0",
+      "controller": "🏢 <strong>Data Controller:</strong> StocksalesApp",
+      "review": "⏳ last review: October 2026",
+      "intro": "Your privacy matters to us. This Privacy Policy explains how StocksalesApp collects, uses, discloses, and safeguards your information when you use our platform. Please read it carefully.",
+
+      "section1.title": "1. Information We Collect",
+      "section1.desc": "We collect information to provide, maintain, and improve our service. The types of data we gather include:",
+      "section1.grid1": "Required for account registration, notifications, and support.",
+      "section1.grid2": "Pages visited, features used, session duration, and referral source.",
+      "section1.grid3": "IP address, browser type, operating system, and device identifiers.",
+      "section1.grid4": "Processed by financial assistance; we do not store full card details.",
+      "section1.extra": "We also collect information you voluntarily provide, such as feedback, survey responses, and support requests.",
+
+      "section2.title": "2. How We Use Your Data",
+      "section2.desc": "We use the information we collect for the following purposes:",
+      "section2.li1": "<strong>Service delivery</strong> — to provide, maintain, and personalize your access to StocksalesApp.",
+      "section2.li2": "<strong>Communications</strong> — to send account notifications, billing receipts, product updates, and security alerts.",
+      "section2.li3": "<strong>Improvement & analytics</strong> — to understand usage patterns, diagnose issues, and enhance features.",
+      "section2.li4": "<strong>Security</strong> — to monitor for fraudulent activity, unauthorized access, and other threats.",
+      "section2.li5": "<strong>Compliance</strong> — to meet legal obligations and enforce our Terms of Service.",
+
+      "section3.title": "3. Payments & Merchant of Record",
+      "section3.p1": "<strong>💳 Payment processing</strong> — All transactions are handled by <strong>financial assistance</strong>, our authorized Merchant of Record. financial assistance collects and processes your payment information (such as card details, billing address, and transaction history) on our behalf.",
+      "section3.p2": "StocksalesApp <strong>does not store, process, or have access</strong> to your full payment card numbers, CVV, or banking credentials. financial assistance is fully PCI‑DSS compliant and maintains strict security standards.",
+
+      "section4.title": "4. Data Sharing & Disclosure",
+      "section4.desc": "<strong>We do not sell, rent, or trade your personal data.</strong> We may share your information only in the following limited circumstances:",
+      "section4.li1": "<strong>Service providers</strong> — trusted third‑party vendors (e.g., hosting, analytics, email delivery) that help us operate the service, under strict confidentiality obligations.",
+      "section4.li2": "<strong>Legal requirements</strong> — if required by law, regulation, or legal process (e.g., court order, government request).",
+      "section4.li3": "<strong>Business transfers</strong> — in the event of a merger, acquisition, or sale of assets, your data may be transferred to the new owner, with notice provided.",
+
+      "section5.title": "5. Data Security & Retention",
+      "section5.p1": "We implement industry‑standard technical and organizational measures to protect your data against unauthorized access, alteration, disclosure, or destruction. These include encryption, access controls, and regular security assessments.",
+      "section5.p2": "We retain your personal data only as long as necessary to fulfill the purposes outlined in this policy, or as required by law. You may request deletion of your account and associated data at any time.",
+
+      "section6.title": "6. Your Privacy Rights",
+      "section6.desc": "Depending on your jurisdiction, you may have the following rights regarding your personal data:",
+      "section6.li1": "<strong>Access</strong> — request a copy of the data we hold about you.",
+      "section6.li2": "<strong>Correction</strong> — update or correct inaccurate information.",
+      "section6.li3": "<strong>Deletion</strong> — request deletion of your account and data.",
+      "section6.li4": "<strong>Restriction</strong> — limit how we process your data.",
+      "section6.li5": "<strong>Portability</strong> — receive your data in a structured, machine‑readable format.",
+      "section6.contact": "To exercise any of these rights, please contact us at <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. We will respond within 30 days.",
+
+      "section7.title": "7. Contact & Jurisdiction",
+      "section7.desc": "If you have any questions, concerns, or requests regarding this Privacy Policy, please reach out to us:",
+      "section7.help": "Visit our Help Center",
+      "section7.govern": "This policy is governed by applicable data protection laws in the jurisdiction where StocksalesApp operates. By using our service, you consent to the collection and use of your data as described herein.",
+
+      "section8.title": "8. Children's Privacy & Age Restrictions (COPPA Compliance)",
+      "section8.h1": "8.1 Age Limits",
+      "section8.p1": "StocksalesApp is designed exclusively for business and organizational inventory management. Our platform is not intended for or directed toward children under 13 years of age. We do not knowingly collect, solicit, or store personal information from anyone under the age of 13.",
+      "section8.h2": "8.2 Notice to Parents and Guardians",
+      "section8.p2": "If you are a parent or legal guardian and believe that your child under age 13 has registered an account or provided personal details (such as an email address) without your consent, please contact us immediately at <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Upon notification, we will take prompt steps to verify and permanently delete such information from our records.",
+
+      "section9.title": "9. Analytics, Session Replay & Keystroke Disclosures",
+      "section9.h1": "9.1 Usage & Session Analytics",
+      "section9.p1": "To diagnose performance issues, optimize app navigation, and prevent fraud, StocksalesApp utilizes third-party analytics services. These tools may collect usage metrics, device specifications, and interaction data.",
+      "section9.h2": "9.2 Session Recording Transparency",
+      "section9.p2": "Where session replay or user interaction recording technology is active, sensitive input fields—including credit card details, account passwords, and confidential financial metrics—are strictly masked and obscured from capture. Session recordings are utilized strictly for user interface optimization and security auditing, and are never sold or shared for commercial advertising.",
+
+      "section10.title": "10. Third-Party Web Assets & Font Delivery",
+      "section10.h1": "10.1 External Asset Hosting",
+      "section10.p1": "To maintain optimal performance, platform speed, and visual formatting, StocksalesApp may load open-source web assets (such as typography or icon libraries) directly from third-party content delivery networks (CDNs).",
+      "section10.h2": "10.2 IP Address Transmission",
+      "section10.p2": "When your browser requests these external assets, your Internet Protocol (IP) address is automatically transmitted to the asset provider's server as part of standard web communication protocols. We configure our CDN integrations to minimize logging and retain IP data solely for security and performance routing.",
+
+      "section11.title": "11. Marketing Communications & Commercial Email Compliance (CAN-SPAM)",
+      "section11.h1": "11.1 Marketing & Waitlist Consent",
+      "section11.p1": "By subscribing to our newsletter, waitlist, or product update notifications, you consent to receive periodic commercial emails from StocksalesApp.",
+      "section11.h2": "11.2 Unsubscribe Mechanism",
+      "section11.p2": "Every commercial and promotional email sent by StocksalesApp includes a clear, automated \"Unsubscribe\" link at the footer. You may opt out of promotional messaging at any time.",
+      "section11.h3": "11.3 Physical Postal Contact",
+      "section11.p3": "In addition to our electronic support desk (support@stocksalesapp.store), StocksalesApp maintains physical postal address records for regulatory compliance. Physical communications or formal legal notices may be submitted to:",
+
+      "section12.title": "12. Recurring Subscriptions & Automatic Renewal Terms",
+      "section12.h1": "12.1 Automatic Renewal Notice",
+      "section12.p1": "All paid software subscriptions (monthly or annual plans) automatically renew at the end of each billing cycle using the payment method on file with our Merchant of Record, unless cancelled prior to the renewal date.",
+      "section12.h2": "12.2 Terms Display & Pre-Checkout Consent",
+      "section12.p2": "The exact renewal price, billing frequency, and cancellation instructions are clearly displayed directly adjacent to the payment checkout button.",
+      "section12.h3": "12.3 Cancellation Procedure",
+      "section12.p3": "You may cancel your subscription at any time via your Account Settings or by contacting support at <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Cancellation stops future automatic charges; past paid fees are governed by our Refund Policy.",
+
+      "section13.title": "13. Digital Millennium Copyright Act (DMCA) Safe Harbor & Takedown Policy",
+      "section13.h1": "13.1 User-Generated Content Responsibility",
+      "section13.p1": "Users are solely responsible for ensuring that all content uploaded to StocksalesApp—including profile photos, product images, and store logos—does not infringe upon third-party intellectual property rights.",
+      "section13.h2": "13.2 Designated DMCA Agent",
+      "section13.p2": "StocksalesApp respects intellectual property rights and maintains a registered Copyright Agent. If you believe your copyrighted work has been improperly uploaded or displayed on our platform, please send a formal DMCA Notice of Alleged Infringement to our designated agent:",
+      "section13.h3": "13.3 DMCA Notice Requirements",
+      "section13.p3": "To be effective, your notice must include: (a) physical or electronic signature of the copyright owner; (b) identification of the copyrighted work claimed to be infringed; (c) exact URL or location of the infringing material; (d) your contact details; and (e) a good-faith statement that the use is unauthorized.",
+
+      "footer.terms": "📜 Terms of Service",
+      "footer.refund": "↩️ Refund Policy",
+      "footer.pricing": "💲 Pricing",
+      "footer.support": "🛟 Support",
+      "footer.revised": "📌 Last revised: <time datetime=\"2026-10\">October 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — inventory & sales platform. This Privacy Policy is part of our commitment to transparency and data protection. We may update it periodically; the latest version will always be available here."
+    },
+
+    fr: {
+      "title": "Politique de confidentialité",
+      "effective": "📅 <strong>En vigueur :</strong> octobre 2026",
+      "version": "⚡ <strong>Version :</strong> 2.2.0",
+      "controller": "🏢 <strong>Contrôleur des données :</strong> StocksalesApp",
+      "review": "⏳ dernière révision : octobre 2026",
+      "intro": "Votre vie privée est importante pour nous. Cette politique de confidentialité explique comment StocksalesApp collecte, utilise, divulgue et protège vos informations lorsque vous utilisez notre plateforme. Veuillez la lire attentivement.",
+
+      "section1.title": "1. Informations que nous collectons",
+      "section1.desc": "Nous collectons des informations pour fournir, maintenir et améliorer notre service. Les types de données que nous recueillons comprennent :",
+      "section1.grid1": "Requis pour l'enregistrement du compte, les notifications et l'assistance.",
+      "section1.grid2": "Pages visitées, fonctionnalités utilisées, durée de la session et source de référence.",
+      "section1.grid3": "Adresse IP, type de navigateur, système d'exploitation et identifiants de l'appareil.",
+      "section1.grid4": "Traité par financial assistance ; nous ne stockons pas les détails complets de la carte.",
+      "section1.extra": "Nous collectons également les informations que vous fournissez volontairement, telles que les commentaires, les réponses aux enquêtes et les demandes d'assistance.",
+
+      "section2.title": "2. Comment nous utilisons vos données",
+      "section2.desc": "Nous utilisons les informations que nous collectons aux fins suivantes :",
+      "section2.li1": "<strong>Prestation de service</strong> — pour fournir, maintenir et personnaliser votre accès à StocksalesApp.",
+      "section2.li2": "<strong>Communications</strong> — pour envoyer des notifications de compte, des reçus de facturation, des mises à jour de produits et des alertes de sécurité.",
+      "section2.li3": "<strong>Amélioration et analyses</strong> — pour comprendre les modèles d'utilisation, diagnostiquer les problèmes et améliorer les fonctionnalités.",
+      "section2.li4": "<strong>Sécurité</strong> — pour surveiller les activités frauduleuses, les accès non autorisés et autres menaces.",
+      "section2.li5": "<strong>Conformité</strong> — pour respecter les obligations légales et appliquer nos conditions d'utilisation.",
+
+      "section3.title": "3. Paiements et commerçant de référence",
+      "section3.p1": "<strong>💳 Traitement des paiements</strong> — Toutes les transactions sont traitées par <strong>financial assistance</strong>, notre commerçant de référence autorisé. financial assistance collecte et traite vos informations de paiement (telles que les détails de la carte, l'adresse de facturation et l'historique des transactions) en notre nom.",
+      "section3.p2": "StocksalesApp <strong>ne stocke, ne traite ni n'a accès</strong> à vos numéros de carte de paiement complets, à votre CVV ou à vos identifiants bancaires. financial assistance est entièrement conforme à la norme PCI‑DSS et maintient des normes de sécurité strictes.",
+
+      "section4.title": "4. Partage et divulgation des données",
+      "section4.desc": "<strong>Nous ne vendons, ne louons ni n'échangeons vos données personnelles.</strong> Nous ne pouvons partager vos informations que dans les circonstances limitées suivantes :",
+      "section4.li1": "<strong>Prestataires de services</strong> — des fournisseurs tiers de confiance (par exemple, hébergement, analyses, livraison d'e-mails) qui nous aident à exploiter le service, sous des obligations de confidentialité strictes.",
+      "section4.li2": "<strong>Exigences légales</strong> — si requis par la loi, la réglementation ou une procédure judiciaire (par exemple, ordonnance du tribunal, demande gouvernementale).",
+      "section4.li3": "<strong>Transferts d'entreprise</strong> — en cas de fusion, d'acquisition ou de vente d'actifs, vos données peuvent être transférées au nouveau propriétaire, avec un préavis.",
+
+      "section5.title": "5. Sécurité et conservation des données",
+      "section5.p1": "Nous mettons en œuvre des mesures techniques et organisationnelles conformes aux normes de l'industrie pour protéger vos données contre tout accès, modification, divulgation ou destruction non autorisés. Cela comprend le chiffrement, les contrôles d'accès et des évaluations de sécurité régulières.",
+      "section5.p2": "Nous conservons vos données personnelles aussi longtemps que nécessaire pour atteindre les objectifs énoncés dans cette politique, ou comme exigé par la loi. Vous pouvez demander la suppression de votre compte et des données associées à tout moment.",
+
+      "section6.title": "6. Vos droits en matière de confidentialité",
+      "section6.desc": "Selon votre juridiction, vous pouvez avoir les droits suivants concernant vos données personnelles :",
+      "section6.li1": "<strong>Accès</strong> — demander une copie des données que nous détenons sur vous.",
+      "section6.li2": "<strong>Correction</strong> — mettre à jour ou corriger des informations inexactes.",
+      "section6.li3": "<strong>Suppression</strong> — demander la suppression de votre compte et de vos données.",
+      "section6.li4": "<strong>Restriction</strong> — limiter la façon dont nous traitons vos données.",
+      "section6.li5": "<strong>Portabilité</strong> — recevoir vos données dans un format structuré et lisible par machine.",
+      "section6.contact": "Pour exercer l'un de ces droits, veuillez nous contacter à <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Nous répondrons dans les 30 jours.",
+
+      "section7.title": "7. Contact et juridiction",
+      "section7.desc": "Si vous avez des questions, des préoccupations ou des demandes concernant cette politique de confidentialité, veuillez nous contacter :",
+      "section7.help": "Visitez notre centre d'aide",
+      "section7.govern": "Cette politique est régie par les lois applicables en matière de protection des données dans la juridiction où StocksalesApp opère. En utilisant notre service, vous consentez à la collecte et à l'utilisation de vos données telles que décrites dans le présent document.",
+
+      "section8.title": "8. Confidentialité des enfants et restrictions d'âge (conformité COPPA)",
+      "section8.h1": "8.1 Limites d'âge",
+      "section8.p1": "StocksalesApp est conçu exclusivement pour la gestion des stocks d'entreprises et d'organisations. Notre plateforme n'est pas destinée aux enfants de moins de 13 ans et ne les cible pas. Nous ne collectons, ne sollicitons ni ne stockons sciemment des informations personnelles auprès de toute personne de moins de 13 ans.",
+      "section8.h2": "8.2 Avis aux parents et tuteurs",
+      "section8.p2": "Si vous êtes un parent ou un tuteur légal et que vous pensez que votre enfant de moins de 13 ans a créé un compte ou fourni des informations personnelles (telles qu'une adresse e-mail) sans votre consentement, veuillez nous contacter immédiatement à <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Dès la notification, nous prendrons des mesures rapides pour vérifier et supprimer définitivement ces informations de nos dossiers.",
+
+      "section9.title": "9. Analyses, relecture de session et divulgations de frappe",
+      "section9.h1": "9.1 Analyses d'utilisation et de session",
+      "section9.p1": "Pour diagnostiquer les problèmes de performance, optimiser la navigation dans l'application et prévenir la fraude, StocksalesApp utilise des services d'analyse tiers. Ces outils peuvent collecter des métriques d'utilisation, des spécifications d'appareil et des données d'interaction.",
+      "section9.h2": "9.2 Transparence sur l'enregistrement de session",
+      "section9.p2": "Lorsque la technologie de relecture de session ou d'enregistrement des interactions utilisateur est active, les champs de saisie sensibles — notamment les détails de carte de crédit, les mots de passe de compte et les indicateurs financiers confidentiels — sont strictement masqués et soustraits à la capture. Les enregistrements de session sont utilisés strictement pour l'optimisation de l'interface utilisateur et l'audit de sécurité, et ne sont jamais vendus ni partagés à des fins de publicité commerciale.",
+
+      "section10.title": "10. Ressources web tierces et diffusion des polices",
+      "section10.h1": "10.1 Hébergement de ressources externes",
+      "section10.p1": "Pour maintenir des performances optimales, la vitesse de la plateforme et la mise en forme visuelle, StocksalesApp peut charger des ressources web open source (telles que des bibliothèques typographiques ou d'icônes) directement depuis des réseaux de diffusion de contenu (CDN) tiers.",
+      "section10.h2": "10.2 Transmission de l'adresse IP",
+      "section10.p2": "Lorsque votre navigateur demande ces ressources externes, votre adresse de protocole Internet (IP) est automatiquement transmise au serveur du fournisseur de ressources dans le cadre des protocoles de communication web standard. Nous configurons nos intégrations CDN pour minimiser la journalisation et conserver les données IP uniquement pour le routage de sécurité et de performance.",
+
+      "section11.title": "11. Communications marketing et conformité des e-mails commerciaux (CAN-SPAM)",
+      "section11.h1": "11.1 Consentement marketing et liste d'attente",
+      "section11.p1": "En vous abonnant à notre newsletter, à notre liste d'attente ou aux notifications de mise à jour produit, vous consentez à recevoir des e-mails commerciaux périodiques de StocksalesApp.",
+      "section11.h2": "11.2 Mécanisme de désabonnement",
+      "section11.p2": "Chaque e-mail commercial et promotionnel envoyé par StocksalesApp comporte un lien « Se désabonner » clair et automatisé en pied de page. Vous pouvez vous retirer des communications promotionnelles à tout moment.",
+      "section11.h3": "11.3 Contact postal physique",
+      "section11.p3": "En plus de notre service d'assistance électronique (support@stocksalesapp.store), StocksalesApp tient à jour des coordonnées postales physiques pour la conformité réglementaire. Les communications physiques ou avis juridiques formels peuvent être adressés à :",
+
+      "section12.title": "12. Abonnements récurrents et conditions de renouvellement automatique",
+      "section12.h1": "12.1 Avis de renouvellement automatique",
+      "section12.p1": "Tous les abonnements logiciels payants (plans mensuels ou annuels) se renouvellent automatiquement à la fin de chaque cycle de facturation en utilisant le moyen de paiement enregistré auprès de notre commerçant de référence, sauf annulation avant la date de renouvellement.",
+      "section12.h2": "12.2 Affichage des conditions et consentement avant paiement",
+      "section12.p2": "Le prix exact du renouvellement, la fréquence de facturation et les instructions d'annulation sont clairement affichés juste à côté du bouton de paiement.",
+      "section12.h3": "12.3 Procédure d'annulation",
+      "section12.p3": "Vous pouvez annuler votre abonnement à tout moment via les paramètres de votre compte ou en contactant l'assistance à <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. L'annulation met fin aux futurs prélèvements automatiques ; les frais déjà payés sont régis par notre politique de remboursement.",
+
+      "section13.title": "13. Exonération DMCA (Digital Millennium Copyright Act) et politique de retrait",
+      "section13.h1": "13.1 Responsabilité du contenu généré par l'utilisateur",
+      "section13.p1": "Les utilisateurs sont seuls responsables de s'assurer que tout contenu téléchargé sur StocksalesApp — y compris les photos de profil, les images de produits et les logos de boutique — ne porte pas atteinte aux droits de propriété intellectuelle de tiers.",
+      "section13.h2": "13.2 Agent DMCA désigné",
+      "section13.p2": "StocksalesApp respecte les droits de propriété intellectuelle et dispose d'un agent de droits d'auteur enregistré. Si vous estimez que votre œuvre protégée par le droit d'auteur a été téléchargée ou affichée de manière abusive sur notre plateforme, veuillez envoyer un avis formel DMCA d'infraction présumée à notre agent désigné :",
+      "section13.h3": "13.3 Exigences de l'avis DMCA",
+      "section13.p3": "Pour être valable, votre avis doit inclure : (a) la signature physique ou électronique du titulaire des droits d'auteur ; (b) l'identification de l'œuvre protégée prétendument contrefaite ; (c) l'URL ou l'emplacement exact du matériel contrefaisant ; (d) vos coordonnées ; et (e) une déclaration de bonne foi indiquant que l'utilisation n'est pas autorisée.",
+
+      "footer.terms": "📜 Conditions d'utilisation",
+      "footer.refund": "↩️ Politique de remboursement",
+      "footer.pricing": "💲 Tarification",
+      "footer.support": "🛟 Assistance",
+      "footer.revised": "📌 Dernière révision : <time datetime=\"2026-10\">octobre 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — plateforme d'inventaire et de vente. Cette politique de confidentialité fait partie de notre engagement envers la transparence et la protection des données. Nous pouvons la mettre à jour périodiquement ; la dernière version sera toujours disponible ici."
+    },
+
+    es: {
+      "title": "Política de privacidad",
+      "effective": "📅 <strong>Vigente:</strong> octubre de 2026",
+      "version": "⚡ <strong>Versión:</strong> 2.2.0",
+      "controller": "🏢 <strong>Controlador de datos:</strong> StocksalesApp",
+      "review": "⏳ última revisión: octubre de 2026",
+      "intro": "Su privacidad es importante para nosotros. Esta Política de privacidad explica cómo StocksalesApp recopila, utiliza, divulga y protege su información cuando utiliza nuestra plataforma. Por favor, léala detenidamente.",
+
+      "section1.title": "1. Información que recopilamos",
+      "section1.desc": "Recopilamos información para proporcionar, mantener y mejorar nuestro servicio. Los tipos de datos que recopilamos incluyen:",
+      "section1.grid1": "Requerido para el registro de la cuenta, notificaciones y soporte.",
+      "section1.grid2": "Páginas visitadas, funciones utilizadas, duración de la sesión y fuente de referencia.",
+      "section1.grid3": "Dirección IP, tipo de navegador, sistema operativo e identificadores del dispositivo.",
+      "section1.grid4": "Procesado por financial assistance; no almacenamos los detalles completos de la tarjeta.",
+      "section1.extra": "También recopilamos información que usted proporciona voluntariamente, como comentarios, respuestas a encuestas y solicitudes de soporte.",
+
+      "section2.title": "2. Cómo utilizamos sus datos",
+      "section2.desc": "Utilizamos la información que recopilamos para los siguientes fines:",
+      "section2.li1": "<strong>Prestación del servicio</strong> — para proporcionar, mantener y personalizar su acceso a StocksalesApp.",
+      "section2.li2": "<strong>Comunicaciones</strong> — para enviar notificaciones de cuenta, recibos de facturación, actualizaciones de productos y alertas de seguridad.",
+      "section2.li3": "<strong>Mejora y análisis</strong> — para comprender los patrones de uso, diagnosticar problemas y mejorar las funciones.",
+      "section2.li4": "<strong>Seguridad</strong> — para monitorear actividades fraudulentas, accesos no autorizados y otras amenazas.",
+      "section2.li5": "<strong>Cumplimiento</strong> — para cumplir con las obligaciones legales y hacer cumplir nuestros Términos de servicio.",
+
+      "section3.title": "3. Pagos y comerciante de registro",
+      "section3.p1": "<strong>💳 Procesamiento de pagos</strong> — Todas las transacciones son gestionadas por <strong>financial assistance</strong>, nuestro comerciante de registro autorizado. financial assistance recopila y procesa su información de pago (como detalles de la tarjeta, dirección de facturación e historial de transacciones) en nuestro nombre.",
+      "section3.p2": "StocksalesApp <strong>no almacena, procesa ni tiene acceso</strong> a los números completos de su tarjeta de pago, CVV o credenciales bancarias. financial assistance cumple plenamente con la normativa PCI‑DSS y mantiene estrictos estándares de seguridad.",
+
+      "section4.title": "4. Compartición y divulgación de datos",
+      "section4.desc": "<strong>No vendemos, alquilamos ni intercambiamos sus datos personales.</strong> Solo podemos compartir su información en las siguientes circunstancias limitadas:",
+      "section4.li1": "<strong>Proveedores de servicios</strong> — proveedores externos de confianza (por ejemplo, alojamiento, análisis, entrega de correos electrónicos) que nos ayudan a operar el servicio, bajo estrictas obligaciones de confidencialidad.",
+      "section4.li2": "<strong>Requisitos legales</strong> — si así lo exige la ley, la normativa o un proceso legal (por ejemplo, orden judicial, solicitud gubernamental).",
+      "section4.li3": "<strong>Transferencias comerciales</strong> — en caso de fusión, adquisición o venta de activos, sus datos pueden ser transferidos al nuevo propietario, con previo aviso.",
+
+      "section5.title": "5. Seguridad y retención de datos",
+      "section5.p1": "Implementamos medidas técnicas y organizativas estándar de la industria para proteger sus datos contra accesos no autorizados, alteraciones, divulgaciones o destrucciones. Estas incluyen cifrado, controles de acceso y evaluaciones de seguridad periódicas.",
+      "section5.p2": "Conservamos sus datos personales solo durante el tiempo necesario para cumplir los fines descritos en esta política, o según lo exija la ley. Puede solicitar la eliminación de su cuenta y los datos asociados en cualquier momento.",
+
+      "section6.title": "6. Sus derechos de privacidad",
+      "section6.desc": "Dependiendo de su jurisdicción, puede tener los siguientes derechos con respecto a sus datos personales:",
+      "section6.li1": "<strong>Acceso</strong> — solicitar una copia de los datos que tenemos sobre usted.",
+      "section6.li2": "<strong>Corrección</strong> — actualizar o corregir información inexacta.",
+      "section6.li3": "<strong>Eliminación</strong> — solicitar la eliminación de su cuenta y datos.",
+      "section6.li4": "<strong>Restricción</strong> — limitar la forma en que procesamos sus datos.",
+      "section6.li5": "<strong>Portabilidad</strong> — recibir sus datos en un formato estructurado y legible por máquina.",
+      "section6.contact": "Para ejercer cualquiera de estos derechos, contáctenos en <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Responderemos dentro de los 30 días.",
+
+      "section7.title": "7. Contacto y jurisdicción",
+      "section7.desc": "Si tiene preguntas, inquietudes o solicitudes con respecto a esta Política de privacidad, comuníquese con nosotros:",
+      "section7.help": "Visite nuestro centro de ayuda",
+      "section7.govern": "Esta política se rige por las leyes de protección de datos aplicables en la jurisdicción donde opera StocksalesApp. Al utilizar nuestro servicio, usted consiente la recopilación y el uso de sus datos como se describe en este documento.",
+
+      "section8.title": "8. Privacidad de los menores y restricciones de edad (cumplimiento de COPPA)",
+      "section8.h1": "8.1 Límites de edad",
+      "section8.p1": "StocksalesApp está diseñada exclusivamente para la gestión de inventario de empresas y organizaciones. Nuestra plataforma no está destinada ni dirigida a menores de 13 años. No recopilamos, solicitamos ni almacenamos a sabiendas información personal de personas menores de 13 años.",
+      "section8.h2": "8.2 Aviso a padres y tutores",
+      "section8.p2": "Si usted es padre, madre o tutor legal y cree que su hijo menor de 13 años ha registrado una cuenta o proporcionado datos personales (como una dirección de correo electrónico) sin su consentimiento, contáctenos de inmediato en <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Tras la notificación, tomaremos medidas inmediatas para verificar y eliminar permanentemente dicha información de nuestros registros.",
+
+      "section9.title": "9. Análisis, repetición de sesiones y divulgación de pulsaciones de teclas",
+      "section9.h1": "9.1 Análisis de uso y sesiones",
+      "section9.p1": "Para diagnosticar problemas de rendimiento, optimizar la navegación de la aplicación y prevenir el fraude, StocksalesApp utiliza servicios de análisis de terceros. Estas herramientas pueden recopilar métricas de uso, especificaciones del dispositivo y datos de interacción.",
+      "section9.h2": "9.2 Transparencia en la grabación de sesiones",
+      "section9.p2": "Cuando la tecnología de repetición de sesiones o de grabación de interacciones del usuario está activa, los campos de entrada sensibles —incluidos los datos de tarjetas de crédito, las contraseñas de cuentas y las métricas financieras confidenciales— se enmascaran y ocultan estrictamente de la captura. Las grabaciones de sesiones se utilizan estrictamente para la optimización de la interfaz de usuario y la auditoría de seguridad, y nunca se venden ni se comparten con fines publicitarios comerciales.",
+
+      "section10.title": "10. Recursos web de terceros y entrega de fuentes",
+      "section10.h1": "10.1 Alojamiento de recursos externos",
+      "section10.p1": "Para mantener un rendimiento óptimo, la velocidad de la plataforma y el formato visual, StocksalesApp puede cargar recursos web de código abierto (como bibliotecas de tipografía o iconos) directamente desde redes de entrega de contenido (CDN) de terceros.",
+      "section10.h2": "10.2 Transmisión de la dirección IP",
+      "section10.p2": "Cuando su navegador solicita estos recursos externos, su dirección de Protocolo de Internet (IP) se transmite automáticamente al servidor del proveedor de recursos como parte de los protocolos estándar de comunicación web. Configuramos nuestras integraciones de CDN para minimizar el registro y conservar los datos de IP únicamente para el enrutamiento de seguridad y rendimiento.",
+
+      "section11.title": "11. Comunicaciones de marketing y cumplimiento de correo comercial (CAN-SPAM)",
+      "section11.h1": "11.1 Consentimiento de marketing y lista de espera",
+      "section11.p1": "Al suscribirse a nuestro boletín, lista de espera o notificaciones de actualización de productos, usted acepta recibir correos electrónicos comerciales periódicos de StocksalesApp.",
+      "section11.h2": "11.2 Mecanismo de cancelación de suscripción",
+      "section11.p2": "Cada correo electrónico comercial y promocional enviado por StocksalesApp incluye un enlace claro y automatizado de «Cancelar suscripción» en el pie de página. Puede optar por no recibir mensajes promocionales en cualquier momento.",
+      "section11.h3": "11.3 Contacto postal físico",
+      "section11.p3": "Además de nuestro servicio de asistencia electrónica (support@stocksalesapp.store), StocksalesApp mantiene registros de direcciones postales físicas para el cumplimiento normativo. Las comunicaciones físicas o notificaciones legales formales pueden enviarse a:",
+
+      "section12.title": "12. Suscripciones recurrentes y condiciones de renovación automática",
+      "section12.h1": "12.1 Aviso de renovación automática",
+      "section12.p1": "Todas las suscripciones de software de pago (planes mensuales o anuales) se renuevan automáticamente al final de cada ciclo de facturación utilizando el método de pago registrado con nuestro Comerciante de Registro, a menos que se cancelen antes de la fecha de renovación.",
+      "section12.h2": "12.2 Visualización de condiciones y consentimiento previo al pago",
+      "section12.p2": "El precio exacto de renovación, la frecuencia de facturación y las instrucciones de cancelación se muestran claramente junto al botón de pago.",
+      "section12.h3": "12.3 Procedimiento de cancelación",
+      "section12.p3": "Puede cancelar su suscripción en cualquier momento a través de la configuración de su cuenta o contactando al soporte en <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. La cancelación detiene los cargos automáticos futuros; las tarifas ya pagadas se rigen por nuestra Política de reembolso.",
+
+      "section13.title": "13. Puerto seguro de la DMCA y política de retirada de contenido",
+      "section13.h1": "13.1 Responsabilidad del contenido generado por el usuario",
+      "section13.p1": "Los usuarios son los únicos responsables de asegurarse de que todo el contenido subido a StocksalesApp —incluidas fotos de perfil, imágenes de productos y logotipos de tiendas— no infrinja los derechos de propiedad intelectual de terceros.",
+      "section13.h2": "13.2 Agente designado de la DMCA",
+      "section13.p2": "StocksalesApp respeta los derechos de propiedad intelectual y mantiene un agente de derechos de autor registrado. Si cree que su obra protegida por derechos de autor se ha subido o mostrado indebidamente en nuestra plataforma, envíe una notificación formal de DMCA por presunta infracción a nuestro agente designado:",
+      "section13.h3": "13.3 Requisitos de la notificación DMCA",
+      "section13.p3": "Para que sea efectiva, su notificación debe incluir: (a) firma física o electrónica del titular de los derechos de autor; (b) identificación de la obra protegida que se alega infringida; (c) URL o ubicación exacta del material infractor; (d) sus datos de contacto; y (e) una declaración de buena fe de que el uso no está autorizado.",
+
+      "footer.terms": "📜 Términos de servicio",
+      "footer.refund": "↩️ Política de reembolso",
+      "footer.pricing": "💲 Precios",
+      "footer.support": "🛟 Soporte",
+      "footer.revised": "📌 Última revisión: <time datetime=\"2026-10\">octubre de 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — plataforma de inventario y ventas. Esta Política de privacidad es parte de nuestro compromiso con la transparencia y la protección de datos. Podemos actualizarla periódicamente; la última versión siempre estará disponible aquí."
+    }
+  };
+
+  function changeLanguage(lang) {
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        el.innerHTML = translations[lang][key];
+      }
+    });
+    // Update the HTML lang attribute
+    document.documentElement.lang = lang;
+  }
+</script>
+
+</body>
+</html>

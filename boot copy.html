@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>StocksalesApp — Loading</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/image/logo.jpg">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #08111f;
+      color: #94a3b8;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .boot-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #1e293b;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="boot-spinner" aria-label="Loading"></div>
+
+<script>
+(function () {
+  'use strict';
+  console.log('🚀 Booting StocksalesApp...');
+
+  // ── safe helpers (localStorage can throw in private mode / quota) ──
+  function safeGet(k) {
+    try { return localStorage.getItem(k); } catch (e) { return null; }
+  }
+  function safeRemove(k) {
+    try { localStorage.removeItem(k); } catch (e) {}
+  }
+
+  // ── 1. Read the session token ──
+  var token = safeGet('sessionToken');
+
+  // ── 2. Check expiry (token payload is base64-encoded JSON) ──
+  var expired = false;
+  if (token) {
+    try {
+      var payload = JSON.parse(decodeURIComponent(atob(token)));
+      if (payload && payload.expiresAt) {
+        var exp = Date.parse(payload.expiresAt);
+        if (!isNaN(exp) && exp < Date.now()) {
+          expired = true;
+        }
+      }
+    } catch (e) {
+      // Not a base64-JSON token (e.g. Supabase JWT) — skip expiry check
+    }
+  }
+
+  // ── 3. Decide ──
+  var hasValidSession = !!token && token.length > 10 && !expired;
+
+  // ── 4. Preserve language preference on the outgoing URL ──
+  var lang = safeGet('language') || 'en';
+
+  if (hasValidSession) {
+    // Returning user — go straight to shop
+    location.replace('/shop/?lang=' + encodeURIComponent(lang) + '&from=boot');
+  } else {
+    // First launch or after logout — wipe any stale tokens and go to login
+    if (token) {
+      safeRemove('sessionToken');
+      safeRemove('rememberMeSessionToken');
+      safeRemove('rememberedUser');
+    }
+    location.replace('/login/?lang=' + encodeURIComponent(lang) + '&from=boot');
+  }
+})();
+</script>
+</body>
+</html>

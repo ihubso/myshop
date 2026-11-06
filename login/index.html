@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - StocksalesApp</title>
+   <script src="https://accounts.google.com/gsi/client"></script>
+       <script src="/envofgethoing.js"></script>
+      <script src="/meiou.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/language-direction.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-rpc-proxy.js"></script>
+<script src="bcrypt.min.js"></script>
+
+  <script src="../js/env.js"></script>
+  <script src="translations.js"></script>
+  <script src="../js/lan.js"></script>
+<style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .btn-google {
+      background: #ffffff;
+      color: #3c4043;
+      border: 1.5px solid #dadce0;
+      flex: 1;
+    }
+
+    .btn-google:hover {
+      background: #f8f9fa;
+      border-color: #d2d5d9;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-google i {
+      font-size: 1.2rem;
+    }
+
+    .auth-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ===== LEFT PANEL ===== */
+    .auth-panel {
+      width: 45%;
+      min-width: 400px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .auth-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -150px;
+      left: -80px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .panel-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 48px;
+    }
+
+    .panel-brand-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .panel-brand-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+
+    .panel-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-illustration {
+      width: 100%;
+      max-width: 280px;
+      height: 200px;
+      margin: 0 auto 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle {
+      width: 160px;
+      height: 160px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border: 1px dashed rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      animation: spin 30s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .illustration-circle i {
+      font-size: 3.5rem;
+      color: var(--primary);
+    }
+
+    .float-badge {
+      position: absolute;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: floatBadge 4s ease-in-out infinite;
+    }
+
+    .float-badge:nth-child(2) { top: 10px; right: 10px; animation-delay: 0s; }
+    .float-badge:nth-child(3) { bottom: 20px; left: 5px; animation-delay: 1s; }
+    .float-badge:nth-child(4) { bottom: 5px; right: 20px; animation-delay: 2s; }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .panel-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .panel-desc {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    .panel-tip {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-top: auto;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .panel-tip-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      background: rgba(59, 130, 246, 0.12);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 0.85rem;
+    }
+
+    .panel-tip-text h5 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-tip-text p {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .trust-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 2;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .trust-item i {
+      color: var(--success);
+      font-size: 0.85rem;
+    }
+
+    /* ===== RIGHT PANEL ===== */
+    .auth-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lang-switch:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+
+    .lang-switch i {
+      color: var(--primary);
+    }
+
+    .auth-content-wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .auth-view {
+      display: none;
+      animation: viewSlideIn 0.45s ease forwards;
+    }
+
+    .auth-view.active {
+      display: block;
+    }
+
+    @keyframes viewSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .auth-header {
+      margin-bottom: 32px;
+    }
+
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 50px;
+      padding: 7px 16px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-header h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .auth-header h1 span {
+      color: var(--primary);
+    }
+
+    .auth-header > p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-label a {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .form-label a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .input-control::placeholder {
+      color: var(--text-dim);
+      opacity: 0.6;
+    }
+
+    .input-control:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .input-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .input-icon-wrapper {
+      position: relative;
+    }
+
+    .input-icon-wrapper .input-control {
+      padding-left: 44px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .input-icon-wrapper .input-control:focus ~ .input-icon,
+    .input-icon-wrapper .input-control:not(:placeholder-shown) ~ .input-icon {
+      color: var(--primary);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-dim);
+      padding: 6px;
+      border-radius: 6px;
+      transition: var(--transition);
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: -6px;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-wrapper input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 14px 28px;
+    }
+
+    .btn-ghost {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1.5px solid var(--border);
+      flex: 1;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(30, 41, 59, 0.9);
+    }
+
+    .btn-ghost i {
+      font-size: 1.1rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .social-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text-dim);
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .auth-footer a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      margin-bottom: 24px;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    /* Success state */
+    .success-state {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .success-icon {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      color: var(--success);
+      animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes successPop {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .success-state h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .success-state p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    /* ===== MODAL ===== */
+    #authMessageModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    #authMessageModal > div {
+      background: var(--bg-dark);
+      padding: 36px;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.6rem;
+    }
+
+    .modal-icon.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+
+    .modal-icon.danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+
+    .modal-icon.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+
+    .modal-icon.info {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+    }
+
+    #authMessageModal h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    #authMessageModal p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* Error message styling */
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-message:not(.hidden) {
+      display: block;
+    }
+
+    .error-message a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .error-message button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .auth-panel {
+        width: 42%;
+        min-width: 340px;
+        padding: 36px 28px;
+      }
+
+      .auth-main {
+        padding: 32px;
+      }
+
+      .panel-title {
+        font-size: 1.5rem;
+      }
+
+      .illustration-circle {
+        width: 130px;
+        height: 130px;
+      }
+
+      .illustration-circle i {
+        font-size: 2.8rem;
+      }
+
+      .trust-row {
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+    }
+
+    /* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    /* allow normal vertical scroll only if needed */
+  }
+
+  .auth-container {
+    flex-direction: column;
+    min-height: 100dvh;      /* use dvh so mobile browser bars are accounted for */
+  }
+
+  /* Left panel hidden on mobile */
+  .auth-panel {
+    display: none;
+  }
+
+  /* Right panel becomes full screen, no forced 100vh */
+  .auth-main {
+    flex: 1;
+    width: 100%;
+    padding: 20px 18px 24px;
+    min-height: 0;            /* IMPORTANT: was 100vh / auto */
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .auth-content-wrapper {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .lang-switch {
+    position: static;         /* stop overlapping */
+    margin-left: auto;
+    margin-bottom: 8px;
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    display: flex;
+    width: fit-content;
+  }
+
+  .auth-header {
+    margin-bottom: 16px;
+  }
+
+  .auth-badge {
+    font-size: 0.68rem;
+    padding: 5px 11px;
+    margin-bottom: 10px;
+  }
+
+  .auth-header h1 {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+
+  .auth-header > p {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .auth-form {
+    gap: 10px;
+  }
+
+  .form-group {
+    gap: 5px;
+  }
+
+  .form-label {
+    font-size: 0.78rem;
+  }
+
+  .input-control {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .input-icon-wrapper .input-control {
+    padding-left: 36px;
+  }
+
+  .input-icon {
+    left: 12px;
+    font-size: 0.82rem;
+  }
+
+  .password-toggle {
+    right: 10px;
+    padding: 4px;
+  }
+
+  .remember-row {
+    margin-top: -2px;
+  }
+
+  .checkbox-wrapper label {
+    font-size: 0.78rem;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 0.82rem;
+  }
+
+  .btn-full {
+    padding: 11px 16px;
+  }
+
+  .divider {
+    margin: 12px 0;
+    font-size: 0.75rem;
+  }
+
+  .social-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .social-buttons .btn,
+  .btn-google,
+  .btn-ghost {
+    width: 100%;
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .auth-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    font-size: 0.8rem;
+  }
+
+  .back-link {
+    margin-bottom: 14px;
+    font-size: 0.8rem;
+  }
+
+  .success-state {
+    padding: 16px 0;
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+  }
+
+  .success-state h2 {
+    font-size: 1.1rem;
+  }
+
+  .success-state p {
+    font-size: 0.82rem;
+  }
+
+  #authMessageModal > div {
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .auth-main {
+    padding: 16px 14px 20px;
+  }
+
+  .auth-header h1 {
+    font-size: 1.15rem;
+  }
+
+  .auth-header > p {
+    font-size: 0.76rem;
+  }
+
+  .input-control {
+    font-size: 0.82rem;
+    padding: 9px 11px;
+  }
+
+  .input-icon-wrapper .input-control {
+    padding-left: 34px;
+  }
+
+  .btn {
+    font-size: 0.78rem;
+    padding: 10px 14px;
+  }
+
+  .btn-full {
+    padding: 10px 14px;
+  }
+
+  .remember-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+  </style>
+</head>
+<body>
+<div class="auth-container">
+    <!-- LEFT PANEL -->
+    <aside class="auth-panel">
+      <div class="panel-brand">
+        <div class="panel-brand-icon"><i class="fas fa-shopping-cart"></i></div>
+        <span class="panel-brand-text" data-translate="app_name">StocksalesApp </span>
+      </div>
+
+      <div class="panel-content">
+        <div class="panel-illustration">
+          <div class="illustration-circle">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <div class="float-badge"><i class="fas fa-lock"></i> <span data-translate="badge_secure">Secure</span></div>
+          <div class="float-badge"><i class="fas fa-bolt"></i> <span data-translate="badge_fast">Fast</span></div>
+          <div class="float-badge"><i class="fas fa-shield-alt"></i> <span data-translate="badge_encrypted">Encrypted</span></div>
+        </div>
+        <h2 class="panel-title" data-translate="panel_welcome">Welcome back to your dashboard</h2>
+        <p class="panel-desc" data-translate="panel_desc">Sign in to manage your inventory, track sales, and keep your business running smoothly from anywhere.</p>
+        <div class="panel-tip">
+          <div class="panel-tip-icon"><i class="fas fa-info-circle"></i></div>
+          <div class="panel-tip-text">
+            <h5 data-translate="panel_tip_title">Need help?</h5>
+            <span style="font-size: 0.75rem; color: var(--text-dim);">v 5.6.91</span>
+            <p data-translate="panel_tip_desc">Forgot your password? Use the link below the form to reset it instantly.</p>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT PANEL -->
+    <main class="auth-main">
+
+      <div class="auth-content-wrapper">
+        <!-- LOGIN VIEW -->
+        <div class="auth-view active" id="login-view">
+          <div class="auth-header">
+            <div class="auth-badge">
+              <i class="fas fa-sign-in-alt"></i> <span data-translate="login_badge">Sign In</span>
+            </div>
+            <h1><span data-translate="login_title">Sign in to</span> <span>StocksalesApp</span></h1>
+            <p data-translate="login_subtitle">Enter your credentials to access your inventory workspace.</p>
+          </div>
+
+          <!-- Login Error Display -->
+          <div id="loginError" class="error-message hidden"></div>
+
+          <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label class="form-label" for="loginUsername" data-translate="login_username_label">Username</label>
+              <div class="input-icon-wrapper">
+                <input type="text" id="loginUsername" class="input-control" placeholder="Enter your username" required autocomplete="username" data-translate-placeholder="login_username_placeholder">
+                <i class="fas fa-user input-icon"></i>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="loginRole" data-translate="login_role_label">Role</label>
+              <div class="input-icon-wrapper">
+                <select id="loginRole" class="input-control" required style="padding-left: 44px; appearance: auto;">
+                  <option value="administrator" data-translate="role_administrator">Administrator</option>
+                  <option value="manager" data-translate="role_manager">Manager</option>
+                  <option value="sales" data-translate="role_sales_associate">Sales Associate</option>
+                </select>
+                <i class="fas fa-user-tag input-icon"></i>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="loginPassword">
+                <span data-translate="login_password_label">Password</span>
+                <a href="#" onclick="showView('forgot-view'); return false;" data-translate="login_forgot_link">Forgot?</a>
+              </label>
+              <div class="input-icon-wrapper password-wrapper">
+                <input type="password" id="loginPassword" class="input-control" placeholder="Enter your password" required style="padding-right: 44px;" autocomplete="current-password" data-translate-placeholder="login_password_placeholder">
+                <i class="fas fa-lock input-icon"></i>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPassword', this)">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="remember-row">
+              <div class="checkbox-wrapper">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe" data-translate="remember_me_label">Remember me for 30 days</label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+              <span data-translate="login_btn">Sign In</span> <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <div class="divider"><span data-translate="or_continue_with">or continue with</span></div>
+
+            <div class="social-buttons">
+              <button type="button" class="btn btn-google" id="googleLoginBtn">
+                  <i class="fab fa-google" style="color: #ea4335;"></i> <span data-translate="google_btn">Google</span>
+              </button>
+
+            </div>
+          </form>
+
+          <div class="auth-footer">
+            <span data-translate="no_account_text">Don't have an account?</span> <a href="#" onclick="showView('signup-view'); return false;" data-translate="create_account_link">Create account</a>
+          </div>
+        </div>
+
+        <!-- SIGNUP VIEW -->
+        <div class="auth-view" id="signup-view">
+          <a href="#" class="back-link" onclick="showView('login-view'); return false;">
+            <i class="fas fa-arrow-left"></i> <span data-translate="back_to_login">Back to sign in</span>
+          </a>
+
+          <div class="auth-header">
+            <div class="auth-badge">
+              <i class="fas fa-user-plus"></i> <span data-translate="signup_badge">Get Started</span>
+            </div>
+            <h1><span data-translate="signup_title">Create your</span> <span>account</span></h1>
+            <p data-translate="signup_subtitle">Start managing your inventory with a 7-day free trial. No credit card required.</p>
+          </div>
+
+          <form class="auth-form" onsubmit="handleSignup(event)">
+            <div class="form-group">
+              <label class="form-label" for="signupEmail" data-translate="signup_email_label">Business Email</label>
+              <div class="input-icon-wrapper">
+                <input type="email" id="signupEmail" class="input-control" placeholder="you@company.com" required data-translate-placeholder="signup_email_placeholder">
+                <i class="fas fa-envelope input-icon"></i>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+              <span data-translate="signup_btn">Start Free Trial</span> <i class="fas fa-rocket"></i>
+            </button>
+
+            <div class="divider"><span data-translate="or_continue_with">or continue with</span></div>
+
+            <div class="social-buttons">
+            <!-- In signup view, replace the button -->
+            <button type="button" class="btn btn-google" id="googlesignupBtn">
+                <i class="fab fa-google" style="color: #ea4335;"></i> <span data-translate="google_btn">Google</span>
+            </button>
+            </div>
+          </form>
+
+          <div class="auth-footer">
+            <span data-translate="have_account_text">Already have an account?</span> <a href="#" onclick="showView('login-view'); return false;" data-translate="sign_in_link">Sign in</a>
+          </div>
+        </div>
+
+        <!-- FORGOT PASSWORD VIEW -->
+        <div class="auth-view" id="forgot-view">
+          <a href="#" class="back-link" onclick="showView('login-view'); return false;">
+            <i class="fas fa-arrow-left"></i> <span data-translate="back_to_login">Back to sign in</span>
+          </a>
+
+          <div class="auth-header">
+            <div class="auth-badge">
+              <i class="fas fa-key"></i> <span data-translate="forgot_badge">Reset Password</span>
+            </div>
+            <h1><span data-translate="forgot_title">Forgot your</span> <span>password?</span></h1>
+            <p data-translate="forgot_subtitle">Enter your email address and we'll send you a link to reset your password.</p>
+          </div>
+
+          <form class="auth-form" onsubmit="handleForgot(event)">
+            <div class="form-group">
+              <label class="form-label" for="forgotEmail" data-translate="forgot_email_label">Email Address</label>
+              <div class="input-icon-wrapper">
+                <input type="email" id="forgotEmail" class="input-control" placeholder="you@company.com" required data-translate-placeholder="forgot_email_placeholder">
+                <i class="fas fa-envelope input-icon"></i>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" id="forgotBtn">
+              <span data-translate="forgot_btn">Send Reset Link</span> <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- RESET SUCCESS VIEW -->
+        <div class="auth-view" id="reset-success-view">
+          <div class="success-state">
+            <div class="success-icon"><i class="fas fa-envelope-open-text"></i></div>
+            <h2 data-translate="reset_success_title">Check your email</h2>
+            <p data-translate="reset_success_desc">We sent a password reset link to:</p>
+            <p style="color: var(--primary); font-weight: 700;" id="resetEmail"></p>
+            <button class="btn btn-primary btn-full" style="margin-top: 24px;" onclick="showView('login-view')">
+              <span data-translate="back_to_login_btn">Back to sign in</span> <i class="fas fa-arrow-right"></i>
+            </button>
+            <div style="margin-top: 16px;">
+              <button class="btn btn-ghost" style="width: 100%;" onclick="resendResetLink()">
+                <i class="fas fa-redo"></i> <span data-translate="resend_link_btn">Didn't receive? Resend</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Message Modal -->
+  <div id="authMessageModal">
+    <div>
+      <div class="modal-icon warning" id="modalIcon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 id="modalTitle" data-translate="modal_notice">Notice</h3>
+      <p id="modalText"></p>
+      <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="closeModal()" data-translate="modal_understood">Understood</button>
+    </div>
+  </div>
+<script src="signin.js"></script>
+<script src="login.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,1133 @@
+
+
+const MYSUPABASE_URL = window.ENV?.MYSHOPSUPABASE_URL || 'https://zexxdoxuzvkovszfqcio.supabase.co';
+const MY_ANON_KEY = window.ENV?.MYSHOPSUPABASE_ANON_KEY || 'your-anon-key-here';
+
+let setupDB = null;
+let realtimeSubscription = null;
+let salesRefreshTimer = null;
+let businessInfo = null;
+let _realtimeRetryCount = 0;
+const MAX_RETRIES = 3;
+
+// ========================================
+// SUPABASE CLIENT INITIALIZATION
+// ========================================
+function getSB(customToken = null) {
+    // If client already exists, update session if a new token is provided
+    if (window._sb) {
+        if (customToken && window._sb.auth) {
+            window._sb.auth.setSession({ access_token: customToken, refresh_token: '' });
+        }
+        return window._sb;
+    }
+    
+    if (window.supabase && window.supabase.createClient) {
+        window._sb = window.supabase.createClient(
+            typeof MYSUPABASE_URL !== 'undefined' ? MYSUPABASE_URL : SUPABASE_URL, 
+            typeof MY_ANON_KEY !== 'undefined' ? MY_ANON_KEY : SUPABASE_ANON_KEY,
+            { auth: { persistSession: true } }
+        );
+        
+        // Apply custom token on first initialization if provided
+        if (customToken && window._sb.auth) {
+            window._sb.auth.setSession({ access_token: customToken, refresh_token: '' });
+        }
+        
+        console.log('✅ Supabase client created and locked globally');
+        return window._sb;
+    }
+    
+    console.warn('⏳ Supabase CDN not loaded yet.');
+    return null;
+}
+// ============================================
+// HELPER: CALL EDGE FUNCTION
+// ============================================
+async function callAuthFunction(action, payload) {
+    try {
+        const response = await fetch(AUTH_FUNCTION_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${MY_ANON_KEY}`
+            },
+            body: JSON.stringify({ action, ...payload })
+        });
+
+        const data = await response.json();
+        return { success: response.ok, data, status: response.status };
+    } catch (error) {
+        console.error('❌ Edge Function error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// ========================================
+// 🔒 SECURE: VERIFY USER ACCESS BEFORE CONNECTING
+// ========================================
+
+async function verifyRealtimeAccess() {
+    try {
+        // 🔥 1. Check if user is logged in
+        const userId = await getcurrentUserId();
+        if (!userId) {
+            console.warn('⚠️ No user logged in - realtime access denied');
+            return { authorized: false, reason: 'No user logged in' };
+        }
+
+        // 🔥 2. Check if user has a business
+        const businessId = currentUser?.business_id || businessInfo?.id || await getBusinessId() || null;
+        if (!businessId) {
+            console.warn('⚠️ No business ID found - realtime access denied');
+            return { authorized: false, reason: 'No business associated with user' };
+        }
+
+        // 🔥 3. Verify user is active (not expired license)
+        const licenseStatus = localStorage.getItem('licenseStatus') || 'active';
+        if (licenseStatus === 'expired' || licenseStatus === 'inactive') {
+            console.warn('⚠️ License expired - realtime access denied');
+            return { authorized: false, reason: 'License expired' };
+        }
+
+        console.log(`✅ Realtime access verified: User ${userId} | Business ${businessId}`);
+        return { 
+            authorized: true, 
+            userId, 
+            businessId,
+            userRole: currentUser?.role || 'sales'
+        };
+
+    } catch (error) {
+        console.error('❌ Realtime access verification failed:', error);
+        return { authorized: false, reason: error.message };
+    }
+}
+// ========================================
+// 🔒 SECURE: CONNECT WEBSOCKET WITH BUSINESS ISOLATION
+// ========================================
+// ========================================
+// 🔒 SECURE: CONNECT WEBSOCKET WITH BUSINESS ISOLATION
+// ========================================
+async function connectWebSocket() {
+    console.log('🔌 Setting up Supabase Realtime...');
+    
+    // 🔥 CRITICAL: Read the custom JWT from localStorage
+    const customToken = localStorage.getItem('sessionToken');
+    const client = getSB(customToken);
+    
+    if (!client) {
+        console.warn('⚠️ Supabase not available for realtime');
+        return;
+    }
+
+    // 🔥 STEP 1: Verify access before connecting
+    const access = await verifyRealtimeAccess();
+    if (!access.authorized) {
+        console.warn(`⚠️ Realtime connection blocked: ${access.reason}`);
+        return;
+    }
+
+    const { userId, businessId, userRole } = access;
+    console.log(`🔍 Realtime filtering by business_id: ${businessId}`);
+
+    const channelName = `public-changes-${businessId}`;
+    
+    // Disconnect any existing subscription first to prevent duplicates
+    if (realtimeSubscription) {
+        await realtimeSubscription.unsubscribe();
+        realtimeSubscription = null;
+    }
+
+    // 🔥 STEP 3: Subscribe with business filter
+    realtimeSubscription = client
+        .channel(channelName)
+        
+        // ============================================
+        // 🔒 SECURE: SALES INSERT (Business + Role filtering)
+        // ============================================
+        .on('postgres_changes', 
+            { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'sales',
+                filter: `business_id=eq.${businessId}`
+            },
+            (payload) => {
+                const sale = payload.new;
+                
+                // 🔥 Double-check business match (defense in depth)
+                if (sale.business_id !== businessId) {
+                    console.warn('⚠️ Skipping sale - business mismatch');
+                    return;
+                }
+
+                // 🔥 Only show sale to users with proper role
+                const currentUsername = currentUser?.username || localStorage.getItem('currentUsername');
+                if (userRole === 'sales_associate' && sale.username !== currentUsername) {
+                    console.log('ℹ️ Sales associate only sees their own sales');
+                    return;
+                }
+
+                console.log(`🆕 New sale detected: ${sale.product_name || 'item'} by ${sale.username || 'someone'}`);
+                
+                // Refresh sales data
+                if (typeof loadSalesForYear === 'function') {
+                    loadSalesForYear(new Date().getFullYear()).then(() => {
+                        if (typeof renderSales === 'function') renderSales();
+                    });
+                }
+
+                // Show notification
+                const saleUser = (typeof users !== 'undefined' ? users.find(u => u.username === sale.username) : null) || currentUser;
+                if (typeof enqueueNotification === 'function') {
+                    enqueueNotification(
+                        (data, done) => showSaleNotificationBar(data.sale, data.user, done),
+                        { sale: sale, user: saleUser }
+                    );
+                }
+
+                // 🔥 Trigger secure push notification via Edge Function
+                if (typeof sendSalePushNotification === 'function') {
+                    sendSalePushNotification(sale);
+                }
+            }
+        )
+        
+        // ============================================
+        // 🔒 SECURE: TASKS INSERT (Business isolation)
+        // ============================================
+        .on('postgres_changes',
+            { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'tasks',
+                filter: `business_id=eq.${businessId}`
+            },
+            (payload) => {
+                const task = payload.new;
+                if (task.business_id !== businessId) return;
+
+                console.log(`🆕 New task: ${task.title || 'Task'}`);
+                if (typeof showTaskNotificationBar === 'function') showTaskNotificationBar(task);
+                if (typeof loadTasks === 'function') loadTasks();
+            }
+        )
+        
+        // ============================================
+        // 🔒 SECURE: STOCK UPDATE (Low stock alerts)
+        // ============================================
+        .on('postgres_changes',
+            { 
+                event: 'UPDATE', 
+                schema: 'public', 
+                table: 'stock',
+                filter: `business_id=eq.${businessId}`
+            },
+            (payload) => {
+                const item = payload.new;
+                if (item.business_id !== businessId) return;
+
+                // 🔥 Only show low stock if below threshold
+                if (item.quantity !== undefined && item.quantity < 3) {
+                    console.log(`⚠️ Low stock alert: ${item.name} (${item.quantity} left)`);
+                    
+                    if (typeof enqueueNotification === 'function') {
+                        enqueueNotification(
+                            showLowStockNotificationBar,
+                            { itemName: item.name, quantity: item.quantity }
+                        );
+                    }
+
+                    // 🔥 Trigger push for low stock
+                    if (typeof triggerPushNotification === 'function') {
+                        triggerPushNotification(
+                            `⚠️ Low Stock Alert`,
+                            `${item.name} has only ${item.quantity} units remaining!`,
+                            'low_stock',
+                            { itemName: item.name, quantity: item.quantity }
+                        );
+                    }
+                }
+            }
+        )
+        
+        // ============================================
+        // 🔒 SECURE: CREDIT SALES INSERT
+        // ============================================
+        .on('postgres_changes',
+            { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'credit_sales',
+                filter: `business_id=eq.${businessId}`
+            },
+            (payload) => {
+                const creditSale = payload.new;
+                if (creditSale.business_id !== businessId) return;
+
+                console.log(`🆕 New credit sale: ${creditSale.customer_name || 'Customer'} | ${creditSale.total_amount || 0}`);
+                if (typeof loadCreditSales === 'function') loadCreditSales();
+            }
+        )
+        
+        // ============================================
+        // 🔒 SECURE: CUSTOMER RECEIPTS INSERT
+        // ============================================
+        .on('postgres_changes',
+            { 
+                event: 'INSERT', 
+                schema: 'public', 
+                table: 'customer_receipts',
+                filter: `business_id=eq.${businessId}`
+            },
+            (payload) => {
+                const receipt = payload.new;
+                if (receipt.business_id !== businessId) return;
+                
+                console.log(`🆕 New receipt: ${receipt.receipt_id || 'Receipt'}`);
+            }
+        )
+        
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log(`✅ Realtime connected: Business ${businessId} | User ${userId} (${userRole})`);
+                _realtimeRetryCount = 0;
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                console.warn(`⚠️ Realtime ${status}, attempting reconnect...`);
+                handleRealtimeDisconnect();
+            } else {
+                console.log('🔄 Realtime status:', status);
+            }
+        });
+}
+// ========================================
+// 🔒 SECURE: HANDLE DISCONNECT WITH RETRY
+// ========================================
+
+function handleRealtimeDisconnect() {
+    if (_realtimeRetryCount < MAX_RETRIES) {
+        _realtimeRetryCount++;
+        const delay = Math.min(1000 * Math.pow(2, _realtimeRetryCount), 30000);
+        console.log(`🔄 Reconnecting in ${delay}ms (attempt ${_realtimeRetryCount}/${MAX_RETRIES})`);
+        
+        setTimeout(() => {
+            if (typeof connectWebSocket === 'function') {
+                connectWebSocket();
+            }
+        }, delay);
+    } else {
+        console.error('❌ Realtime connection failed after max retries');
+        if (typeof showMessageModal === 'function') {
+        }
+    }
+}
+
+// ========================================
+// 🔒 SECURE: DISCONNECT REALTIME
+// ========================================
+
+function disconnectRealtime() {
+    if (realtimeSubscription) {
+        realtimeSubscription.unsubscribe();
+        realtimeSubscription = null;
+        console.log('🔌 Realtime disconnected');
+    }
+    _realtimeRetryCount = 0;
+}
+
+// ========================================
+// 🔒 SECURE: SALES REFRESH SCHEDULER
+// ========================================
+
+function scheduleSalesYearRefresh(delay = 1500) {
+    if (salesRefreshTimer) {
+        clearTimeout(salesRefreshTimer);
+    }
+    salesRefreshTimer = setTimeout(async () => {
+        salesRefreshTimer = null;
+        
+        // 🔥 Only refresh if user is still authenticated
+        const userId = await getcurrentUserId();
+        if (!userId) {
+            console.warn('⚠️ Skipping sales refresh - no user logged in');
+            return;
+        }
+        
+        if (typeof loadSalesForYear === 'function') {
+            try {
+                await loadSalesForYear(new Date().getFullYear());
+                if (typeof renderSales === 'function') renderSales();
+            } catch (refreshError) {
+                console.error('Failed to refresh sales after realtime event:', refreshError);
+            }
+        }
+    }, delay);
+}
+
+// ========================================
+// 🔒 SECURE: PUSH NOTIFICATIONS (Requires auth)
+// ========================================
+
+function canUseNativePush() {
+    const hasPush = 'PushManager' in window;
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+    const isSupported = 'serviceWorker' in navigator && hasPush && isSecure;
+    
+    console.warn('Native Push Support:', {
+        serviceWorker: 'serviceWorker' in navigator,
+        pushManager: hasPush,
+        https: isSecure,
+        supported: isSupported
+    });
+    
+    return isSupported;
+}
+
+async function requestPushPermission() {
+    // 🔥 Only allow if user is logged in
+    const userId = await getcurrentUserId();
+    if (!userId) {
+        console.warn('⚠️ Cannot request push - user not logged in');
+        return false;
+    }
+
+    if (!canUseNativePush()) {
+        console.warn('⚠️ Native push not supported');
+        return false;
+    }
+    
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            console.log('✅ Push notification permission granted');
+            await subscribeToPush();
+            return true;
+        } else {
+            console.log('❌ Push permission denied');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error requesting push permission:', error);
+        return false;
+    }
+}
+
+// ✅ Global Helper: Safely converts VAPID base64 to Uint8Array
+function urlBase64ToUint8Array(base64String) {
+    if (!base64String) {
+        console.error('❌ urlBase64ToUint8Array: VAPID key is undefined or null!');
+        return null;
+    }
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// ✅ Global Helper: Converts ArrayBuffer to Base64
+function arrayBufferToBase64(buffer) {
+    if (!buffer) return '';
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+// ========================================
+// 🔒 SECURE: SUBSCRIBE TO PUSH (Uses NEW Key)
+// ========================================
+async function subscribeToPush() {
+     console.warn('⚠️ starting the subscribeToPush process...');
+    // 🔥 1. Robust User ID Capture
+    let userId = null;
+    if (typeof getcurrentUserId === 'function') {
+        userId = await getcurrentUserId();
+    }
+    userId = userId || localStorage.getItem('userId') || localStorage.getItem('currentUserId');
+    
+    let businessId = null;
+    if (typeof getBusinessId === 'function') {
+        businessId = await getBusinessId();
+    }
+    businessId = businessId || localStorage.getItem('businessId');
+
+    if (!userId || !businessId) {
+        console.warn('⚠️ Cannot subscribe to push - missing user or business ID', { userId, businessId });
+        return null;
+    }
+  
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        let subscription = await registration.pushManager.getSubscription();
+        
+        // 🔥 2. If no subscription, create one with the NEW VAPID KEY
+        if (!subscription) {
+            console.log('📝 No subscription found, creating one with NEW key...');
+            
+            // ✅ THIS IS THE NEW KEY YOU GENERATED
+            const YOUR_VAPID_PUBLIC_KEY = window.ENV?.VAPIDPUBLICKEY;
+            
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(YOUR_VAPID_PUBLIC_KEY)
+            });
+            console.log('✅ Browser push subscription created!');
+              console.warn('✅ Browser push subscription created!');
+        } else {
+            console.log('✅ Browser push subscription already exists!');
+            console.warn('✅ Browser push subscription already exists!');
+        }
+
+        // 🔥 3. Save it securely
+        await savePushSubscription(subscription, userId, businessId);
+        return subscription;
+
+    } catch (error) {
+        console.error('❌ Failed to subscribe to push:', error);
+        return null;
+    }
+}
+async function initMobilePush() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // ℹ️ Log if not mobile, but DON'T return. Let desktop users get push too!
+    if (!isMobile) {
+        console.log('ℹ️ Desktop detected. Relying on createPushSubscription()...');
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.warn('⚠️ Push notifications not supported in this browser.');
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        let subscription = await registration.pushManager.getSubscription();
+
+        if (!subscription) {
+            // ✅ FIX: Request permission if it hasn't been granted yet
+            if (Notification.permission === 'default') {
+                console.log('🔔 Requesting notification permission...');
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    console.warn('⚠️ User denied notification permission.');
+                    return;
+                }
+            } else if (Notification.permission === 'denied') {
+                console.warn('⚠️ Notifications are blocked by the user.');
+                return;
+            }
+
+            console.log('📱 Creating push subscription...');
+            const VAPID_PUBLIC_KEY = window.ENV?.VAPIDPUBLICKEY;
+            
+            // ✅ FIX: Guard against missing VAPID key
+            if (!VAPID_PUBLIC_KEY) {
+                console.error('❌ CRITICAL: window.ENV.VAPID_PUBLIC_KEY is missing! Check your Vercel Environment Variables.');
+                return;
+            }
+
+            const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+            if (!applicationServerKey) return;
+
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+            });
+            console.log('✅ Push subscription created successfully!');
+            
+            // Save to backend (Trigger the same logic used in createPushSubscription)
+            await createPushSubscription(); 
+        } else {
+            console.log('✅ Push subscription already exists.');
+        }
+    } catch (err) {
+        console.error('❌ Mobile push setup failed:', err);
+    }
+}
+// ========================================
+// 🔒 FIXED: CREATE OR UPDATE PUSH SUBSCRIPTION
+// ========================================
+async function createPushSubscription() {
+    console.log('🔧 Checking/Creating push subscription...');
+    
+    // 1. Verify user is logged in and has a business
+    const userId = await getcurrentUserId();
+    const businessId = await getBusinessId();
+    
+    console.log('🔍 User ID:', userId, 'Business ID:', businessId);
+    
+    if (!userId || !businessId) {
+        console.warn('⚠️ Cannot create push subscription - missing user or business ID.', { userId, businessId });
+        return null;
+    }
+    
+    // 2. Check browser support
+    if (!('serviceWorker' in navigator)) {
+        console.warn('⚠️ Service Worker not supported');
+        return null;
+    }
+    
+    if (!('PushManager' in window)) {
+        console.warn('⚠️ Push notifications not supported');
+        return null;
+    }
+
+    try {
+        // 3. Wait for service worker to be ready
+        const registration = await navigator.serviceWorker.ready;
+        console.log('✅ Service Worker ready');
+        
+        // 4. Check existing subscription
+        let subscription = await registration.pushManager.getSubscription();
+        
+        if (!subscription) {
+            console.log('📝 No subscription found, creating one...');
+            
+            // 5. Get VAPID key
+            const VAPID_PUBLIC_KEY = window.ENV?.VAPIDPUBLICKEY;
+            
+            if (!VAPID_PUBLIC_KEY) {
+                console.error('❌ CRITICAL: VAPID_PUBLIC_KEY is missing!');
+                console.log('📌 Set window.ENV.VAPID_PUBLIC_KEY in your HTML');
+                return null;
+            }
+            
+            console.log('🔑 Using VAPID key:', VAPID_PUBLIC_KEY.substring(0, 20) + '...');
+            
+            // 6. Convert VAPID key
+            const applicationServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+            if (!applicationServerKey) {
+                console.error('❌ Failed to convert VAPID key');
+                return null;
+            }
+            
+            // 7. Create subscription
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+            });
+            console.log('✅ Browser subscription created!');
+        } else {
+            console.log('✅ Browser subscription already exists!');
+        }
+        
+        // 8. Save to Supabase
+        const saved = await savePushSubscriptionSecure(subscription, userId, businessId);
+        if (saved) {
+            console.log('✅ Subscription saved to Supabase');
+        } else {
+            console.warn('⚠️ Subscription not saved to Supabase, but browser subscription exists');
+        }
+        
+        return subscription;
+        
+    } catch (error) {
+        console.error('❌ Failed to create push subscription:', error);
+        
+        // Handle specific errors
+        if (error.message.includes('ApplicationServerKey')) {
+            console.error('🔑 VAPID key is invalid or expired. Please regenerate your VAPID key.');
+        } else if (error.message.includes('permission')) {
+            console.error('🔔 Notification permission was denied. Ask user to enable in browser settings.');
+        }
+        
+        return null;
+    }
+}
+// ========================================
+// 🔒 FIXED: SAVE PUSH SUBSCRIPTION WITH RETRY
+// ========================================
+async function savePushSubscriptionSecure(subscription, userId, businessId) {
+    // ─────────────────────────────────────────────
+    // 1. Validate inputs before touching the DB
+    // ─────────────────────────────────────────────
+    if (!subscription || !subscription.endpoint) {
+        console.error('❌ savePushSubscriptionSecure: no subscription/endpoint');
+        return { success: false, reason: 'no_subscription' };
+    }
+    if (!userId || !businessId) {
+        console.warn('⚠️ savePushSubscriptionSecure: missing userId or businessId', {
+            userId, businessId
+        });
+        return { success: false, reason: 'missing_ids' };
+    }
+
+    // ─────────────────────────────────────────────
+    // 2. Extract keys safely
+    // ─────────────────────────────────────────────
+    const p256dhBuf = subscription.getKey?.('p256dh');
+    const authBuf   = subscription.getKey?.('auth');
+
+    const p256dh = p256dhBuf ? arrayBufferToBase64(p256dhBuf) : '';
+    const auth   = authBuf   ? arrayBufferToBase64(authBuf)   : '';
+    const key =window.ENV?.VAPIDPUBLICKEY;
+
+    if (!p256dh || !auth) {
+        console.error('❌ savePushSubscriptionSecure: subscription is missing p256dh or auth keys');
+        // still save locally as a fallback so we don't lose the endpoint
+        saveSubscriptionLocally(subscription);
+        return { success: false, reason: 'missing_keys' };
+    }
+
+    // ─────────────────────────────────────────────
+    // 3. Get Supabase client
+    // ─────────────────────────────────────────────
+    const client = typeof getSB === 'function' ? getSB() : null;
+    if (!client) {
+        console.warn('⚠️ No Supabase client — saving locally only');
+        saveSubscriptionLocally(subscription);
+        return { success: false, reason: 'no_client' };
+    }
+
+    // ─────────────────────────────────────────────
+    // 4. Call the secure RPC (does INSERT **or** UPDATE)
+    // ─────────────────────────────────────────────
+    let data = null;
+    let error = null;
+
+    try {
+        const res = await client.rpc('create_push_subscription_secure', {
+            p_endpoint:    subscription.endpoint,
+            p_p256dh:      p256dh,
+            p_auth:        auth,
+            p_user_agent:  navigator.userAgent.slice(0, 500), // guard against giant UA strings
+            p_user_id:     String(userId),                    // column is text
+            p_business_id: businessId,
+            p_vapid_key:   key,
+           
+        });
+        data  = res.data;
+        error = res.error;
+    } catch (thrown) {
+        console.error('❌ RPC threw (network / client error):', thrown);
+        saveSubscriptionLocally(subscription);
+        return { success: false, reason: 'rpc_threw', error: thrown };
+    }
+
+    // ─────────────────────────────────────────────
+    // 5. Handle RPC error
+    // ─────────────────────────────────────────────
+    if (error) {
+        console.error('❌ create_push_subscription_secure failed:', {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint
+        });
+
+        // Save the browser subscription locally so nothing is lost.
+        saveSubscriptionLocally(subscription);
+
+        // Map common Postgres error codes to readable reasons
+        const reason =
+            error.code === '23505' ? 'duplicate_endpoint' :
+            error.code === '23503' ? 'foreign_key_violation' :
+            error.code === '42501' ? 'permission_denied' :
+            error.code === 'PGRST202' ? 'rpc_not_found' :
+            'rpc_error';
+
+        return { success: false, reason, error };
+    }
+
+    // ─────────────────────────────────────────────
+    // 6. Success — verify the row we got back
+    // ─────────────────────────────────────────────
+    if (!data || !data.id) {
+        console.warn('⚠️ RPC returned no row — treating as soft failure');
+        saveSubscriptionLocally(subscription);
+        return { success: false, reason: 'no_row_returned', data };
+    }
+
+    // Optional: cross-check that the row belongs to this business
+    if (data.business_id && data.business_id !== businessId) {
+        console.error('❌ Returned row has a different business_id!', {
+            expected: businessId,
+            got: data.business_id
+        });
+        return { success: false, reason: 'business_mismatch', data };
+    }
+
+    console.log('✅ Push subscription saved via RPC:', {
+        id: data.id,
+        endpoint: data.endpoint?.slice(0, 40) + '…',
+        business_id: data.business_id,
+        user_id: data.user_id,
+        updated_at: data.updated_at
+    });
+
+    // Mirror to localStorage as a cache (helps offline / debugging)
+    saveSubscriptionLocally(subscription);
+
+    return {
+        success: true,
+        id: data.id,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        row: data
+    };
+}
+
+// Local backup save
+function saveSubscriptionLocally(subscription) {
+    try {
+        const p256dh = subscription.getKey('p256dh');
+        const auth = subscription.getKey('auth');
+        
+        localStorage.setItem('pushSubscription', JSON.stringify({
+            endpoint: subscription.endpoint,
+            keys: {
+                p256dh: p256dh ? arrayBufferToBase64(p256dh) : '',
+                auth: auth ? arrayBufferToBase64(auth) : ''
+            },
+            savedAt: new Date().toISOString()
+        }));
+        console.log('💾 Subscription saved locally as fallback');
+    } catch (error) {
+        console.warn('Could not save subscription locally:', error);
+    }
+}
+// ========================================
+// 🔒 FIXED: INITIALIZE PUSH AFTER LOGIN
+// ========================================
+async function initializePushAfterLogin() {
+    console.log('🔔 Initializing push notifications after login...');
+    
+    // 1. Check if user is logged in
+    const userId = await getcurrentUserId();
+    const businessId = await getBusinessId();
+    
+    if (!userId || !businessId) {
+        console.log('⚠️ User or business not found, skipping push setup');
+        console.log('📌 userId:', userId, 'businessId:', businessId);
+        return false;
+    }
+    
+    console.log(`✅ User logged in - business: ${businessId}, user: ${userId}`);
+    
+    // 2. Check browser support
+    if (!('serviceWorker' in navigator)) {
+        console.log('❌ Service Worker not supported');
+        return false;
+    }
+    
+    if (!('PushManager' in window)) {
+        console.log('❌ Push not supported in this browser');
+        return false;
+    }
+    
+    // 3. Check notification permission
+    if (Notification.permission === 'denied') {
+        console.log('❌ Notification permission denied. User must enable in browser settings.');
+        // Show user how to enable
+        if (typeof showMessageModal === 'function') {
+            showMessageModal(
+                '🔔 Push notifications are blocked. Please enable them in your browser settings for real-time updates.',
+                'warning',
+                5000
+            );
+        }
+        return false;
+    }
+    
+    // 4. Request permission if not granted
+    if (Notification.permission === 'default') {
+        console.log('🔔 Requesting notification permission...');
+        const permission = await Notification.requestPermission();
+        console.log('📌 Permission result:', permission);
+        
+        if (permission !== 'granted') {
+            console.log('❌ Permission not granted');
+            return false;
+        }
+    }
+    
+    // 5. Permission is granted, create subscription
+    console.log('✅ Permission granted, creating subscription...');
+    
+    try {
+        const subscription = await createPushSubscription();
+        
+        if (subscription) {
+            console.log('✅ Push subscription ready!');
+
+            return true;
+        } else {
+            console.warn('⚠️ Subscription creation returned null');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Failed to initialize push:', error);
+        return false;
+    }
+}
+
+// ========================================
+// 🔒 SECURE: SEND NATIVE PUSH NOTIFICATION
+// ========================================
+
+async function sendNativePushNotification(title, body, data = {}, options = {}) {
+    // 🔥 Only send if user is logged in
+    const userId = await getcurrentUserId();
+    if (!userId) {
+        console.warn('⚠️ Cannot send push - user not logged in');
+        return false;
+    }
+
+    if ('serviceWorker' in navigator && Notification.permission === 'granted') {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification(title, {
+                body: body,
+                icon: options.icon || '/image/logo.jpg',
+                badge: options.badge || '//image/200.png',
+                vibrate: options.vibrate || [200, 100, 200],
+                tag: options.tag || `stockapp-${Date.now()}`,
+                data: { url: data.url || window.location.href, type: data.type || 'notification', ...data },
+                actions: options.actions || [
+                    { action: 'view', title: 'View Details' },
+                    { action: 'dismiss', title: 'Dismiss' }
+                ],
+                silent: options.silent || false,
+                requireInteraction: options.requireInteraction || false,
+                timestamp: Date.now()
+            });
+            console.log(`📱 Native push sent: "${title}"`);
+            return true;
+        } catch (error) {
+            console.error('Failed to send native push:', error);
+            return false;
+        }
+    }
+    
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, { body, icon: '/image/logo.jpg' });
+        return true;
+    }
+    
+    return false;
+}
+
+// ========================================
+// 🔒 SECURE: TRIGGER PUSH NOTIFICATION VIA EDGE FUNCTION
+// ========================================
+
+const NOTFY = `${MYSUPABASE_URL}/functions/v1/NOTIFYME`;
+
+async function sendBusinessNotification({ type, title, body, businessId, data = {}, customUrl = null }) {
+    try {
+        const userId = await getcurrentUserId();
+        const resolvedBusinessId =  await getBusinessId() || null;
+
+        if (!userId || !resolvedBusinessId) {
+            console.log('⚠️ No user/business, skipping NOTIFYME push');
+            return null;
+        }
+
+        const resolvedUrl = customUrl || data.customUrl || data.url || `${window.location.origin}/shop/`;
+        const payload = {
+            type,
+            business_id: resolvedBusinessId,
+            title,
+            body,
+            customUrl: resolvedUrl,
+            data: { ...data, url: resolvedUrl, customUrl: resolvedUrl }
+        };
+
+        const response = await fetch(NOTFY, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':  `Bearer ${MY_ANON_KEY}` 
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        console.log('📱 NOTIFYME push result:', result);
+        return result;
+    } catch (error) {
+        console.log('Push notification failed (non-critical):', error.message);
+        return null;
+    }
+}
+
+async function sendSalePushNotification(saleData) {
+    try {
+        const businessId = await getBusinessId() || null;
+        if (!businessId) {
+            console.log('⚠️ No business ID, skipping sale push');
+            return null;
+        }
+
+        const username = currentUser?.username || saleData.username || 'Someone';
+        const productName = saleData.product_name || saleData.productName || 'a product';
+        const amount = saleData.price || saleData.total_amount || 0;
+        const receiptId = saleData.receipt_id || saleData.receiptId || 'UNKNOWN';
+        const receiptUrl = receiptId !== 'UNKNOWN' ? `${window.location.origin}/shop/?open_receipt=${encodeURIComponent(receiptId)}` : `${window.location.origin}/shop/`;
+
+        return await sendBusinessNotification({
+            type: 'sale',
+            title: '💰 New Sale!',
+            body: `${username} sold ${productName} for ${Number(amount).toLocaleString()} CFA`,
+            businessId,
+            customUrl: receiptUrl,
+            data: {
+                saleId: saleData.id,
+                receiptId,
+                username,
+                productName,
+                amount
+            }
+        });
+    } catch (error) {
+        console.log('Push notification failed (non-critical):', error.message);
+        return null;
+    }
+}
+
+async function sendTaskReassignedNotification({ taskId, taskTitle, fromUser, toUser, businessId, customUrl = null }) {
+    return await sendBusinessNotification({
+        type: 'task_reassigned',
+        title: '📋 Task Reassigned',
+        body: `${taskTitle || 'Task'} was reassigned from ${fromUser || 'a user'} to ${toUser || 'the team'}`,
+        businessId: businessId || await getBusinessId() || null,
+        customUrl: customUrl || `${window.location.origin}/shop/`,
+        data: { taskId, taskTitle, fromUser, toUser, customUrl: customUrl || `${window.location.origin}/shop/` }
+    });
+}
+
+async function sendDueDateReminderNotification({ reminderId, reminderTitle, dueDate, businessId, customUrl = null }) {
+    return await sendBusinessNotification({
+        type: 'due_date_reminder',
+        title: '⏰ Due Date Reminder',
+        body: `${reminderTitle || 'Reminder'} is due ${dueDate || 'soon'}`,
+        businessId: businessId || await getBusinessId() || null,
+        customUrl: customUrl || `${window.location.origin}/shop/`,
+        data: { reminderId, reminderTitle, dueDate, customUrl: customUrl || `${window.location.origin}/shop/` }
+    });
+}
+
+async function sendManagerDemotionNotification({ username, demotedBy, businessId, customUrl = null }) {
+    return await sendBusinessNotification({
+        type: 'manager_demotion',
+        title: '📉 Manager Demoted',
+        body: `${username || 'A manager'} was demoted to sales associate${demotedBy ? ` by ${demotedBy}` : ''}`,
+        businessId: businessId || await getBusinessId() || null,
+        customUrl: customUrl || `${window.location.origin}/shop/`,
+        data: { username, demotedBy, customUrl: customUrl || `${window.location.origin}/shop/` }
+    });
+}
+
+async function sendPaymentReminderNotification({ customerName, amount, dueDate, businessId, customUrl = null }) {
+    return await sendBusinessNotification({
+        type: 'payment_reminder',
+        title: '💳 Payment Reminder',
+        body: `${customerName || 'Customer'} has a payment due of ${Number(amount || 0).toLocaleString()} CFA${dueDate ? ` on ${dueDate}` : ''}`,
+        businessId: businessId || await getBusinessId() || null,
+        customUrl: customUrl || `${window.location.origin}/shop/`,
+        data: { customerName, amount, dueDate, customUrl: customUrl || `${window.location.origin}/shop/` }
+    });
+}
+
+async function sendCreditSaleAlertNotification({ customerName, totalAmount, dueDate, creditSaleId, businessId, customUrl = null }) {
+    return await sendBusinessNotification({
+        type: 'credit_sale_alert',
+        title: '📒 Credit Sale Alert',
+        body: `${customerName || 'Customer'} has an outstanding credit sale of ${Number(totalAmount || 0).toLocaleString()} CFA${dueDate ? ` due ${dueDate}` : ''}`,
+        businessId: businessId || await getBusinessId() || null,
+        customUrl: customUrl || `${window.location.origin}/shop/`,
+        data: { creditSaleId, customerName, totalAmount, dueDate, customUrl: customUrl || `${window.location.origin}/shop/` }
+    });
+}
+
+// ========================================
+// 🔒 SECURE: REGISTER BACKGROUND SYNC
+// ========================================
+
+async function registerBackgroundSync() {
+    // 🔥 Only allow if user is logged in
+    const userId = await getcurrentUserId();
+    if (!userId) {
+        console.warn('⚠️ Cannot register background sync - user not logged in');
+        return;
+    }
+
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.sync.register('sync-notifications');
+            console.log('✅ Background sync registered for notifications');
+        } catch (error) {
+            console.log('Background sync not available:', error);
+        }
+    }
+}
+
+// ========================================
+// 🔒 SECURE: TEST NOTIFICATION
+// ========================================
+
+async function testNativeNotification() {
+    // 🔥 Only allow if user is logged in
+    const userId = await getcurrentUserId();
+    if (!userId) {
+        alert('Please login first to test notifications.');
+        return;
+    }
+
+    console.log('🧪 Testing native push notification...');
+    
+    if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            alert('Please enable notifications to test');
+            return;
+        }
+    }
+    
+    if (!('serviceWorker' in navigator)) {
+        alert('Service Worker not supported');
+        return;
+    }
+    
+    const registration = await navigator.serviceWorker.ready;
+    await registration.showNotification('🧪 Test Notification', {
+        body: 'If you see this, native notifications work!',
+        icon: '/image/logo.jpg',
+        badge: '//image/200.png',
+        vibrate: [200, 100, 200],
+        tag: 'test-notification',
+        requireInteraction: true,
+        data: { url: window.location.href, type: 'test' }
+    });
+    
+    console.log('✅ Test notification sent!');
+    alert('Test notification sent! Check your notification shade.');
+}
+
+// ========================================
+// EXPORT FUNCTIONS
+// ========================================
+
+window.getSB = getSB;
+window.connectWebSocket = connectWebSocket;
+window.disconnectRealtime = disconnectRealtime;
+window.scheduleSalesYearRefresh = scheduleSalesYearRefresh;
+window.requestPushPermission = requestPushPermission;
+window.subscribeToPush = subscribeToPush;
+window.initializePushAfterLogin = initializePushAfterLogin;
+window.sendNativePushNotification = sendNativePushNotification;
+window.sendSalePushNotification = sendSalePushNotification;
+window.testNativeNotification = testNativeNotification;
+window.registerBackgroundSync = registerBackgroundSync;
+window.canUseNativePush = canUseNativePush;
+window.verifyRealtimeAccess = verifyRealtimeAccess;

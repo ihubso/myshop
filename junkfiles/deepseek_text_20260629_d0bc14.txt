@@ -1,0 +1,18 @@
+===============================================
+STOCKAPP PREMIUM - ACTIVATED SUCCESSFULLY
+===============================================
+
+Your License Key: {license_key}
+
+HOW TO ACTIVATE:
+1. Open StockApp on your computer
+2. Go to the Activation page
+3. Enter your license key shown above
+4. Click "Verify & Save"
+
+Your monthly license is valid for 30 days.
+
+Need help? feedback@stocksalesapp.store
+
+Thank you for your purchase!
+===============================================

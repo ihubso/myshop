@@ -1,0 +1,927 @@
+
+let editCategoryDropdown = document.getElementById('editCategoryDropdown');
+const editCategoryInput = document.getElementById('editCategoryInput');
+if (editCategoryInput && !editCategoryDropdown) {
+    editCategoryDropdown = document.createElement('div');
+    editCategoryDropdown.id = 'editCategoryDropdown';
+    editCategoryDropdown.style.position = 'absolute';
+    editCategoryDropdown.style.background = '#0b0b0bff';
+    editCategoryDropdown.style.border = '1px solid #ccc';
+    editCategoryDropdown.style.borderRadius = '0.375rem';
+    editCategoryDropdown.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    editCategoryDropdown.style.zIndex = '1000';
+    editCategoryDropdown.style.display = 'none';
+    editCategoryDropdown.style.maxHeight = '200px';
+    editCategoryDropdown.style.overflowY = 'auto';
+     editCategoryDropdown.style.color = 'red';
+
+    editCategoryInput.parentNode.appendChild(editCategoryDropdown);
+    editCategoryInput.style.position = 'relative';
+}
+function getAllCategories() {
+    return [...new Set(stock.map(item => item.category).filter(Boolean))];
+}
+if (editCategoryInput) {
+    editCategoryInput.addEventListener('focus', showEditCategoryDropdown);
+    editCategoryInput.addEventListener('input', showEditCategoryDropdown);
+
+    function showEditCategoryDropdown() {
+        const categories = getAllCategories();
+        const filter = editCategoryInput.value.toLowerCase();
+        const filtered = categories.filter(cat => cat.toLowerCase().includes(filter));
+        if (filtered.length === 0) {
+            editCategoryDropdown.style.display = 'none';
+            return;
+        }
+        editCategoryDropdown.innerHTML = filtered.map(cat =>
+            `<div style="padding:8px 12px;cursor:pointer;" class="hover:bg-blue-100" data-value="${cat}">${cat}</div>`
+        ).join('');
+        editCategoryDropdown.style.top = (editCategoryInput.offsetTop + editCategoryInput.offsetHeight) + 'px';
+        editCategoryDropdown.style.left = editCategoryInput.offsetLeft + 'px';
+        editCategoryDropdown.style.width = editCategoryInput.offsetWidth + 'px';
+        editCategoryDropdown.style.display = 'block';
+    }
+    editCategoryDropdown.addEventListener('mousedown', function(e) {
+        if (e.target && e.target.dataset.value) {
+            editCategoryInput.value = e.target.dataset.value;
+            editCategoryDropdown.style.display = 'none';
+        }
+    });
+    document.addEventListener('mousedown', function(e) {
+        if (!editCategoryInput.contains(e.target) && !editCategoryDropdown.contains(e.target)) {
+            editCategoryDropdown.style.display = 'none';
+        }
+    });
+}
+
+let editSubcategoryDropdown = document.getElementById('editSubcategoryDropdown');
+const editSubcategoryInput = document.getElementById('editSubcategoryInput');
+
+// Create dropdown dynamically if it doesn't exist
+if (editSubcategoryInput && !editSubcategoryDropdown) {
+    editSubcategoryDropdown = document.createElement('div');
+    editSubcategoryDropdown.id = 'editSubcategoryDropdown';
+    editSubcategoryDropdown.style.position = 'absolute';
+    editSubcategoryDropdown.style.background = '#0b0b0bff';
+    editSubcategoryDropdown.style.border = '1px solid #ccc';
+    editSubcategoryDropdown.style.borderRadius = '0.375rem';
+    editSubcategoryDropdown.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    editSubcategoryDropdown.style.zIndex = '1000';
+    editSubcategoryDropdown.style.display = 'none';
+    editSubcategoryDropdown.style.maxHeight = '200px';
+    editSubcategoryDropdown.style.overflowY = 'auto';
+    editSubcategoryDropdown.style.color = 'red';
+
+    // Append dropdown to the same parent as the input
+    editSubcategoryInput.parentNode.appendChild(editSubcategoryDropdown);
+    editSubcategoryInput.style.position = 'relative';
+}
+
+function getAllSubcategories() {
+    return [...new Set(stock.map(item => item.subcategory).filter(Boolean))];
+}
+
+if (editSubcategoryInput) {
+    editSubcategoryInput.addEventListener('focus', showEditSubcategoryDropdown);
+    editSubcategoryInput.addEventListener('input', showEditSubcategoryDropdown);
+
+    function showEditSubcategoryDropdown() {
+        const subcategories = getAllSubcategories();
+        const filter = editSubcategoryInput.value.toLowerCase();
+        const filtered = subcategories.filter(sub => sub.toLowerCase().includes(filter));
+
+        if (filtered.length === 0) {
+            editSubcategoryDropdown.style.display = 'none';
+            return;
+        }
+
+        editSubcategoryDropdown.innerHTML = filtered.map(sub =>
+            `<div style="padding:8px 12px;cursor:pointer;" class="hover:bg-blue-100" data-value="${sub}">${sub}</div>`
+        ).join('');
+
+        // Position dropdown right under input
+        editSubcategoryDropdown.style.top = (editSubcategoryInput.offsetTop + editSubcategoryInput.offsetHeight) + 'px';
+        editSubcategoryDropdown.style.left = editSubcategoryInput.offsetLeft + 'px';
+        editSubcategoryDropdown.style.width = editSubcategoryInput.offsetWidth + 'px';
+        editSubcategoryDropdown.style.display = 'block';
+    }
+
+    // Handle clicking an item from dropdown
+    editSubcategoryDropdown.addEventListener('mousedown', function (e) {
+        if (e.target && e.target.dataset.value) {
+            editSubcategoryInput.value = e.target.dataset.value;
+            editSubcategoryDropdown.style.display = 'none';
+        }
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('mousedown', function (e) {
+        if (!editSubcategoryInput.contains(e.target) && !editSubcategoryDropdown.contains(e.target)) {
+            editSubcategoryDropdown.style.display = 'none';
+        }
+    });
+}
+// ==========================
+// 🟢 Add Subcategory Dropdown (for Add Item Modal)
+// ==========================
+let subcategoryDropdown = document.getElementById('subcategoryDropdown');
+const subcategoryInput = document.getElementById('subcategoryInput');
+
+// Create dropdown dynamically if it doesn't exist
+if (subcategoryInput && !subcategoryDropdown) {
+    subcategoryDropdown = document.createElement('div');
+    subcategoryDropdown.id = 'subcategoryDropdown';
+    subcategoryDropdown.style.position = 'absolute';
+    subcategoryDropdown.style.background = '#0b0b0bff'; // dark theme
+    subcategoryDropdown.style.border = '1px solid #ccc';
+    subcategoryDropdown.style.borderRadius = '0.375rem';
+    subcategoryDropdown.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    subcategoryDropdown.style.zIndex = '1000';
+    subcategoryDropdown.style.display = 'none';
+    subcategoryDropdown.style.maxHeight = '200px';
+    subcategoryDropdown.style.overflowY = 'auto';
+    subcategoryDropdown.style.color = 'white';
+
+    // Attach dropdown to same parent container
+    subcategoryInput.parentNode.appendChild(subcategoryDropdown);
+    subcategoryInput.style.position = 'relative';
+}
+
+// Helper to collect all unique subcategories
+
+    function getAllSubcategories() {
+        // Get unique non-empty subcategories from the already-filtered stock array
+        const subcategories = [...new Set(
+            stock
+                .map(item => item.subcategory)
+                .filter(sub => sub && sub.trim() !== '') // Remove empty, null, undefined
+        )].sort(); // Sort alphabetically
+            console.log('🔍 DEBUG - First item subcategory:', stock[0]?.subcategory);
+    console.log('🔍 DEBUG - All subcategories from stock:', [...new Set(stock.map(i => i.subcategory))]);
+    console.log('🔍 DEBUG - Full first item:', JSON.stringify(stock[0], null, 2));
+        console.log('📂 Subcategories from loaded stock:', subcategories);
+        return subcategories;
+    }
+// Add event listeners for focus and input
+if (subcategoryInput) {
+    subcategoryInput.addEventListener('focus', showSubcategoryDropdown);
+    subcategoryInput.addEventListener('input', showSubcategoryDropdown);
+
+    function showSubcategoryDropdown() {
+        const subcategories = getAllSubcategories();
+        const filter = subcategoryInput.value.toLowerCase();
+        const filtered = subcategories.filter(sub => sub.toLowerCase().includes(filter));
+
+        if (filtered.length === 0) {
+            subcategoryDropdown.style.display = 'none';
+            return;
+        }
+
+        subcategoryDropdown.innerHTML = filtered.map(sub =>
+            `<div style="padding:8px 12px;cursor:pointer;color:white;" class="hover:bg-blue-600" data-value="${sub}">
+                ${sub}
+            </div>`
+        ).join('');
+
+        // Position dropdown right under the input
+        const rect = subcategoryInput.getBoundingClientRect();
+        subcategoryDropdown.style.top = (subcategoryInput.offsetTop + subcategoryInput.offsetHeight) + 'px';
+        subcategoryDropdown.style.left = subcategoryInput.offsetLeft + 'px';
+        subcategoryDropdown.style.width = subcategoryInput.offsetWidth + 'px';
+        subcategoryDropdown.style.display = 'block';
+    }
+
+    // Handle item click
+    subcategoryDropdown.addEventListener('mousedown', function (e) {
+        if (e.target && e.target.dataset.value) {
+            subcategoryInput.value = e.target.dataset.value;
+            subcategoryDropdown.style.display = 'none';
+        }
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('mousedown', function (e) {
+        if (!subcategoryInput.contains(e.target) && !subcategoryDropdown.contains(e.target)) {
+            subcategoryDropdown.style.display = 'none';
+        }
+    });
+}
+
+function showEditItemImagePreview(file) {
+    if (!file) return;
+    if (!file.type.match(/^image\/(png|jpeg|jpg|gif)$/)) {
+        alert('Only PNG, JPG, or GIF images are allowed.');
+        editItemImageInput.value = '';
+        editItemImagePreview.src = '';
+        editItemImagePreview.classList.add('hidden');
+        removeEditItemImageBtn.classList.add('hidden');
+        if (editItemImageSvg) editItemImageSvg.style.display = '';
+        return;
+    }
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        alert('Image file is too large (max 10MB).');
+        editItemImageInput.value = '';
+        editItemImagePreview.src = '';
+        editItemImagePreview.classList.add('hidden');
+        removeEditItemImageBtn.classList.add('hidden');
+        if (editItemImageSvg) editItemImageSvg.style.display = '';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+        editItemImagePreview.src = evt.target.result;
+        editItemImagePreview.classList.remove('hidden');
+        removeEditItemImageBtn.classList.remove('hidden');
+        if (editItemImageSvg) editItemImageSvg.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+editItemImageInput.addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    showEditItemImagePreview(file);
+});
+
+function clearEditItemImage() {
+    editItemImageInput.value = '';
+    editItemImagePreview.src = '';
+    editItemImagePreview.classList.add('hidden');
+    removeEditItemImageBtn.classList.add('hidden');
+    if (editItemImageSvg) editItemImageSvg.style.display = '';
+}
+
+// Usage:
+removeEditItemImageBtn.addEventListener('click', clearEditItemImage);
+// Drag & drop support
+const uploadArea = editItemImageInput.closest('.flex.justify-center');
+uploadArea.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#2563eb';
+});
+uploadArea.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    uploadArea.style.borderColor = '';
+});
+uploadArea.addEventListener('drop', function (e) {
+    e.preventDefault();
+    uploadArea.style.borderColor = '';
+    if (e.dataTransfer.files.length) {
+        editItemImageInput.files = e.dataTransfer.files;
+        showEditItemImagePreview(e.dataTransfer.files[0]);
+    }
+});
+
+document.getElementById('editItemImage').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('editItemImagePreview');
+    const svgIcon = preview.parentElement.querySelector('svg');
+    const uploadLabel = this.closest('label').querySelector('span');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+            preview.src = evt.target.result;
+            preview.classList.remove('hidden');
+            if (svgIcon) svgIcon.classList.add('hidden');
+            if (uploadLabel) uploadLabel.textContent = 'Change Image';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '';
+        preview.classList.add('hidden');
+        if (svgIcon) svgIcon.classList.remove('hidden');
+        if (uploadLabel) uploadLabel.textContent = 'Upload a file';
+    }
+});
+
+document.getElementById('removeEditItemImageBtn').addEventListener('click', function () {
+    const input = document.getElementById('editItemImage');
+    const preview = document.getElementById('editItemImagePreview');
+    const svgIcon = preview.parentElement.querySelector('svg');
+    const uploadLabel = input.closest('label').querySelector('span');
+    preview.src = '';
+    preview.classList.add('hidden');
+    input.value = '';
+    if (svgIcon) svgIcon.classList.remove('hidden');
+    if (uploadLabel) uploadLabel.textContent = 'Upload a file';
+    this.classList.add('hidden');
+});
+
+function enterEditMode() {
+    if (!currentItemBeingEdited) {
+        showMessageModal(translations[currentLanguage].noItemSelectedToEdit || 'No item selected to edit.');
+        return;
+    }
+    
+    editProductNameInput.value = currentItemBeingEdited.name;
+    editItemType.textContent = currentItemBeingEdited.type === 'product' ? 'Product' : 'Service';
+    editQuantityInput.value = '';
+    editPriceInput.value = currentItemBeingEdited.price !== null ? Math.round(currentItemBeingEdited.price) : '';
+    editQuantityLabel.textContent = `Add Quantity (Current: ${currentItemBeingEdited.quantity})`;
+    editQuantityInput.placeholder = `Current: ${currentItemBeingEdited.quantity}`;
+    
+    const editCostPriceInput = document.getElementById('editCostPrice');
+    if (editCostPriceInput) {
+        editCostPriceInput.value = currentItemBeingEdited.costPrice !== undefined && currentItemBeingEdited.costPrice !== null
+            ? currentItemBeingEdited.costPrice
+            : '';
+    }
+    document.getElementById('editTaxRate').value = currentItemBeingEdited.taxRate || 0;
+    
+    const editCategoryInput = document.getElementById('editCategoryInput');
+    if (editCategoryInput) {
+        editCategoryInput.value = currentItemBeingEdited.category || '';
+    }
+     const barcodeeditInput = document.getElementById('barcodeeditInput');
+    if (barcodeeditInput) {
+        barcodeeditInput.value = currentItemBeingEdited.barcode || '';
+    }
+    const editSubcategoryInput = document.getElementById('editSubcategoryInput');
+    if (editSubcategoryInput) {
+        editSubcategoryInput.value = currentItemBeingEdited.subcategory || '';
+    }
+    
+    // Handle image display
+    if (currentItemBeingEdited.type === 'product') {
+        if (currentItemBeingEdited.imageUrl || currentItemBeingEdited.image) {
+            let imageUrl = currentItemBeingEdited.imageUrl || currentItemBeingEdited.image;
+            if (imageUrl.startsWith('http')) {
+                editProductCurrentImage.src = imageUrl;
+            } else if (imageUrl.startsWith('/')) {
+                editProductCurrentImage.src = imageUrl;
+                console.warn('Image has relative path - may not load:', imageUrl);
+            } else {
+                editProductCurrentImage.src = imageUrl;
+            }
+            
+            editProductCurrentImage.classList.remove('hidden');
+            editNoCurrentImageMessage.classList.add('hidden');
+            console.log('Current image URL:', imageUrl);
+        } else {
+            editProductCurrentImage.src = '';
+            editProductCurrentImage.classList.add('hidden');
+            editNoCurrentImageMessage.classList.remove('hidden');
+        }
+        
+        // Clear file input and reset preview
+        editItemImageInput.value = '';
+        editItemImagePreview.src = '';
+        editItemImagePreview.classList.add('hidden');
+        if (removeEditItemImageBtn) removeEditItemImageBtn.classList.add('hidden');
+        
+        // Show image container
+        editItemImageContainer.classList.remove('hidden');
+    } else {
+        // Hide image section for services
+        editItemImageContainer.classList.add('hidden');
+    }
+    
+    editDateAddedSpan.textContent = currentItemBeingEdited.dateAdded || currentItemBeingEdited.date_added || 'N/A';
+
+    // Switch to edit mode
+    itemDetailsViewMode.classList.add('hidden');
+    itemDetailsEditMode.classList.remove('hidden');
+}
+async function updateItemDetails() {
+    if (!currentItemBeingEdited) {
+        showMessageModal(
+            translations[currentLanguage]?.noItemSelectedForUpdate
+            || 'No item selected for update.'
+        );
+        return;
+    }
+
+    // ── 1. Read inputs ───────────────────────────────────────────
+    const currentUserId = await getcurrentUserId();
+
+    const newProductName = editProductNameInput.value.trim();
+
+    const quantityValue    = editQuantityInput.value.trim();
+    const originalQuantity = currentItemBeingEdited.quantity;
+    // NOTE: this ADDS the input to the current qty (delta, not set).
+    const newQuantity = quantityValue === ''
+        ? originalQuantity
+        : (originalQuantity + parseInt(quantityValue, 10));
+
+    const newPrice = editPriceInput.value === '' ? null : parseFloat(editPriceInput.value);
+
+    const newImageFile = editItemImageInput.files[0];
+
+    const newSubcategory = document.getElementById('editSubcategoryInput')?.value.trim() || '';
+    const taxRate        = parseFloat(document.getElementById('editTaxRate')?.value) || 0;
+
+    const newCostPriceEl = document.getElementById('editCostPrice');
+    const newCostPrice = newCostPriceEl
+        ? (newCostPriceEl.value === '' ? null : parseFloat(newCostPriceEl.value))
+        : (currentItemBeingEdited.cost_price || currentItemBeingEdited.costPrice || null);
+
+    const newCategoryEl = document.getElementById('editCategoryInput');
+    const newCategory = newCategoryEl
+        ? newCategoryEl.value.trim()
+        : (currentItemBeingEdited.category || '');
+
+    const barcodeEl = document.getElementById('editBarcodeInput')
+                   || document.getElementById('barcodeeditInput');
+    const newBarcode = barcodeEl ? barcodeEl.value.trim() : '';
+    const oldBarcode = currentItemBeingEdited.barcode || '';
+
+    // ── 2. Validation ────────────────────────────────────────────
+    if (newProductName === '') {
+        showMessageModal(
+            translations[currentLanguage]?.productNameCannotBeEmpty
+            || 'Product/Service name cannot be empty.'
+        );
+        return;
+    }
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+        showMessageModal(
+            translations[currentLanguage]?.quantityMustBePositive
+            || 'Quantity must be a positive number.'
+        );
+        return;
+    }
+    if (editPriceInput.value !== '' && (isNaN(newPrice) || newPrice < 0)) {
+        showMessageModal(
+            translations[currentLanguage]?.priceMustBeNonNegative
+            || 'Price must be a non-negative number.'
+        );
+        return;
+    }
+
+    if (typeof showLoading === 'function') showLoading('💾 Preparing update...');
+
+    try {
+        const client = getSB();
+        if (!client) throw new Error('Database not connected');
+
+        const currentBusinessId = currentUser?.business_id
+                               || businessInfo?.id
+                               || await getBusinessId()
+                               || null;
+
+        if (!currentBusinessId) {
+            throw new Error('Business ID missing — please re-login.');
+        }
+
+        const username = currentUser?.username
+                      || window.currentUser?.username
+                      || 'Unknown';
+        const now    = new Date().toISOString();
+        const itemId = currentItemBeingEdited.id;
+
+        if (!itemId) throw new Error('Cannot update item: Missing item ID.');
+
+        // ── 3. Upload new image (optional) ───────────────────────
+        let newImageUrl = currentItemBeingEdited.image
+                       || currentItemBeingEdited.imageUrl
+                       || '';
+
+        if (currentItemBeingEdited.type === 'product' && newImageFile) {
+            if (typeof showLoading === 'function') showLoading('📸 Uploading product image...');
+
+            const uploadResult = await uploadToCloudinary(newImageFile, {
+               folderIntent: 'products',
+            });
+
+            newImageUrl = uploadResult.url;
+            console.log('✅ New product image uploaded:', newImageUrl);
+        }
+
+        // ── 4. Compute change list for history ───────────────────
+        const changes = [];
+        if (currentItemBeingEdited.name !== newProductName) {
+            changes.push(`Name: '${currentItemBeingEdited.name}' → '${newProductName}'`);
+        }
+        if (originalQuantity !== newQuantity) {
+            const diff = newQuantity - originalQuantity;
+            changes.push(`Qty: ${diff > 0 ? '+' : ''}${diff} (${originalQuantity} → ${newQuantity})`);
+        }
+        if (currentItemBeingEdited.price !== newPrice) {
+            changes.push(`Price: ${currentItemBeingEdited.price} → ${newPrice}`);
+        }
+        if ((currentItemBeingEdited.cost_price || null) !== newCostPrice) {
+            changes.push(`Cost: ${currentItemBeingEdited.cost_price} → ${newCostPrice}`);
+        }
+        if ((currentItemBeingEdited.category || '') !== newCategory) {
+            changes.push(`Category: '${currentItemBeingEdited.category}' → '${newCategory}'`);
+        }
+        if ((currentItemBeingEdited.subcategory || '') !== newSubcategory) {
+            changes.push(`Subcategory: '${currentItemBeingEdited.subcategory}' → '${newSubcategory}'`);
+        }
+        if (oldBarcode !== newBarcode) {
+            changes.push(`Barcode: '${oldBarcode}' → '${newBarcode}'`);
+        }
+        if ((currentItemBeingEdited.tax_rate || 0) !== taxRate) {
+            changes.push(`Tax: ${currentItemBeingEdited.tax_rate}% → ${taxRate}%`);
+        }
+        if (newImageFile) changes.push('Image Updated');
+
+        // ── 5. Build payload ─────────────────────────────────────
+        // Empty optional fields → null so the DB can CLEAR them.
+        // Only `undefined` is stripped (never sent).
+        const updateData = {
+            name:        newProductName,
+            quantity:    newQuantity,
+            price:       newPrice,                 // null is meaningful
+            cost_price:  newCostPrice,             // null is meaningful
+            image:   newImageUrl || null,
+            category:    newCategory || null,
+            subcategory: newSubcategory || null,
+            barcode:     newBarcode || null,
+            tax_rate:    taxRate
+        };
+
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key] === undefined) delete updateData[key];
+        });
+
+        // ── 6. Call secure RPC ───────────────────────────────────
+        const { data: updatedItemData, error: updateError } = await client.rpc(
+            'update_stock_secure',
+            {
+                p_id:          itemId,
+                p_record:      updateData,
+                p_business_id: currentBusinessId
+            }
+        );
+
+        if (updateError) {
+            const msg = updateError.message || '';
+            if (msg.includes('BARCODE_EXISTS_DB:')) {
+                const existingName = msg.split('BARCODE_EXISTS_DB:')[1]?.trim();
+                throw Object.assign(new Error('BARCODE_EXISTS_DB'), { existingName });
+            }
+            throw updateError;
+        }
+
+        console.log('✅ Item updated securely in Supabase');
+
+        // ── 7. Sync local state with the DB-returned row ─────────
+        const saved = updatedItemData
+            ? updatedItemData
+            : { ...currentItemBeingEdited, ...updateData, updated_at: now };
+
+        Object.assign(currentItemBeingEdited, saved);
+
+        if (Array.isArray(stock)) {
+            const idx = stock.findIndex(i => i.id === saved.id);
+            if (idx > -1) Object.assign(stock[idx], saved);
+        }
+
+        // ── 8. Record history ────────────────────────────────────
+        if (changes.length > 0) {
+            const historyData = {
+                item_name:       newProductName,
+                action:          `Item Updated: ${changes.join(' | ')}`,
+                quantity_change: 0,            // ✅ no qty delta for an edit
+                username,
+                business_id:     currentBusinessId,
+                timestamp:       now
+            };
+
+            const { error: historyError } = await client.rpc('insert_stock_history_secure', {
+                p_user_id:     currentUserId,
+                p_record:      historyData,
+                p_business_id: currentBusinessId
+            });
+
+            if (historyError) {
+                console.warn('Stock history recording failed:', historyError);
+            } else {
+                console.log('✅ Stock history updated with changes:', changes);
+            }
+        }
+
+        // ── 9. Success + UI refresh ──────────────────────────────
+        showMessageModal(`Item "${newProductName}" updated successfully!`);
+
+        if (typeof clearEditItemImage      === 'function') clearEditItemImage();
+        if (typeof loadStock               === 'function') await loadStock();
+        if (typeof renderStock             === 'function') renderStock();
+        if (typeof updateLowStockAlert     === 'function') updateLowStockAlert();
+        if (typeof closeItemDetailsModal   === 'function') closeItemDetailsModal();
+
+    } catch (error) {
+        console.error('Error updating item:', error);
+
+        if (error.message === 'BARCODE_EXISTS_DB') {
+            const tmpl = (translations[currentLanguage]?.barcode_db_exists_msg)
+                      || 'Barcode {barcode} is already used by "{product}".';
+            showMessageModal(
+                tmpl.replace(/\{barcode\}/g, newBarcode)
+                    .replace(/\{product\}/g, error.existingName || 'Unknown')
+            );
+        } else if (
+            error.code === '23505' ||
+            (error.message || '').match(/duplicate|unique/i)
+        ) {
+            const tmpl = (translations[currentLanguage]?.barcode_db_duplicate)
+                      || 'Barcode {barcode} already exists.';
+            showMessageModal(tmpl.replace(/\{barcode\}/g, newBarcode));
+        } else {
+            showMessageModal(error.message || 'Failed to update item. Please try again.');
+        }
+    } finally {
+        if (typeof hideLoading === 'function') hideLoading();
+    }
+}
+     editItemDetailsBtn.addEventListener('click', enterEditMode);
+         updateItemButton.addEventListener('click', updateItemDetails);
+
+    cancelEditItemBtn.addEventListener('click', closeItemDetailsModal);
+
+
+
+async function showItemDetailsModal(item, clickedRow = null){
+      await loadStockTOSAVE();
+    try {
+        if (!item) {
+            showMessageModal('⚠️ Invalid item data.');
+              AdminProgressBar.error();
+            return;
+        }
+
+        // ✅ Ensure every item has an ID
+        if (!item.id) {
+            console.warn(`⚠️ Missing item ID for ${item.name}, assigning temporary ID.`);
+            item.id = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+        }
+
+        currentItemBeingEdited = item;
+
+        const now = new Date();
+        const startMonth = Math.max(1, now.getMonth() - 4);
+        const year = now.getFullYear();
+       
+        await loadSalesForFiveMonths(year, startMonth + 1);
+
+        if (!Array.isArray(sales) || sales.length === 0) {
+            console.warn("⚠️ No sales data found for item details.");
+        }
+
+        // ✅ SAFE ELEMENT ACCESS HELPER
+        const safeSetText = (elementId, text) => {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text !== undefined && text !== null ? text : 'N/A';
+                return true;
+            }
+            console.warn(`⚠️ Element with ID '${elementId}' not found`);
+            return false;
+        };
+
+        // Check if critical elements exist
+        const modalProductNameView = document.getElementById('modalProductNameText');
+        const itemDetailsModal = document.getElementById('itemDetailsModal');
+
+        if (!modalProductNameView || !itemDetailsModal) {
+            console.error('❌ Critical modal elements not found');
+            showMessageModal('Failed to load item details. Modal structure is incomplete.');
+              AdminProgressBar.error();
+            return;
+        }
+
+        // === Populate modal fields SAFELY ===
+        safeSetText('modalProductNameText', item.name);
+        safeSetText('modalTypeView', item.type === 'product' ? 'Product' : 'Service');
+        safeSetText('modalQuantityView', item.quantity ?? 0);
+        
+        const formattedPrice = item.price ? Math.round(item.price).toLocaleString('fr-FR') : 'N/A';
+        safeSetText('modalPriceView', formattedPrice);
+        safeSetText('modalDateAddedView', item.dateAdded || item.date_added || 'N/A');
+        safeSetText('modalCategoryView', item.category || 'N/A');
+        safeSetText('modalSubcategoryView', item.subcategory || '—');
+        safeSetText('modalIdView', item.id);
+          safeSetText('barcodeIdView', item.barcode);
+
+        // Cost Price
+        const modalCostPriceView = document.getElementById('modalCostPriceView');
+        if (modalCostPriceView) {
+            const costPrice = item.costPrice || item.cost_price;
+            const formattedCost = (costPrice !== undefined && !isNaN(costPrice))
+                ? Math.round(costPrice).toLocaleString('fr-FR')
+                : 'N/A';
+            modalCostPriceView.textContent = formattedCost;
+        }
+
+        // Tax Rate
+        const taxRateView = document.getElementById('modalTaxRateView');
+        if (taxRateView) {
+            taxRateView.textContent = (item.taxRate || item.tax_rate) || 0;
+        }
+
+        // Profit margin
+        const modalMarginView = document.getElementById('modalMarginView');
+        if (modalMarginView) {
+            const costPrice = item.costPrice || item.cost_price;
+            const margin = calculateProfitMargin(item.price, costPrice);
+            if (margin === null) {
+                modalMarginView.textContent = 'N/A';
+                modalMarginView.className = 'text-gray-500 text-xl font-bold';
+            } else {
+                const rounded = Math.round(margin);
+                modalMarginView.textContent = `${rounded}%`;
+                modalMarginView.className =
+                    rounded < 20 ? 'text-red-600 text-xl font-bold' :
+                    rounded < 50 ? 'text-yellow-600 text-xl font-bold' :
+                    'text-green-600 text-xl font-bold';
+            }
+        }
+
+        // Barcode or QR Code Display
+        const qrCodeElement = document.getElementById('modalQRCode');
+        const qrContainer = document.getElementById('modalQRCodeContainer');
+        const qrcodetest  = document.getElementById('qrcodetest');
+        if (qrContainer && qrCodeElement) {
+            // Check if item has a barcode - display barcode instead of QR code
+            if (item.barcode && item.barcode.trim()) {
+                try {
+                    // Generate barcode using JsBarcode
+                    JsBarcode(qrCodeElement, item.barcode, {
+                        format: "CODE128",
+                        width: 2,
+                        height: 80,
+                        displayValue: true
+                    });
+                    qrCodeElement.title = 'Click to generate QR codes';
+                    qrCodeElement.style.cursor = 'pointer';
+                    qrcodetest.textContent = 'Barcode';
+                    qrCodeElement.onclick = () => openQrGenerationModal(item);
+                    qrContainer.classList.remove('hidden');
+                } catch (err) {
+                    console.error("Barcode display failed:", err);
+                    qrContainer.classList.add('hidden');
+                }
+            } else {
+                // No barcode - display QR code instead
+                try {
+                    const qr = new QRious({
+                        element: qrCodeElement,
+                        value: JSON.stringify({ id: item.id, name: item.name }),
+                        size: 128,
+                        level: 'M'
+                    });
+                    qrCodeElement.title = 'Click to generate QR codes';
+                    qrCodeElement.style.cursor = 'pointer';
+                       qrcodetest.textContent = 'QR Code';
+                    qrCodeElement.onclick = () => openQrGenerationModal(item);
+                    qrContainer.classList.remove('hidden');
+                } catch (err) {
+                    console.error("QR code display failed:", err);
+                    qrContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        // ========== PRODUCT IMAGE (SUPABASE STORAGE) ==========
+        const modalProductImageView = document.getElementById('modalProductImageView');
+        const modalNoImageViewMessage = document.getElementById('modalNoImageViewMessage');
+        
+        if (modalProductImageView && modalNoImageViewMessage) {
+            const imageUrl = item.imageUrl || item.image;
+            
+            if (item.type === 'product' && imageUrl) {
+                modalProductImageView.src = imageUrl;
+                modalProductImageView.classList.remove('hidden');
+                modalProductImageView.style.cursor = 'zoom-in';
+                modalNoImageViewMessage.classList.add('hidden');
+
+                modalProductImageView.onclick = function () {
+                    if (!this.src) return;
+                    zoomImage(this.src, item.name || 'Product Image');
+                };
+            } else {
+                modalProductImageView.classList.add('hidden');
+                modalNoImageViewMessage.classList.remove('hidden');
+            }
+        }
+
+        // === Last sale info ===
+        let lastSaleInfoHtml = '';
+        if (Array.isArray(sales) && sales.length > 0) {
+            const normalize = str => str ? str.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '') : '';
+            const itemKey = normalize(item.name);
+            const itemSales = sales.filter(sale => {
+                const saleKey = normalize(sale.productName || sale.product_name);
+                return saleKey.includes(itemKey) || itemKey.includes(saleKey);
+            });
+
+            if (itemSales.length > 0) {
+                itemSales.sort((a, b) => new Date(b.dateSold || b.date_sold || b.timestamp) - new Date(a.dateSold || a.date_sold || a.timestamp));
+                const lastSale = itemSales[0];
+
+                lastSaleInfoHtml = `
+                    <div class="mt-6 p-4 border rounded-xl shadow-lg bg-white dark:bg-gray-800 transition-all duration-300">
+                        <div class="flex items-center mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                ${item.name} was last sold on ${new Date(lastSale.dateSold || lastSale.date_sold || lastSale.timestamp).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                            </h4>
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-300">
+                            <p><strong>Quantity Sold:</strong> ${lastSale.quantity}</p>
+                            <p><strong>Total Amount:</strong> ${formatCurrency(lastSale.price || lastSale.total_amount)}</p>
+                            <p><strong>Payment Type:</strong> ${lastSale.paymentType || lastSale.payment_type}</p>
+                            ${lastSale.customerName || lastSale.customer_name ? `<p><strong>Customer:</strong> ${lastSale.customerName || lastSale.customer_name}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                lastSaleInfoHtml = `
+                    <div class="mt-4 p-4 text-center text-gray-500 dark:text-gray-400 border rounded-lg">
+                        <h4 class="text-lg font-semibold">${item.name} has not been sold for the past five months</h4>
+                    </div>`;
+            }
+        } else {
+            lastSaleInfoHtml = `
+                <div class="mt-4 p-4 text-center text-gray-500 dark:text-gray-400 border rounded-lg">
+                    <h4 class="text-lg font-semibold">Sales Data Unavailable</h4>
+                    <p class="text-sm">Unable to load recent sales.</p>
+                </div>`;
+        }
+
+        // Insert last sale info
+        const lastSaleDiv = document.getElementById('modalLastSaleInfo');
+        if (lastSaleDiv) {
+            lastSaleDiv.innerHTML = lastSaleInfoHtml;
+            
+            const moreInfoBtn = document.createElement('button');
+            moreInfoBtn.className = 'mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition';
+            moreInfoBtn.textContent = 'View item performance';
+            moreInfoBtn.onclick = function() {
+                showMoreInfo(item.id);
+            };
+            lastSaleDiv.appendChild(moreInfoBtn);
+        }
+
+        // === Show modal ===
+        const itemDetailsViewMode = document.getElementById('itemDetailsViewMode');
+        const itemDetailsEditMode = document.getElementById('itemDetailsEditMode');
+        if (itemDetailsViewMode) itemDetailsViewMode.classList.remove('hidden');
+        if (itemDetailsEditMode) itemDetailsEditMode.classList.add('hidden');
+        openItemDetailsModal();
+
+        // Remove animation class
+        if (clickedRow) {
+            clickedRow.classList.remove('row-click-animation');
+        }
+        closeCalculator();
+
+        // Hook up "Increase Quantity" button
+        const stockActionBtn = document.getElementById('stockActionBtn');
+        if (stockActionBtn) {
+            stockActionBtn.onclick = null;
+            stockActionBtn.addEventListener('click', () => {
+                if (item) {
+                    openQuantityActionModal(item);
+                     window.history.pushState({ quantityActionModal: true }, '', window.location.href);
+                } else {
+                    showMessageModal('⚠️ Please select an item first.');
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('❌ Error showing item details:', error);
+        showMessageModal('Failed to load item details. Please try again.');
+          AdminProgressBar.error();
+        if (clickedRow) {
+            clickedRow.classList.remove('row-click-animation');
+        }
+    }
+}
+
+function closeCalculator() {
+    if (window.calculator) {
+        window.calculator.closeCalculator();
+    }
+}
+
+
+
+function openItemDetailsModal() {
+    const modal = document.getElementById('itemDetailsModal');
+
+    modal.classList.remove('hidden');
+    modal.classList.add('MODAL-LOCK-OPEN');
+    modal.classList.add('show');
+       openModal('itemDetailsModal');
+    document.body.style.overflow = 'hidden';
+        goToTop();
+          AdminProgressBar.complete();
+        hideLoading();
+}
+function closeItemDetailsModal() {
+    currentItemBeingEdited = null; 
+    const modal = document.getElementById('itemDetailsModal');
+
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+
+    setTimeout(() => {
+      modal.classList.remove('MODAL-LOCK-OPEN');
+        modal.classList.add('hidden');
+    }, 300);
+}

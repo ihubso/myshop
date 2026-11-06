@@ -1,0 +1,46 @@
+(function() {
+  // Check if we're on GitHub Pages or production
+  const isProduction = window.location.hostname.includes('github.io') || 
+                       !window.location.hostname.includes('localhost');
+  
+  if (isProduction) {
+    // Disable all console methods
+    const noop = function() {};
+    console.log = noop;
+    console.error = noop;
+    console.warn = noop;
+    console.info = noop;
+    console.debug = noop;
+    console.trace = noop;
+  }
+})();
+
+        function showAuthRequired(message) {
+            const main = document.getElementById('mainContent');
+            if (main) {
+                main.style.opacity = '0.5';
+                main.style.pointerEvents = 'none';
+            }
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'auth-overlay';
+            overlay.innerHTML = `
+                <div class="auth-card">
+                    <i class="fas fa-lock" style="font-size: 48px; color: #3b82f6; margin-bottom: 16px;"></i>
+                    <h2>${translate('auth_required_title') || 'Authentication Required'}</h2>
+                    <p>${message || (translate('auth_required_message_activate') || 'Please log in to activate your license.')}</p>
+                    <div class="auth-buttons">
+                        <a href="index.html" class="auth-btn auth-btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> ${translate('login_btn') || 'Login'}
+                        </a>
+                        <a href="setup" class="auth-btn auth-btn-secondary">
+                            <i class="fas fa-store"></i> ${translate('setup_business_btn') || 'Setup Business'}
+                        </a>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 0.8rem; color: #94a3b8;">
+                        ${translate('no_account_prompt') || "Don't have an account? Set up your business first."}
+                    </p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }

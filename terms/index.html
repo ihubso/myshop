@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Terms of Service · StocksalesApp</title>
+  <meta name="description" content="StocksalesApp Terms of Service – governing your use of our cloud-based inventory, POS, and CRM platform. Includes COPPA, DMCA, auto-renewal, and CAN-SPAM disclosures.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" href="/image/logo.jpg">
+  <link rel="apple-touch-icon" href="/image/logo.jpg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <script src="/meiou.js"></script>
+  <style>
+    /* === RESET & BASE === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, Arial, sans-serif;
+      background-image: linear-gradient(to bottom, #f8fafc, #e9eff5);
+      color: #0b1a33;
+      padding: 32px 20px;
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1020px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 40px 48px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
+      border: 1px solid #e9eef3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle animated accent line */
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #2563eb, #7aa5ff, #2563eb);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* === HEADER === */
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #eef2f6;
+      flex-wrap: wrap;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      color: #0a1e3c;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 0.9rem;
+      font-weight: 450;
+      color: #476085;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    .badge-legal {
+      margin-left: auto;
+      background: #eef4ff;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1a4c8a;
+      border: 1px solid #d6e2f5;
+      white-space: nowrap;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.15); }
+      50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+    }
+
+    .back-to-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 40px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #1e3a5f;
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .back-to-login:hover {
+      background: #e2e8f0;
+      color: #0a1e3c;
+      border-color: #cbd5e1;
+    }
+
+    /* === LANGUAGE SELECTOR === */
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: 16px;
+      background: #f1f5f9;
+      padding: 4px 12px 4px 16px;
+      border-radius: 40px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .lang-selector label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    .lang-selector select {
+      background: transparent;
+      border: none;
+      color: #0f172a;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 4px 0;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .lang-selector select option {
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    /* === SEARCH BOX === */
+    .search-wrapper {
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border-radius: 60px;
+      border: 1px solid #dbe5f0;
+      background: #f8fafc;
+      font-size: 0.95rem;
+      color: #0b1a33;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+
+    .search-box:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+      background: #ffffff;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: #475569;
+    }
+
+    /* === TYPOGRAPHY === */
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0a1e3c;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .legal-subhead {
+      font-size: 1rem;
+      color: #3a5670;
+      background: #f8faff;
+      padding: 12px 20px;
+      border-radius: 14px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      border: 1px solid #e6edf6;
+      border-left: 6px solid #2563eb;
+    }
+
+    .legal-subhead span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legal-subhead .dot {
+      width: 5px;
+      height: 5px;
+      background: #8ba3c7;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 650;
+      color: #0f2942;
+      margin-top: 36px;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid #eef2f6;
+      padding-bottom: 8px;
+      transition: background 0.2s;
+    }
+
+    h2:first-of-type {
+      margin-top: 8px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 650;
+      color: #1e3a5f;
+      margin-top: 22px;
+      margin-bottom: 8px;
+      letter-spacing: -0.005em;
+      line-height: 1.45;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #1d2d44;
+    }
+
+    ul, ol {
+      margin: 10px 0 18px 24px;
+      color: #1d2d44;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    a {
+      color: #1f4e8a;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s, border-bottom 0.2s;
+    }
+
+    a:hover {
+      color: #0b2b55;
+      border-bottom-color: #8eb0d9;
+    }
+
+    .highlight-box {
+      background: #fafcff;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin: 22px 0 24px;
+      border: 1px solid #dfe9f2;
+      border-left: 5px solid #2563eb;
+    }
+
+    .highlight-box strong {
+      color: #10345e;
+    }
+
+    .financial-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eef3fa;
+      padding: 4px 16px 4px 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #1e3f68;
+      border: 1px solid #d4e0ed;
+      margin-left: 4px;
+    }
+
+    .address-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 16px 0 22px;
+      font-style: normal;
+      color: #1d2d44;
+      line-height: 1.65;
+      font-size: 0.97rem;
+    }
+
+    .address-box strong {
+      color: #0f2942;
+      font-weight: 600;
+    }
+
+    /* === FOOTER === */
+    .legal-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #d0dceb, transparent);
+      margin: 8px 0 20px;
+    }
+
+    .legal-footer {
+      margin-top: 44px;
+      padding-top: 28px;
+      border-top: 1px solid #e2eaf2;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.95rem;
+    }
+
+    .footer-links a {
+      color: #1f4e8a;
+      text-decoration: none;
+      font-weight: 500;
+      margin-right: 20px;
+      transition: color 0.1s;
+      border-bottom: 1px solid transparent;
+    }
+
+    .footer-links a:hover {
+      color: #0b2b55;
+      border-bottom-color: #8eb0d9;
+    }
+
+    .footer-meta {
+      color: #587294;
+      font-size: 0.85rem;
+    }
+
+    .footer-meta time {
+      font-weight: 500;
+    }
+
+    .small-print {
+      font-size: 0.85rem;
+      color: #4a6688;
+      margin-top: 6px;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 820px) {
+      .container {
+        padding: 32px 28px;
+      }
+      .app-header {
+        gap: 12px;
+      }
+      .lang-selector {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 8px;
+      }
+      .badge-legal {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 24px 18px;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      .brand-name {
+        font-size: 1.3rem;
+      }
+      .app-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .logo-wrapper {
+        width: 100%;
+      }
+      .badge-legal {
+        align-self: flex-start;
+        margin-top: 4px;
+      }
+      .back-to-login {
+        align-self: flex-start;
+      }
+      .legal-subhead {
+        flex-direction: column;
+        align-items: start;
+        gap: 4px;
+      }
+      .legal-footer {
+        flex-direction: column;
+        align-items: start;
+      }
+      .lang-selector {
+        width: 100%;
+        margin-top: 12px;
+        padding: 8px 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px 8px;
+      }
+      .container {
+        padding: 20px 14px;
+        border-radius: 20px;
+      }
+      .logo-img {
+        width: 46px;
+        height: 46px;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .footer-links a {
+        margin-right: 0;
+      }
+    }
+
+    /* search highlight */
+    .search-highlight {
+      background: #fef08a;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    .hidden-by-search {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="logo-wrapper">
+      <img
+        class="logo-img"
+        src="/image/logo.jpg"
+        alt="StocksalesApp logo"
+        loading="lazy"
+      >
+      <div class="brand-text">
+        <span class="brand-name">StocksalesApp</span>
+        <span class="brand-sub">inventory · sales · cloud</span>
+      </div>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="lang-selector">
+      <label for="langSelect">🌐</label>
+      <select id="langSelect" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+
+    <div class="badge-legal">📋 terms of service</div>
+    <a href="/shop/" class="back-to-login">
+      <i class="fas fa-arrow-left"></i> <span>Back to Login</span>
+    </a>
+  </header>
+
+  <h1 data-i18n="title">Terms of Service</h1>
+
+  <div class="legal-subhead">
+    <span data-i18n="effective">📅 <strong>Effective:</strong> October 10, 2026</span>
+    <span class="dot"></span>
+    <span data-i18n="version">⚡ <strong>Version:</strong> 2.5.0</span>
+    <span class="dot"></span>
+    <span data-i18n="merchant">🏢 <strong>Merchant:</strong> financial assistance</span>
+    <span style="margin-left:auto; font-size:0.9rem;" data-i18n="review">⏳ last review: October 2026</span>
+  </div>
+
+  <!-- SEARCH BOX -->
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      class="search-box"
+      id="searchInput"
+      placeholder="Search terms…"
+      data-i18n-placeholder="search.placeholder"
+      oninput="filterTerms(this.value)"
+    >
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+  </div>
+
+  <p style="font-size:1.05rem; font-weight:450; color:#1a3455;" data-i18n="intro">Welcome to StocksalesApp. By accessing or using our cloud-based business management platform, you agree to comply with and be bound by these Terms. Please read them carefully.</p>
+
+  <!-- ============================================================ -->
+  <!-- 1. Service Description & Scope                               -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section1.title">1. Service Description &amp; Scope</h2>
+  <h3 data-i18n="section1.h1">1.1 Platform Scope</h3>
+  <p data-i18n="section1.p1">StocksalesApp is a comprehensive, subscription-based business management ecosystem that provides integrated tools for inventory tracking, point-of-sale (POS) operations, customer relationship management (CRM), real-time analytics, and multi-channel order synchronization. The service is delivered as a software-as-a-service (SaaS) solution accessible via web browsers and supported mobile applications.</p>
+  <h3 data-i18n="section1.h2">1.2 Modifications &amp; Plan Limits</h3>
+  <p data-i18n="section1.p2">All features, modules, and usage limits are defined by your active subscription plan. StocksalesApp reserves the right to introduce new functionalities or modify existing ones, provided such changes do not materially reduce the core utility of the service during an active paid subscription period.</p>
+
+  <!-- ============================================================ -->
+  <!-- 2. Account Registration, Age Limits & COPPA Safeguards       -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section2.title">2. Account Registration, Age Limits &amp; COPPA Safeguards</h2>
+  <h3 data-i18n="section2.h1">2.1 Account Eligibility</h3>
+  <p data-i18n="section2.p1">You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to register an account and enter into this binding agreement.</p>
+  <h3 data-i18n="section2.h2">2.2 Children’s Online Privacy Protection Act (COPPA) Notice</h3>
+  <p data-i18n="section2.p2">StocksalesApp is designed strictly for business and organizational operations and is <strong>not intended for or directed toward children under 13 years of age</strong>. We do not knowingly collect, store, or process personal data from anyone under 13. If an unauthorized minor creates an account or submits personal information, please contact us immediately at <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a>. Upon verification, the account and associated data will be deleted immediately in compliance with COPPA regulations.</p>
+
+  <!-- ============================================================ -->
+  <!-- 3. License & Intellectual Property Rights                    -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section3.title">3. License &amp; Intellectual Property Rights</h2>
+  <h3 data-i18n="section3.h1">3.1 SaaS License Grant</h3>
+  <p data-i18n="section3.p1">Subject to your full compliance with these Terms and payment of applicable fees, StocksalesApp grants you a limited, non-exclusive, non-transferable, non-sublicensable, and revocable license to access and use the platform solely for your internal business operations.</p>
+  <h3 data-i18n="section3.h2">3.2 Restrictions</h3>
+  <p data-i18n="section3.p2">This license does not grant you any right to:</p>
+  <ul>
+    <li data-i18n="section3.li1">Copy, modify, adapt, or create derivative works of the software or source code;</li>
+    <li data-i18n="section3.li2">Reverse engineer, decompile, disassemble, or attempt to extract underlying source code;</li>
+    <li data-i18n="section3.li3">Rent, lease, sublicense, resell, or distribute access to the platform to third parties;</li>
+    <li data-i18n="section3.li4">Circumvent security controls or use the platform for unauthorized commercial gain.</li>
+  </ul>
+  <h3 data-i18n="section3.h3">3.3 Ownership</h3>
+  <p data-i18n="section3.p3">All software code, algorithms, visual interfaces, trademarks, logos, and service marks associated with StocksalesApp are the exclusive property of StocksalesApp or its licensors. You retain full ownership of the raw business data and inventory content you upload to the platform.</p>
+
+  <!-- ============================================================ -->
+  <!-- 4. Acceptable Use & Conduct                                  -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section4.title">4. Acceptable Use &amp; Conduct</h2>
+  <p data-i18n="section4.p1">You agree to use StocksalesApp in a strictly lawful, responsible, and ethical manner. Prohibited activities include, but are not limited to:</p>
+  <ul>
+    <li data-i18n="section4.li1">Transmitting fraudulent, deceptive, defamatory, or unlawful material;</li>
+    <li data-i18n="section4.li2">Interfering with platform integrity, launching denial-of-service (DoS) attacks, or injecting malware;</li>
+    <li data-i18n="section4.li3">Attempting unauthorized access to accounts, servers, or underlying databases;</li>
+    <li data-i18n="section4.li4">Storing or processing illegal goods, prohibited inventory, or unauthorized third-party personal data.</li>
+  </ul>
+  <p data-i18n="section4.p2">Accounts found in violation of acceptable use rules are subject to immediate suspension or termination without prior notice.</p>
+
+  <!-- ============================================================ -->
+  <!-- 5. Payments, Billing, Merchant of Record & Auto-Renewal      -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section5.title">5. Payments, Billing, Merchant of Record &amp; Auto-Renewal Disclosures</h2>
+  <h3 data-i18n="section5.h1">5.1 Merchant of Record</h3>
+  <p data-i18n="section5.p1">All transactions, subscription billing, local taxes (VAT/GST), and invoicing are processed securely by <strong>financial assistance</strong>, our authorized global Merchant of Record and reseller. StocksalesApp does not store, process, or have direct access to your full credit card numbers, CVV, or banking credentials.</p>
+  <h3 data-i18n="section5.h2">5.2 Recurring Billing &amp; Auto-Renewal Consent</h3>
+  <ul>
+    <li data-i18n="section5.li1">Subscriptions automatically renew at the end of each billing cycle (monthly or annual) using the payment method on file with financial assistance.</li>
+    <li data-i18n="section5.li2"><strong>Pre-Checkout Transparency:</strong> Exact renewal terms, billing frequency, and cancellation terms are explicitly presented directly adjacent to the payment checkout button.</li>
+    <li data-i18n="section5.li3"><strong>California Auto-Renewal Law Compliance:</strong> By clicking "Subscribe" or "Complete Purchase", you authorize recurring charges. You may cancel auto-renewal at any time prior to the next billing date via Account Settings or by emailing <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a> / financial assistance support. Cancellation stops future billing cycles; past payments are governed by our Refund Policy.</li>
+  </ul>
+
+  <!-- ============================================================ -->
+  <!-- 6. DMCA Safe Harbor & Takedown Policy                        -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section6.title">6. Digital Millennium Copyright Act (DMCA) Safe Harbor &amp; Takedown Policy</h2>
+  <h3 data-i18n="section6.h1">6.1 User Content Responsibility</h3>
+  <p data-i18n="section6.p1">Users remain solely responsible for ensuring that all images, product catalogs, shop logos, and avatars uploaded to StocksalesApp do not infringe third-party copyrights or intellectual property.</p>
+  <h3 data-i18n="section6.h2">6.2 Designated DMCA Copyright Agent</h3>
+  <p data-i18n="section6.p2">StocksalesApp maintains a registered Copyright Agent under Section 512(c) of the DMCA to maintain safe harbor protections. If you believe your copyrighted work has been improperly posted on our service, send a formal DMCA Takedown Notice to our designated agent:</p>
+  <address class="address-box">
+    <strong>Designated Copyright Agent:</strong> Legal &amp; Compliance Desk — StocksalesApp<br>
+    <strong>Official Email:</strong> <a href="mailto:dmca@stocksalesapp.store">dmca@stocksalesapp.store</a> (or <a href="mailto:support@stocksalesapp.store">support@stocksalesapp.store</a>)<br>
+    <strong>Physical Address:</strong> Agence E - Passeport, face à SNEDAI, Terminus 82, Angré Djibi, Cocody, Abidjan, Côte d'Ivoire
+  </address>
+  <h3 data-i18n="section6.h3">6.3 Takedown Notice Requirements</h3>
+  <p data-i18n="section6.p3">A valid DMCA notice must include: (a) physical or electronic signature of the copyright holder; (b) clear identification of the copyrighted work; (c) exact URL or account link location of the infringing material; (d) contact details; and (e) a good-faith statement that use of the material is unauthorized.</p>
+
+  <!-- ============================================================ -->
+  <!-- 7. Commercial Email & CAN-SPAM Act Compliance                -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section7.title">7. Commercial Email &amp; CAN-SPAM Act Compliance</h2>
+  <h3 data-i18n="section7.h1">7.1 Email Communications</h3>
+  <p data-i18n="section7.p1">By registering an account or subscribing to our updates, you consent to receive account, billing, security, and periodic marketing notifications.</p>
+  <h3 data-i18n="section7.h2">7.2 Unsubscribe Mechanism</h3>
+  <p data-i18n="section7.p2">Every commercial or waitlist email sent by StocksalesApp includes a clear, automated "Unsubscribe" link in the footer.</p>
+  <h3 data-i18n="section7.h3">7.3 Regulatory Physical Postal Contact</h3>
+  <p data-i18n="section7.p3">In compliance with the CAN-SPAM Act and global commercial messaging regulations, our official physical corporate contact details are included on all email footers and legal notices:</p>
+  <address class="address-box">
+    <strong>StocksalesApp Corporate Headquarters</strong><br>
+    Agence E - Passeport, face à SNEDAI, Terminus 82, Angré Djibi, Cocody, Abidjan, Côte d'Ivoire
+  </address>
+
+  <!-- ============================================================ -->
+  <!-- 8. Analytics, Session Replay & Technical Disclosures         -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section8.title">8. Analytics, Session Replay &amp; Technical Disclosures</h2>
+  <h3 data-i18n="section8.h1">8.1 External Assets &amp; Font Hosting</h3>
+  <p data-i18n="section8.p1">To maintain system performance, StocksalesApp may load typography and UI assets via external Content Delivery Networks (CDNs). Accessing these assets transmits your IP address and browser headers to third-party asset hosts.</p>
+  <h3 data-i18n="section8.h2">8.2 Session Replay &amp; Keystroke Masking</h3>
+  <p data-i18n="section8.p2">Where session recording diagnostics are enabled for support or troubleshooting, sensitive user input fields (passwords, payment fields, financial numbers) are strictly masked and encrypted to ensure privacy and avoid wiretapping infractions.</p>
+
+  <!-- ============================================================ -->
+  <!-- 9. Data Protection & Privacy                                 -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section9.title">9. Data Protection &amp; Privacy</h2>
+  <p data-i18n="section9.p1">Your privacy is fundamental to our service. Our data practices are detailed in our <a href="/privacy/" style="font-weight:500;">Privacy Policy</a> (incorporated by reference into these Terms). We implement encryption, firewalls, and strict access controls to protect your data. You are responsible for maintaining secret credentials for your account login.</p>
+
+  <!-- ============================================================ -->
+  <!-- 10. Warranty Disclaimer & Limitation of Liability            -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section10.title">10. Warranty Disclaimer &amp; Limitation of Liability</h2>
+  <h3 data-i18n="section10.h1">10.1 Warranty Disclaimer</h3>
+  <p data-i18n="section10.p1">StocksalesApp is provided on an "AS IS" and "AS AVAILABLE" basis. To the maximum extent permitted by law, StocksalesApp disclaims all warranties, express, implied, or statutory, including warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+  <h3 data-i18n="section10.h2">10.2 Limitation of Liability</h3>
+  <p data-i18n="section10.p2">In no event shall StocksalesApp, its directors, or licensors be liable for any indirect, incidental, special, consequential, or punitive damages (including lost profits, lost data, or business interruption). Our total aggregate liability for any claim arising from these Terms shall not exceed the total amount paid by you to StocksalesApp in the twelve (12) months preceding the claim.</p>
+
+  <!-- ============================================================ -->
+  <!-- 11. Termination & Suspension                                 -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section11.title">11. Termination &amp; Suspension</h2>
+  <p data-i18n="section11.p1">Either party may terminate this agreement at any time. Upon account termination, your right to use the platform immediately ceases. Provisions regarding Intellectual Property, DMCA Safe Harbor, Limitation of Liability, and Governing Law survive termination.</p>
+
+  <!-- ============================================================ -->
+  <!-- 12. Governing Law & Dispute Resolution                       -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section12.title">12. Governing Law &amp; Dispute Resolution</h2>
+  <h3 data-i18n="section12.h1">12.1 Governing Law</h3>
+  <p data-i18n="section12.p1">These Terms shall be governed by and construed in accordance with applicable laws, without regard to conflict of law principles.</p>
+  <h3 data-i18n="section12.h2">12.2 Dispute Resolution</h3>
+  <p data-i18n="section12.p2">Any dispute or legal claim arising out of these Terms or use of StocksalesApp shall be submitted to the exclusive jurisdiction of the competent courts in <strong>Abidjan, Côte d'Ivoire</strong>, unless mandatory international consumer arbitration laws apply.</p>
+
+  <!-- ============================================================ -->
+  <!-- 13. Contact & Corporate Identity                             -->
+  <!-- ============================================================ -->
+  <h2 data-i18n="section13.title">13. Contact &amp; Corporate Identity</h2>
+  <p data-i18n="section13.p1">For official inquiries, legal service, or compliance matters, please reach us at:</p>
+  <ul style="list-style:none; margin-left:0; padding-left:0;">
+    <li>📧 <strong>Support Email:</strong> <a href="mailto:support@stocksalesapp.store" style="font-weight:500;">support@stocksalesapp.store</a></li>
+    <li>⚖️ <strong>DMCA Agent Email:</strong> <a href="mailto:dmca@stocksalesapp.store" style="font-weight:500;">dmca@stocksalesapp.store</a></li>
+    <li>🏢 <strong>Physical Corporate Address:</strong> Agence E - Passeport, face à SNEDAI, Terminus 82, Angré Djibi, Cocody, Abidjan, Côte d'Ivoire</li>
+    <li>🛟 <strong>Help Center:</strong> <a href="https://myshop.stocksalesapp.store/support/" target="_blank" rel="noopener">myshop.stocksalesapp.store/support/</a></li>
+  </ul>
+
+  <!-- footer -->
+  <div class="legal-divider"></div>
+
+  <div class="legal-footer">
+    <div class="footer-links">
+      <a href="/pricing" data-i18n="footer.pricing">💲 Pricing</a>
+      <a href="/refund/" data-i18n="footer.refund">↩️ Refund Policy</a>
+      <a href="/privacy/" data-i18n="footer.privacy">🔐 Privacy</a>
+      <a href="/support/" data-i18n="footer.support">🛟 Support</a>
+    </div>
+    <div class="footer-meta">
+      <span data-i18n="footer.revised">📌 Last revised: <time datetime="2026-10-10">October 10, 2026</time></span>
+      <span style="display:inline-block; margin-left: 18px;">© 2026 StocksalesApp</span>
+    </div>
+  </div>
+
+  <div class="small-print" style="margin-top: 18px; border-top: 1px solid #ecf0f5; padding-top: 18px;">
+    <span data-i18n="footer.smallprint">⚙️ <strong>StocksalesApp</strong> — inventory &amp; sales platform. All rights reserved. This document constitutes the entire agreement between you and StocksalesApp regarding your use of the service and supersedes all prior agreements.</span>
+  </div>
+
+</div>
+
+<!-- === TRANSLATION SCRIPT === -->
+<script>
+  const translations = {
+    en: {
+      "title": "Terms of Service",
+      "effective": "📅 <strong>Effective:</strong> October 10, 2026",
+      "version": "⚡ <strong>Version:</strong> 2.5.0",
+      "merchant": "🏢 <strong>Merchant:</strong> financial assistance",
+      "review": "⏳ last review: October 2026",
+      "intro": "Welcome to StocksalesApp. By accessing or using our cloud-based business management platform, you agree to comply with and be bound by these Terms. Please read them carefully.",
+      "search.placeholder": "Search terms…",
+
+      "section1.title": "1. Service Description &amp; Scope",
+      "section1.h1": "1.1 Platform Scope",
+      "section1.p1": "StocksalesApp is a comprehensive, subscription-based business management ecosystem that provides integrated tools for inventory tracking, point-of-sale (POS) operations, customer relationship management (CRM), real-time analytics, and multi-channel order synchronization. The service is delivered as a software-as-a-service (SaaS) solution accessible via web browsers and supported mobile applications.",
+      "section1.h2": "1.2 Modifications &amp; Plan Limits",
+      "section1.p2": "All features, modules, and usage limits are defined by your active subscription plan. StocksalesApp reserves the right to introduce new functionalities or modify existing ones, provided such changes do not materially reduce the core utility of the service during an active paid subscription period.",
+
+      "section2.title": "2. Account Registration, Age Limits &amp; COPPA Safeguards",
+      "section2.h1": "2.1 Account Eligibility",
+      "section2.p1": "You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to register an account and enter into this binding agreement.",
+      "section2.h2": "2.2 Children’s Online Privacy Protection Act (COPPA) Notice",
+      "section2.p2": "StocksalesApp is designed strictly for business and organizational operations and is <strong>not intended for or directed toward children under 13 years of age</strong>. We do not knowingly collect, store, or process personal data from anyone under 13. If an unauthorized minor creates an account or submits personal information, please contact us immediately at <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Upon verification, the account and associated data will be deleted immediately in compliance with COPPA regulations.",
+
+      "section3.title": "3. License &amp; Intellectual Property Rights",
+      "section3.h1": "3.1 SaaS License Grant",
+      "section3.p1": "Subject to your full compliance with these Terms and payment of applicable fees, StocksalesApp grants you a limited, non-exclusive, non-transferable, non-sublicensable, and revocable license to access and use the platform solely for your internal business operations.",
+      "section3.h2": "3.2 Restrictions",
+      "section3.p2": "This license does not grant you any right to:",
+      "section3.li1": "Copy, modify, adapt, or create derivative works of the software or source code;",
+      "section3.li2": "Reverse engineer, decompile, disassemble, or attempt to extract underlying source code;",
+      "section3.li3": "Rent, lease, sublicense, resell, or distribute access to the platform to third parties;",
+      "section3.li4": "Circumvent security controls or use the platform for unauthorized commercial gain.",
+      "section3.h3": "3.3 Ownership",
+      "section3.p3": "All software code, algorithms, visual interfaces, trademarks, logos, and service marks associated with StocksalesApp are the exclusive property of StocksalesApp or its licensors. You retain full ownership of the raw business data and inventory content you upload to the platform.",
+
+      "section4.title": "4. Acceptable Use &amp; Conduct",
+      "section4.p1": "You agree to use StocksalesApp in a strictly lawful, responsible, and ethical manner. Prohibited activities include, but are not limited to:",
+      "section4.li1": "Transmitting fraudulent, deceptive, defamatory, or unlawful material;",
+      "section4.li2": "Interfering with platform integrity, launching denial-of-service (DoS) attacks, or injecting malware;",
+      "section4.li3": "Attempting unauthorized access to accounts, servers, or underlying databases;",
+      "section4.li4": "Storing or processing illegal goods, prohibited inventory, or unauthorized third-party personal data.",
+      "section4.p2": "Accounts found in violation of acceptable use rules are subject to immediate suspension or termination without prior notice.",
+
+      "section5.title": "5. Payments, Billing, Merchant of Record &amp; Auto-Renewal Disclosures",
+      "section5.h1": "5.1 Merchant of Record",
+      "section5.p1": "All transactions, subscription billing, local taxes (VAT/GST), and invoicing are processed securely by <strong>financial assistance</strong>, our authorized global Merchant of Record and reseller. StocksalesApp does not store, process, or have direct access to your full credit card numbers, CVV, or banking credentials.",
+      "section5.h2": "5.2 Recurring Billing &amp; Auto-Renewal Consent",
+      "section5.li1": "Subscriptions automatically renew at the end of each billing cycle (monthly or annual) using the payment method on file with financial assistance.",
+      "section5.li2": "<strong>Pre-Checkout Transparency:</strong> Exact renewal terms, billing frequency, and cancellation terms are explicitly presented directly adjacent to the payment checkout button.",
+      "section5.li3": "<strong>California Auto-Renewal Law Compliance:</strong> By clicking \"Subscribe\" or \"Complete Purchase\", you authorize recurring charges. You may cancel auto-renewal at any time prior to the next billing date via Account Settings or by emailing <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a> / financial assistance support. Cancellation stops future billing cycles; past payments are governed by our Refund Policy.",
+
+      "section6.title": "6. Digital Millennium Copyright Act (DMCA) Safe Harbor &amp; Takedown Policy",
+      "section6.h1": "6.1 User Content Responsibility",
+      "section6.p1": "Users remain solely responsible for ensuring that all images, product catalogs, shop logos, and avatars uploaded to StocksalesApp do not infringe third-party copyrights or intellectual property.",
+      "section6.h2": "6.2 Designated DMCA Copyright Agent",
+      "section6.p2": "StocksalesApp maintains a registered Copyright Agent under Section 512(c) of the DMCA to maintain safe harbor protections. If you believe your copyrighted work has been improperly posted on our service, send a formal DMCA Takedown Notice to our designated agent:",
+      "section6.h3": "6.3 Takedown Notice Requirements",
+      "section6.p3": "A valid DMCA notice must include: (a) physical or electronic signature of the copyright holder; (b) clear identification of the copyrighted work; (c) exact URL or account link location of the infringing material; (d) contact details; and (e) a good-faith statement that use of the material is unauthorized.",
+
+      "section7.title": "7. Commercial Email &amp; CAN-SPAM Act Compliance",
+      "section7.h1": "7.1 Email Communications",
+      "section7.p1": "By registering an account or subscribing to our updates, you consent to receive account, billing, security, and periodic marketing notifications.",
+      "section7.h2": "7.2 Unsubscribe Mechanism",
+      "section7.p2": "Every commercial or waitlist email sent by StocksalesApp includes a clear, automated \"Unsubscribe\" link in the footer.",
+      "section7.h3": "7.3 Regulatory Physical Postal Contact",
+      "section7.p3": "In compliance with the CAN-SPAM Act and global commercial messaging regulations, our official physical corporate contact details are included on all email footers and legal notices:",
+
+      "section8.title": "8. Analytics, Session Replay &amp; Technical Disclosures",
+      "section8.h1": "8.1 External Assets &amp; Font Hosting",
+      "section8.p1": "To maintain system performance, StocksalesApp may load typography and UI assets via external Content Delivery Networks (CDNs). Accessing these assets transmits your IP address and browser headers to third-party asset hosts.",
+      "section8.h2": "8.2 Session Replay &amp; Keystroke Masking",
+      "section8.p2": "Where session recording diagnostics are enabled for support or troubleshooting, sensitive user input fields (passwords, payment fields, financial numbers) are strictly masked and encrypted to ensure privacy and avoid wiretapping infractions.",
+
+      "section9.title": "9. Data Protection &amp; Privacy",
+      "section9.p1": "Your privacy is fundamental to our service. Our data practices are detailed in our <a href=\"/privacy/\" style=\"font-weight:500;\">Privacy Policy</a> (incorporated by reference into these Terms). We implement encryption, firewalls, and strict access controls to protect your data. You are responsible for maintaining secret credentials for your account login.",
+
+      "section10.title": "10. Warranty Disclaimer &amp; Limitation of Liability",
+      "section10.h1": "10.1 Warranty Disclaimer",
+      "section10.p1": "StocksalesApp is provided on an \"AS IS\" and \"AS AVAILABLE\" basis. To the maximum extent permitted by law, StocksalesApp disclaims all warranties, express, implied, or statutory, including warranties of merchantability, fitness for a particular purpose, and non-infringement.",
+      "section10.h2": "10.2 Limitation of Liability",
+      "section10.p2": "In no event shall StocksalesApp, its directors, or licensors be liable for any indirect, incidental, special, consequential, or punitive damages (including lost profits, lost data, or business interruption). Our total aggregate liability for any claim arising from these Terms shall not exceed the total amount paid by you to StocksalesApp in the twelve (12) months preceding the claim.",
+
+      "section11.title": "11. Termination &amp; Suspension",
+      "section11.p1": "Either party may terminate this agreement at any time. Upon account termination, your right to use the platform immediately ceases. Provisions regarding Intellectual Property, DMCA Safe Harbor, Limitation of Liability, and Governing Law survive termination.",
+
+      "section12.title": "12. Governing Law &amp; Dispute Resolution",
+      "section12.h1": "12.1 Governing Law",
+      "section12.p1": "These Terms shall be governed by and construed in accordance with applicable laws, without regard to conflict of law principles.",
+      "section12.h2": "12.2 Dispute Resolution",
+      "section12.p2": "Any dispute or legal claim arising out of these Terms or use of StocksalesApp shall be submitted to the exclusive jurisdiction of the competent courts in <strong>Abidjan, Côte d'Ivoire</strong>, unless mandatory international consumer arbitration laws apply.",
+
+      "section13.title": "13. Contact &amp; Corporate Identity",
+      "section13.p1": "For official inquiries, legal service, or compliance matters, please reach us at:",
+
+      "footer.pricing": "💲 Pricing",
+      "footer.refund": "↩️ Refund Policy",
+      "footer.privacy": "🔐 Privacy",
+      "footer.support": "🛟 Support",
+      "footer.revised": "📌 Last revised: <time datetime=\"2026-10-10\">October 10, 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — inventory &amp; sales platform. All rights reserved. This document constitutes the entire agreement between you and StocksalesApp regarding your use of the service and supersedes all prior agreements."
+    },
+
+    fr: {
+      "title": "Conditions d'utilisation",
+      "effective": "📅 <strong>En vigueur :</strong> 10 octobre 2026",
+      "version": "⚡ <strong>Version :</strong> 2.5.0",
+      "merchant": "🏢 <strong>Commerçant :</strong> financial assistance",
+      "review": "⏳ dernière révision : octobre 2026",
+      "intro": "Bienvenue sur StocksalesApp. En accédant ou en utilisant notre plateforme de gestion d'entreprise basée sur le cloud, vous acceptez de vous conformer et d'être lié par les présentes Conditions. Veuillez les lire attentivement.",
+      "search.placeholder": "Rechercher dans les conditions…",
+
+      "section1.title": "1. Description et portée du service",
+      "section1.h1": "1.1 Portée de la plateforme",
+      "section1.p1": "StocksalesApp est un écosystème complet de gestion d'entreprise par abonnement qui fournit des outils intégrés pour le suivi des stocks, les opérations de point de vente (POS), la gestion de la relation client (CRM), l'analyse en temps réel et la synchronisation des commandes multicanales. Le service est fourni en tant que solution logicielle en tant que service (SaaS) accessible via des navigateurs web et des applications mobiles prises en charge.",
+      "section1.h2": "1.2 Modifications et limites du forfait",
+      "section1.p2": "Toutes les fonctionnalités, modules et limites d'utilisation sont définis par votre plan d'abonnement actif. StocksalesApp se réserve le droit d'introduire de nouvelles fonctionnalités ou de modifier celles existantes, à condition que ces changements ne réduisent pas matériellement l'utilité principale du service pendant une période d'abonnement payant active.",
+
+      "section2.title": "2. Inscription au compte, limites d'âge et garanties COPPA",
+      "section2.h1": "2.1 Éligibilité au compte",
+      "section2.p1": "Vous devez avoir au moins 18 ans (ou l'âge légal de la majorité dans votre juridiction) pour créer un compte et conclure cet accord contraignant.",
+      "section2.h2": "2.2 Avis relatif à la loi sur la protection de la vie privée des enfants en ligne (COPPA)",
+      "section2.p2": "StocksalesApp est conçu strictement pour les opérations commerciales et organisationnelles et <strong>n'est pas destiné aux enfants de moins de 13 ans</strong>. Nous ne collectons, ne stockons ni ne traitons sciemment les données personnelles de toute personne de moins de 13 ans. Si un mineur non autorisé crée un compte ou soumet des informations personnelles, veuillez nous contacter immédiatement à <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Après vérification, le compte et les données associées seront supprimés immédiatement conformément aux règlements COPPA.",
+
+      "section3.title": "3. Licence et droits de propriété intellectuelle",
+      "section3.h1": "3.1 Octroi de licence SaaS",
+      "section3.p1": "Sous réserve de votre conformité totale aux présentes Conditions et du paiement des frais applicables, StocksalesApp vous accorde une licence limitée, non exclusive, non transférable, non sous-licenciable et révocable pour accéder à la plateforme et l'utiliser uniquement pour vos opérations commerciales internes.",
+      "section3.h2": "3.2 Restrictions",
+      "section3.p2": "Cette licence ne vous accorde aucun droit de :",
+      "section3.li1": "Copier, modifier, adapter ou créer des œuvres dérivées du logiciel ou du code source ;",
+      "section3.li2": "Procéder à l'ingénierie inverse, décompiler, désassembler ou tenter d'extraire le code source sous-jacent ;",
+      "section3.li3": "Louer, donner en crédit-bail, sous-licencier, revendre ou distribuer l'accès à la plateforme à des tiers ;",
+      "section3.li4": "Contourner les contrôles de sécurité ou utiliser la plateforme à des fins commerciales non autorisées.",
+      "section3.h3": "3.3 Propriété",
+      "section3.p3": "Tous les codes logiciels, algorithmes, interfaces visuelles, marques, logos et marques de service associés à StocksalesApp sont la propriété exclusive de StocksalesApp ou de ses concédants. Vous conservez la pleine propriété des données commerciales brutes et du contenu d'inventaire que vous téléchargez sur la plateforme.",
+
+      "section4.title": "4. Utilisation acceptable et conduite",
+      "section4.p1": "Vous acceptez d'utiliser StocksalesApp de manière strictement légale, responsable et éthique. Les activités interdites incluent, sans s'y limiter :",
+      "section4.li1": "Transmettre du matériel frauduleux, trompeur, diffamatoire ou illégal ;",
+      "section4.li2": "Porter atteinte à l'intégrité de la plateforme, lancer des attaques par déni de service (DoS) ou injecter des logiciels malveillants ;",
+      "section4.li3": "Tenter d'accéder sans autorisation aux comptes, serveurs ou bases de données sous-jacentes ;",
+      "section4.li4": "Stocker ou traiter des marchandises illégales, des stocks interdits ou des données personnelles de tiers non autorisées.",
+      "section4.p2": "Les comptes jugés en violation des règles d'utilisation acceptable sont susceptibles d'être immédiatement suspendus ou résiliés sans préavis.",
+
+      "section5.title": "5. Paiements, facturation, commerçant de référence et divulgations sur le renouvellement automatique",
+      "section5.h1": "5.1 Commerçant de référence",
+      "section5.p1": "Toutes les transactions, la facturation des abonnements, les taxes locales (TVA/GST) et la facturation sont traitées en toute sécurité par <strong>financial assistance</strong>, notre commerçant de référence et revendeur mondial autorisé. StocksalesApp ne stocke, ne traite ni n'a directement accès à vos numéros de carte de crédit complets, à votre CVV ou à vos identifiants bancaires.",
+      "section5.h2": "5.2 Consentement à la facturation récurrente et au renouvellement automatique",
+      "section5.li1": "Les abonnements se renouvellent automatiquement à la fin de chaque cycle de facturation (mensuel ou annuel) en utilisant le mode de paiement enregistré auprès de financial assistance.",
+      "section5.li2": "<strong>Transparence avant paiement :</strong> Les conditions exactes de renouvellement, la fréquence de facturation et les conditions d'annulation sont explicitement présentées juste à côté du bouton de paiement.",
+      "section5.li3": "<strong>Conformité à la loi californienne sur le renouvellement automatique :</strong> En cliquant sur « S'abonner » ou « Finaliser l'achat », vous autorisez les prélèvements récurrents. Vous pouvez annuler le renouvellement automatique à tout moment avant la prochaine date de facturation via les paramètres de votre compte ou en envoyant un e-mail à <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a> / au support de financial assistance. L'annulation met fin aux futurs cycles de facturation ; les paiements passés sont régis par notre politique de remboursement.",
+
+      "section6.title": "6. Exonération DMCA et politique de retrait",
+      "section6.h1": "6.1 Responsabilité du contenu utilisateur",
+      "section6.p1": "Les utilisateurs restent seuls responsables de s'assurer que toutes les images, catalogues de produits, logos de boutique et avatars téléchargés sur StocksalesApp ne portent pas atteinte aux droits d'auteur ou à la propriété intellectuelle de tiers.",
+      "section6.h2": "6.2 Agent DMCA désigné",
+      "section6.p2": "StocksalesApp maintient un agent de droits d'auteur enregistré en vertu de l'article 512(c) de la DMCA pour maintenir les protections du safe harbor. Si vous pensez que votre œuvre protégée par le droit d'auteur a été publiée de manière abusive sur notre service, envoyez une notification formelle de retrait DMCA à notre agent désigné :",
+      "section6.h3": "6.3 Exigences de la notification de retrait",
+      "section6.p3": "Une notification DMCA valide doit inclure : (a) la signature physique ou électronique du titulaire des droits d'auteur ; (b) l'identification claire de l'œuvre protégée par le droit d'auteur ; (c) l'URL exacte ou l'emplacement du lien de compte du matériel contrefaisant ; (d) les coordonnées ; et (e) une déclaration de bonne foi selon laquelle l'utilisation du matériel n'est pas autorisée.",
+
+      "section7.title": "7. Courrier électronique commercial et conformité CAN-SPAM",
+      "section7.h1": "7.1 Communications par e-mail",
+      "section7.p1": "En créant un compte ou en vous abonnant à nos mises à jour, vous consentez à recevoir des notifications de compte, de facturation, de sécurité et des notifications marketing périodiques.",
+      "section7.h2": "7.2 Mécanisme de désabonnement",
+      "section7.p2": "Chaque e-mail commercial ou de liste d'attente envoyé par StocksalesApp comprend un lien « Se désabonner » clair et automatisé en pied de page.",
+      "section7.h3": "7.3 Contact postal physique réglementaire",
+      "section7.p3": "Conformément à la loi CAN-SPAM et aux réglementations mondiales sur les messages commerciaux, nos coordonnées physiques officielles de l'entreprise sont incluses dans tous les pieds de page des e-mails et les mentions légales :",
+
+      "section8.title": "8. Analyses, relecture de session et divulgations techniques",
+      "section8.h1": "8.1 Ressources externes et hébergement de polices",
+      "section8.p1": "Pour maintenir les performances du système, StocksalesApp peut charger la typographie et les ressources de l'interface utilisateur via des réseaux de diffusion de contenu (CDN) externes. L'accès à ces ressources transmet votre adresse IP et les en-têtes de votre navigateur à des hôtes de ressources tiers.",
+      "section8.h2": "8.2 Relecture de session et masquage des frappes",
+      "section8.p2": "Lorsque les diagnostics d'enregistrement de session sont activés pour le support ou le dépannage, les champs de saisie utilisateur sensibles (mots de passe, champs de paiement, numéros financiers) sont strictement masqués et chiffrés pour garantir la confidentialité et éviter les infractions d'écoute électronique.",
+
+      "section9.title": "9. Protection des données et confidentialité",
+      "section9.p1": "Votre vie privée est fondamentale pour notre service. Nos pratiques en matière de données sont détaillées dans notre <a href=\"/privacy/\" style=\"font-weight:500;\">Politique de confidentialité</a> (incorporée par référence dans les présentes Conditions). Nous mettons en œuvre le chiffrement, les pare-feu et des contrôles d'accès stricts pour protéger vos données. Vous êtes responsable du maintien de la confidentialité des identifiants de connexion à votre compte.",
+
+      "section10.title": "10. Exclusion de garantie et limitation de responsabilité",
+      "section10.h1": "10.1 Exclusion de garantie",
+      "section10.p1": "StocksalesApp est fourni « EN L'ÉTAT » et « SELON DISPONIBILITÉ ». Dans toute la mesure permise par la loi, StocksalesApp décline toutes les garanties, expresses, implicites ou légales, y compris les garanties de qualité marchande, d'adéquation à un usage particulier et de non-contrefaçon.",
+      "section10.h2": "10.2 Limitation de responsabilité",
+      "section10.p2": "En aucun cas StocksalesApp, ses dirigeants ou ses concédants ne pourront être tenus responsables des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs (y compris les pertes de bénéfices, les pertes de données ou l'interruption d'activité). Notre responsabilité globale totale pour toute réclamation découlant des présentes Conditions ne dépassera pas le montant total que vous avez payé à StocksalesApp au cours des douze (12) mois précédant la réclamation.",
+
+      "section11.title": "11. Résiliation et suspension",
+      "section11.p1": "L'une ou l'autre partie peut résilier cet accord à tout moment. En cas de résiliation du compte, votre droit d'utiliser la plateforme cesse immédiatement. Les dispositions relatives à la propriété intellectuelle, au safe harbor DMCA, à la limitation de responsabilité et à la loi applicable survivent à la résiliation.",
+
+      "section12.title": "12. Loi applicable et résolution des litiges",
+      "section12.h1": "12.1 Loi applicable",
+      "section12.p1": "Les présentes Conditions sont régies par et interprétées conformément aux lois applicables, sans égard aux principes de conflit de lois.",
+      "section12.h2": "12.2 Résolution des litiges",
+      "section12.p2": "Tout litige ou réclamation juridique découlant des présentes Conditions ou de l'utilisation de StocksalesApp sera soumis à la juridiction exclusive des tribunaux compétents d'<strong>Abidjan, Côte d'Ivoire</strong>, sauf si des lois internationales impératives sur l'arbitrage des consommateurs s'appliquent.",
+
+      "section13.title": "13. Contact et identité de l'entreprise",
+      "section13.p1": "Pour les demandes officielles, les significations judiciaires ou les questions de conformité, veuillez nous contacter à :",
+
+      "footer.pricing": "💲 Tarification",
+      "footer.refund": "↩️ Politique de remboursement",
+      "footer.privacy": "🔐 Confidentialité",
+      "footer.support": "🛟 Assistance",
+      "footer.revised": "📌 Dernière révision : <time datetime=\"2026-10-10\">10 octobre 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — plateforme d'inventaire et de vente. Tous droits réservés. Ce document constitue l'intégralité de l'accord entre vous et StocksalesApp concernant votre utilisation du service et remplace tous les accords antérieurs."
+    },
+
+    es: {
+      "title": "Términos de servicio",
+      "effective": "📅 <strong>Vigente:</strong> 10 de octubre de 2026",
+      "version": "⚡ <strong>Versión:</strong> 2.5.0",
+      "merchant": "🏢 <strong>Comerciante:</strong> financial assistance",
+      "review": "⏳ última revisión: octubre de 2026",
+      "intro": "Bienvenido a StocksalesApp. Al acceder o utilizar nuestra plataforma de gestión empresarial basada en la nube, usted acepta cumplir y estar sujeto a estos Términos. Por favor, léalos detenidamente.",
+      "search.placeholder": "Buscar en los términos…",
+
+      "section1.title": "1. Descripción y alcance del servicio",
+      "section1.h1": "1.1 Alcance de la plataforma",
+      "section1.p1": "StocksalesApp es un ecosistema integral de gestión empresarial basado en suscripción que proporciona herramientas integradas para el seguimiento de inventario, operaciones de punto de venta (POS), gestión de relaciones con clientes (CRM), análisis en tiempo real y sincronización de pedidos multicanal. El servicio se entrega como una solución de software como servicio (SaaS) accesible a través de navegadores web y aplicaciones móviles compatibles.",
+      "section1.h2": "1.2 Modificaciones y límites del plan",
+      "section1.p2": "Todas las funciones, módulos y límites de uso están definidos por su plan de suscripción activo. StocksalesApp se reserva el derecho de introducir nuevas funcionalidades o modificar las existentes, siempre que dichos cambios no reduzcan materialmente la utilidad principal del servicio durante un período de suscripción de pago activo.",
+
+      "section2.title": "2. Registro de cuenta, límites de edad y salvaguardas COPPA",
+      "section2.h1": "2.1 Elegibilidad de la cuenta",
+      "section2.p1": "Debe tener al menos 18 años de edad (o la mayoría de edad legal en su jurisdicción) para registrar una cuenta y celebrar este acuerdo vinculante.",
+      "section2.h2": "2.2 Aviso de la Ley de Protección de la Privacidad Infantil en Línea (COPPA)",
+      "section2.p2": "StocksalesApp está diseñado estrictamente para operaciones comerciales y organizativas y <strong>no está destinado ni dirigido a niños menores de 13 años</strong>. No recopilamos, almacenamos ni procesamos a sabiendas datos personales de personas menores de 13 años. Si un menor no autorizado crea una cuenta o envía información personal, contáctenos de inmediato en <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a>. Tras la verificación, la cuenta y los datos asociados se eliminarán de inmediato en cumplimiento de las regulaciones COPPA.",
+
+      "section3.title": "3. Licencia y derechos de propiedad intelectual",
+      "section3.h1": "3.1 Concesión de licencia SaaS",
+      "section3.p1": "Sujeto a su pleno cumplimiento de estos Términos y al pago de las tarifas aplicables, StocksalesApp le otorga una licencia limitada, no exclusiva, intransferible, no sublicenciable y revocable para acceder y utilizar la plataforma únicamente para sus operaciones comerciales internas.",
+      "section3.h2": "3.2 Restricciones",
+      "section3.p2": "Esta licencia no le otorga ningún derecho a:",
+      "section3.li1": "Copiar, modificar, adaptar o crear obras derivadas del software o código fuente;",
+      "section3.li2": "Realizar ingeniería inversa, descompilar, desensamblar o intentar extraer el código fuente subyacente;",
+      "section3.li3": "Alquilar, arrendar, sublicenciar, revender o distribuir el acceso a la plataforma a terceros;",
+      "section3.li4": "Eludir los controles de seguridad o utilizar la plataforma para obtener beneficios comerciales no autorizados.",
+      "section3.h3": "3.3 Propiedad",
+      "section3.p3": "Todo el código de software, algoritmos, interfaces visuales, marcas comerciales, logotipos y marcas de servicio asociados con StocksalesApp son propiedad exclusiva de StocksalesApp o sus licenciantes. Usted conserva la plena propiedad de los datos comerciales brutos y el contenido de inventario que carga en la plataforma.",
+
+      "section4.title": "4. Uso aceptable y conducta",
+      "section4.p1": "Usted acepta utilizar StocksalesApp de manera estrictamente legal, responsable y ética. Las actividades prohibidas incluyen, entre otras:",
+      "section4.li1": "Transmitir material fraudulento, engañoso, difamatorio o ilegal;",
+      "section4.li2": "Interferir con la integridad de la plataforma, lanzar ataques de denegación de servicio (DoS) o inyectar malware;",
+      "section4.li3": "Intentar acceder sin autorización a cuentas, servidores o bases de datos subyacentes;",
+      "section4.li4": "Almacenar o procesar productos ilegales, inventario prohibido o datos personales de terceros no autorizados.",
+      "section4.p2": "Las cuentas que infrinjan las reglas de uso aceptable están sujetas a suspensión o terminación inmediata sin previo aviso.",
+
+      "section5.title": "5. Pagos, facturación, comerciante de registro y divulgaciones de renovación automática",
+      "section5.h1": "5.1 Comerciante de registro",
+      "section5.p1": "Todas las transacciones, la facturación de suscripciones, los impuestos locales (IVA/GST) y la facturación son procesados de forma segura por <strong>financial assistance</strong>, nuestro comerciante de registro y revendedor global autorizado. StocksalesApp no almacena, procesa ni tiene acceso directo a los números completos de su tarjeta de crédito, CVV o credenciales bancarias.",
+      "section5.h2": "5.2 Consentimiento de facturación recurrente y renovación automática",
+      "section5.li1": "Las suscripciones se renuevan automáticamente al final de cada ciclo de facturación (mensual o anual) utilizando el método de pago registrado con financial assistance.",
+      "section5.li2": "<strong>Transparencia antes del pago:</strong> Los términos exactos de renovación, la frecuencia de facturación y los términos de cancelación se presentan explícitamente junto al botón de pago.",
+      "section5.li3": "<strong>Cumplimiento de la ley de renovación automática de California:</strong> Al hacer clic en \"Suscribirse\" o \"Completar compra\", usted autoriza cargos recurrentes. Puede cancelar la renovación automática en cualquier momento antes de la próxima fecha de facturación a través de la configuración de su cuenta o enviando un correo electrónico a <a href=\"mailto:support@stocksalesapp.store\" style=\"font-weight:500;\">support@stocksalesapp.store</a> / soporte de financial assistance. La cancelación detiene los ciclos de facturación futuros; los pagos anteriores se rigen por nuestra Política de reembolso.",
+
+      "section6.title": "6. Puerto seguro de la DMCA y política de retirada",
+      "section6.h1": "6.1 Responsabilidad del contenido del usuario",
+      "section6.p1": "Los usuarios son los únicos responsables de asegurarse de que todas las imágenes, catálogos de productos, logotipos de tiendas y avatares cargados en StocksalesApp no infrinjan los derechos de autor o la propiedad intelectual de terceros.",
+      "section6.h2": "6.2 Agente designado de la DMCA",
+      "section6.p2": "StocksalesApp mantiene un agente de derechos de autor registrado en virtud de la Sección 512(c) de la DMCA para mantener las protecciones del puerto seguro. Si cree que su obra protegida por derechos de autor se ha publicado indebidamente en nuestro servicio, envíe una notificación formal de retirada de DMCA a nuestro agente designado:",
+      "section6.h3": "6.3 Requisitos de la notificación de retirada",
+      "section6.p3": "Una notificación DMCA válida debe incluir: (a) firma física o electrónica del titular de los derechos de autor; (b) identificación clara de la obra protegida por derechos de autor; (c) URL exacta o ubicación del enlace de la cuenta del material infractor; (d) datos de contacto; y (e) una declaración de buena fe de que el uso del material no está autorizado.",
+
+      "section7.title": "7. Correo electrónico comercial y cumplimiento de CAN-SPAM",
+      "section7.h1": "7.1 Comunicaciones por correo electrónico",
+      "section7.p1": "Al registrar una cuenta o suscribirse a nuestras actualizaciones, usted acepta recibir notificaciones de cuenta, facturación, seguridad y marketing periódicas.",
+      "section7.h2": "7.2 Mecanismo de cancelación de suscripción",
+      "section7.p2": "Cada correo electrónico comercial o de lista de espera enviado por StocksalesApp incluye un enlace claro y automatizado de \"Cancelar suscripción\" en el pie de página.",
+      "section7.h3": "7.3 Contacto postal físico reglamentario",
+      "section7.p3": "En cumplimiento de la Ley CAN-SPAM y las regulaciones globales de mensajería comercial, nuestros datos de contacto físicos corporativos oficiales se incluyen en todos los pies de página de correo electrónico y avisos legales:",
+
+      "section8.title": "8. Análisis, repetición de sesiones y divulgaciones técnicas",
+      "section8.h1": "8.1 Recursos externos y alojamiento de fuentes",
+      "section8.p1": "Para mantener el rendimiento del sistema, StocksalesApp puede cargar tipografías y recursos de interfaz de usuario a través de redes de entrega de contenido (CDN) externas. Acceder a estos recursos transmite su dirección IP y encabezados del navegador a hosts de recursos de terceros.",
+      "section8.h2": "8.2 Repetición de sesiones y enmascaramiento de pulsaciones",
+      "section8.p2": "Cuando los diagnósticos de grabación de sesiones están habilitados para soporte o solución de problemas, los campos de entrada de usuario sensibles (contraseñas, campos de pago, números financieros) se enmascaran y cifran estrictamente para garantizar la privacidad y evitar infracciones de escuchas telefónicas.",
+
+      "section9.title": "9. Protección de datos y privacidad",
+      "section9.p1": "Su privacidad es fundamental para nuestro servicio. Nuestras prácticas de datos se detallan en nuestra <a href=\"/privacy/\" style=\"font-weight:500;\">Política de privacidad</a> (incorporada por referencia en estos Términos). Implementamos cifrado, firewalls y estrictos controles de acceso para proteger sus datos. Usted es responsable de mantener la confidencialidad de las credenciales de inicio de sesión de su cuenta.",
+
+      "section10.title": "10. Exención de garantía y limitación de responsabilidad",
+      "section10.h1": "10.1 Exención de garantía",
+      "section10.p1": "StocksalesApp se proporciona \"TAL CUAL\" y \"SEGÚN DISPONIBILIDAD\". En la máxima medida permitida por la ley, StocksalesApp renuncia a todas las garantías, expresas, implícitas o legales, incluidas las garantías de comerciabilidad, idoneidad para un propósito particular y no infracción.",
+      "section10.h2": "10.2 Limitación de responsabilidad",
+      "section10.p2": "En ningún caso StocksalesApp, sus directores o licenciantes serán responsables de daños indirectos, incidentales, especiales, consecuentes o punitivos (incluidos lucro cesante, pérdida de datos o interrupción del negocio). Nuestra responsabilidad total agregada por cualquier reclamo que surja de estos Términos no excederá el monto total pagado por usted a StocksalesApp en los doce (12) meses anteriores al reclamo.",
+
+      "section11.title": "11. Terminación y suspensión",
+      "section11.p1": "Cualquiera de las partes puede terminar este acuerdo en cualquier momento. Al terminar la cuenta, su derecho a utilizar la plataforma cesa inmediatamente. Las disposiciones relativas a Propiedad Intelectual, Puerto Seguro DMCA, Limitación de Responsabilidad y Ley Aplicable sobreviven a la terminación.",
+
+      "section12.title": "12. Ley aplicable y resolución de disputas",
+      "section12.h1": "12.1 Ley aplicable",
+      "section12.p1": "Estos Términos se regirán e interpretarán de conformidad con las leyes aplicables, sin tener en cuenta los principios de conflicto de leyes.",
+      "section12.h2": "12.2 Resolución de disputas",
+      "section12.p2": "Cualquier disputa o reclamo legal que surja de estos Términos o del uso de StocksalesApp se someterá a la jurisdicción exclusiva de los tribunales competentes en <strong>Abiyán, Costa de Marfil</strong>, a menos que se apliquen leyes internacionales obligatorias de arbitraje de consumidores.",
+
+      "section13.title": "13. Contacto e identidad corporativa",
+      "section13.p1": "Para consultas oficiales, notificaciones legales o asuntos de cumplimiento, contáctenos en:",
+
+      "footer.pricing": "💲 Precios",
+      "footer.refund": "↩️ Política de reembolso",
+      "footer.privacy": "🔐 Privacidad",
+      "footer.support": "🛟 Soporte",
+      "footer.revised": "📌 Última revisión: <time datetime=\"2026-10-10\">10 de octubre de 2026</time>",
+      "footer.smallprint": "⚙️ <strong>StocksalesApp</strong> — plataforma de inventario y ventas. Todos los derechos reservados. Este documento constituye el acuerdo completo entre usted y StocksalesApp con respecto al uso del servicio y reemplaza todos los acuerdos anteriores."
+    }
+  };
+
+  function changeLanguage(lang) {
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        el.innerHTML = translations[lang][key];
+      }
+    });
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (translations[lang] && translations[lang][key]) {
+        el.placeholder = translations[lang][key];
+      }
+    });
+    document.documentElement.lang = lang;
+    // Re-apply search filter after language change
+    const query = document.getElementById('searchInput').value;
+    if (query) filterTerms(query);
+  }
+
+  /* === SEARCH FUNCTIONALITY === */
+  function filterTerms(query) {
+    const q = query.trim().toLowerCase();
+    const clearBtn = document.getElementById('searchClear');
+    const container = document.querySelector('.container');
+    const headings = container.querySelectorAll('h2, h3, p, ul, ol, .highlight-box, .address-box');
+
+    if (!q) {
+      // Show everything
+      container.querySelectorAll('.hidden-by-search').forEach(el => el.classList.remove('hidden-by-search'));
+      clearBtn.style.display = 'none';
+      return;
+    }
+
+    clearBtn.style.display = 'block';
+
+    // We'll hide sections by hiding all elements between h2 headings.
+    // Simpler approach: hide all content elements, then show those that match or are within a matching section.
+    // We'll iterate over h2 sections and check if any text inside matches.
+    const sections = [];
+    let currentSection = null;
+    const children = container.children;
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i];
+      if (el.tagName === 'H2') {
+        if (currentSection) sections.push(currentSection);
+        currentSection = { heading: el, elements: [el] };
+      } else if (currentSection) {
+        currentSection.elements.push(el);
+      }
+    }
+    if (currentSection) sections.push(currentSection);
+
+    // First hide all sections
+    sections.forEach(sec => {
+      sec.elements.forEach(el => el.classList.add('hidden-by-search'));
+    });
+
+    // Now show sections that match
+    let anyVisible = false;
+    sections.forEach(sec => {
+      const text = sec.elements.map(el => el.textContent).join(' ').toLowerCase();
+      if (text.includes(q)) {
+        sec.elements.forEach(el => el.classList.remove('hidden-by-search'));
+        anyVisible = true;
+        // Highlight matching text (simple)
+        sec.elements.forEach(el => {
+          if (el.children.length === 0 && el.textContent.toLowerCase().includes(q)) {
+            const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            el.innerHTML = el.innerHTML.replace(regex, '<mark class="search-highlight">$1</mark>');
+          }
+        });
+      }
+    });
+
+    if (!anyVisible) {
+      // Optionally show a "no results" message
+      // We'll just leave everything hidden.
+    }
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    filterTerms('');
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    // set default language to en
+    changeLanguage('en');
+  });
+</script>
+
+</body>
+</html>

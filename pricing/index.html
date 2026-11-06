@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Activation Center · StocksalesApp</title>
+    <!-- Paystack Script -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/language-direction.css">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="/envofgethoing.js"></script>
+        <script src="/supabase-rpc-proxy.js"></script>
+    <!-- Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="/pricing/js/hideme.js"></script>
+    <script src="/pricing/translations.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#0f172a;padding:0 0 40px;line-height:1.5}
+        .container{max-width:1300px;margin:0 auto;padding:0 20px}
+        .app-header{background:#fff;border-bottom:1px solid #e9edf2;padding:14px 0;position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);background:rgba(255,255,255,0.9)}
+        .header-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+        .brand{display:flex;align-items:center;gap:12px}
+        .brand-icon{width:42px;height:42px;background:linear-gradient(135deg,#1e293b,#3b82f6);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
+        .brand h1{font-size:1.3rem;font-weight:700;letter-spacing:-0.3px}
+        .tag{background:#3b82f6;color:#fff;font-size:0.65rem;padding:2px 10px;border-radius:40px;font-weight:600;margin-left:6px;vertical-align:middle}
+        .header-status a{text-decoration:none;color:#1e293b;font-weight:500;font-size:0.85rem}
+        .header-status a:hover{color:#3b82f6}
+        .business-card{background:#fff;border-radius:28px;padding:20px 24px;box-shadow:0 8px 20px rgba(0,0,0,0.02);border:1px solid #eef2f6;display:flex;align-items:center;gap:18px;margin:24px 0;flex-wrap:wrap}
+        .business-card .logo{width:60px;height:60px;border-radius:18px;object-fit:cover;background:#f1f5f9}
+        .business-card .info{flex:1}
+        .business-card .name{font-weight:700;font-size:1.2rem}
+        .business-card .details{font-size:0.85rem;color:#475569;margin-top:2px}
+        .status-badge{font-size:0.7rem;padding:4px 14px;border-radius:60px;font-weight:600;display:inline-block;background:#f1f5f9;color:#475569}
+        .status-badge.active{background:#dcfce7;color:#166534}
+        .status-badge.inactive{background:#fee2e2;color:#991b1b}
+        .hidden{display:none!important}
+        .license-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 24px;background:#f8fafc;border-radius:20px;padding:16px 20px;margin:12px 0}
+        .license-details .item{display:flex;justify-content:space-between;border-bottom:1px dashed #e2e8f0;padding:6px 0}
+        .license-details .label{font-weight:500;color:#475569}
+        .license-details .value{font-weight:600}
+        .divider{margin:20px 0;border:0;border-top:1px solid #e9edf2}
+        .payment-methods{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:12px 0 6px}
+        .payment-method-btn{background:#fff;border:1px solid #e2e8f0;border-radius:60px;padding:8px 24px;font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+        .payment-method-btn.active{background:#0f172a;border-color:#0f172a;color:#fff}
+        .payment-method-btn .badge-paystack{background:#3b82f6;color:#fff;font-size:0.6rem;padding:2px 8px;border-radius:40px;margin-left:4px}
+        .payment-method-btn .badge-gumroad{background:#6b21a5;color:#fff;font-size:0.6rem;padding:2px 8px;border-radius:40px;margin-left:4px}
+        .method-desc{font-size:0.85rem;color:#475569;margin:6px 0 16px}
+        .section-title{font-size:1.6rem;font-weight:700;margin-top:40px;margin-bottom:4px}
+        .section-sub{color:#64748b;margin-bottom:20px;font-weight:400}
+        .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:20px 0 32px}
+        .plan-card{background:#fff;border-radius:32px;padding:24px 22px;border:1px solid #eef2f6;box-shadow:0 4px 12px rgba(0,0,0,0.02);transition:all 0.2s;display:flex;flex-direction:column}
+        .plan-card:hover{box-shadow:0 12px 30px rgba(0,0,0,0.06);border-color:#cbd5e1}
+        .plan-card.popular{border-color:#3b82f6;background:#fafcff}
+        .plan-name{font-weight:700;font-size:1.2rem;display:flex;justify-content:space-between;align-items:center}
+        .badge-pro{background:#3b82f6;color:#fff;font-size:0.6rem;padding:2px 12px;border-radius:40px;font-weight:600}
+        .badge-ent{background:#8b5cf6;color:#fff;font-size:0.6rem;padding:2px 12px;border-radius:40px;font-weight:600}
+        .plan-price{font-size:2.2rem;font-weight:800;margin:8px 0 4px}
+        .plan-price span{font-size:1rem;font-weight:500;color:#64748b}
+        .price-comparison{font-size:0.8rem;color:#64748b;margin-bottom:10px}
+        .price-comparison .save{color:#16a34a;font-weight:600}
+        .plan-desc{color:#475569;font-size:0.9rem;margin-bottom:12px}
+        .plan-features{list-style:none;margin:10px 0 18px;flex:1}
+        .plan-features li{padding:5px 0;font-size:0.9rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f1f5f9}
+        .plan-features li i{width:18px;color:#3b82f6}
+        .plan-features li i.fa-times{color:#94a3b8}
+        .payment-options{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 10px;border-radius:60px;font-weight:600;font-size:0.9rem;border:0;cursor:pointer;transition:all 0.2s;width:100%}
+        .btn-paystack{background:#0f172a;color:#fff}
+        .btn-paystack:hover{background:#1e293b}
+        .btn-gumroad{background:#6b21a5;color:#fff}
+        .btn-gumroad:hover{background:#7c3aed}
+        .info-box{background:#f1f5f9;border-radius:24px;padding:20px 24px;margin:36px 0 20px;border-left:6px solid #3b82f6}
+        .info-box h4{font-size:1rem;margin-bottom:6px}
+        .info-box ul{list-style:none;padding-left:0}
+        .info-box ul li{padding:3px 0;display:flex;gap:8px;align-items:center;font-size:0.9rem}
+        .info-box ul li i{color:#3b82f6;width:18px}
+        footer{text-align:center;font-size:0.8rem;color:#64748b;padding:30px 0 10px;border-top:1px solid #e9edf2;margin-top:20px}
+        footer a{color:#1e293b;text-decoration:none;font-weight:500}
+        footer a:hover{color:#3b82f6}
+        .loading{display:flex;justify-content:center;align-items:center;height:60vh}
+        .spinner{width:40px;height:40px;border-radius:50%;border:5px solid #e2e8f0;border-top-color:#3b82f6;animation:spin 0.8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .feature-table-wrap{overflow-x:auto;margin:24px 0 10px;border-radius:24px;border:1px solid #eef2f6;background:#fff}
+        .feature-table{width:100%;border-collapse:collapse;font-size:0.9rem;min-width:600px}
+        .feature-table th{background:#f8fafc;font-weight:600;padding:14px 16px;text-align:left;border-bottom:2px solid #e2e8f0}
+        .feature-table td{padding:12px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+        .feature-table tr:last-child td{border-bottom:0}
+        .feature-table .feature-name{font-weight:500}
+        .feature-table .lock{color:#dc2626;font-weight:600}
+        .feature-table .allow{color:#16a34a;font-weight:600}
+        .feature-table .reason{font-size:0.75rem;color:#64748b;max-width:180px}
+        .feature-table .icon-cell{width:30px;text-align:center}
+        @media (max-width:700px){.brand h1{font-size:1rem}.business-card{flex-direction:column;text-align:center}.business-card .details{flex-direction:column;gap:4px}}
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h1><span data-translate="app_name">Activation Center</span> <span class="tag" data-translate="brand_tag">Stocksales</span></h1>
+                </div>
+            </div>
+            <div class="header-status" id="headerStatus">
+                <a href="/shop/"><i class="fas fa-arrow-left"></i> <span data-translate="back_to_shop">Back to Shop</span></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading -->
+    <div id="loadingState" class="loading"><div class="spinner"></div></div>
+
+    <div class="container">
+        <!-- Business Card -->
+        <div id="businessCard" class="business-card hidden">
+            <img id="businessLogo" class="logo" src="" alt="Logo">
+            <div class="info">
+                <div class="name" id="businessName">Loading...</div>
+                <div class="details">
+                    <span id="businessEmail">...</span> · 
+                    <span id="businessPhone">...</span>
+                </div>
+                <div><span id="licenseBadge" class="status-badge inactive" data-translate="checking">⏳ Checking...</span></div>
+            </div>
+        </div>
+
+        <!-- License Details -->
+        <div id="licenseDetailsCard" class="hidden">
+            <div class="license-details" id="licenseDetailsContainer">
+                <div class="item"><span class="label" data-translate="plan_label">Plan</span> <span class="value" id="licensePlan">—</span></div>
+                <div class="item"><span class="label" data-translate="status_label">Status</span> <span class="value" id="licenseStatus">—</span></div>
+                <div class="item"><span class="label" data-translate="expires_label">Expires</span> <span class="value" id="licenseExpiry">—</span></div>
+                <div class="item"><span class="label" data-translate="activated_label">Activated</span> <span class="value" id="licenseActivated">—</span></div>
+            </div>
+            <div class="license-actions" id="licenseActions"></div>
+            <hr class="divider">
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Payment method selector -->
+            <div style="text-align:center; margin-top:8px;">
+                <div class="payment-methods">
+                    <button class="payment-method-btn active" data-method="paystack" onclick="selectPaymentMethod('paystack')">
+                        <i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> <span class="badge-paystack">Paystack</span>
+                    </button>
+                    <button class="payment-method-btn" data-method="gumroad" onclick="selectPaymentMethod('gumroad')">
+                        <i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span> <span class="badge-gumroad">Gumroad</span>
+                    </button>
+                </div>
+                <p class="method-desc" id="methodDescText" data-translate="method_desc_paystack">Paystack — mobile money, bank transfer & cards.</p>
+            </div>
+
+            <!-- MONTHLY PLANS -->
+            <h2 class="section-title" data-translate="monthly_plans">Monthly Plans</h2>
+            <p class="section-sub" data-translate="monthly_sub">Flexible billing · cancel anytime</p>
+            <div class="plans-grid" id="plansGrid">
+                <!-- STARTER -->
+                <div class="plan-card">
+                    <div class="plan-name" data-translate="starter">Starter</div>
+                    <div class="plan-price">$12<span data-translate="per_month">/mo</span></div>
+                    <div class="plan-desc" data-translate="starter_desc">For small businesses starting out</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> <span data-translate="starter_f1">Up to 100 products</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="starter_f2">Basic inventory management</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="starter_f3">Sales tracking & receipts</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="starter_f4">1 Device limit</span></li>
+                        <li style="opacity:0.5;"><i class="fas fa-times"></i> <span data-translate="starter_f5">Stock History & Analytics</span></li>
+                        <li style="opacity:0.5;"><i class="fas fa-times"></i> <span data-translate="starter_f6">Excel Export & Credit Book</span></li>
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('starter',6900,'monthly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 6.900XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('starter',1200,'monthly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+                <!-- PROFESSIONAL -->
+                <div class="plan-card popular">
+                    <div class="plan-name"><span data-translate="professional">Professional</span> <span class="badge-pro" data-translate="most_popular">MOST POPULAR</span></div>
+                    <div class="plan-price">$25<span data-translate="per_month">/mo</span></div>
+                    <div class="plan-desc" data-translate="professional_desc">Best for growing businesses</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> <strong data-translate="pro_f1">Unlimited</strong> products</li>
+                        <li><i class="fas fa-check"></i> <span data-translate="pro_f2">Advanced inventory & sub-categories</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="pro_f3">Profit/Loss & Sales Analytics</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="pro_f4">Excel Export & Credit Book</span></li>
+                        <li><i class="fas fa-check"></i> Up to <strong data-translate="pro_f5">3 Devices</strong></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="pro_f6">Priority support</span></li>
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('professional',11400,'monthly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 11 400XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('professional',2500,'monthly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+                <!-- ENTERPRISE -->
+                <div class="plan-card">
+                    <div class="plan-name"><span data-translate="enterprise">Enterprise</span> <span class="badge-ent" data-translate="power_badge">POWER</span></div>
+                    <div class="plan-price">$42<span data-translate="per_month">/mo</span></div>
+                    <div class="plan-desc" data-translate="enterprise_desc">For large organizations & teams</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> <span data-translate="ent_f1">Everything in Professional</span></li>
+                        <li><i class="fas fa-check"></i> Up to <strong data-translate="ent_f2">5 Devices</strong></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="ent_f3">Custom API Integrations</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="ent_f4">Staff Promotion Certificates</span></li>
+                        <li><i class="fas fa-check"></i> <span data-translate="ent_f5">Dedicated account manager</span></li>
+                       
+                    </ul>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('enterprise',14400,'monthly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 14 400XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('enterprise',4200,'monthly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YEARLY PLANS -->
+            <h2 class="section-title"><span data-translate="annual_plans">Annual Plans</span> <span style="color:#16a34a;font-size:1rem;" data-translate="save_20">(save 20%)</span></h2>
+            <p class="section-sub" data-translate="annual_sub">Pay once · full year · best value</p>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <div class="plan-name" data-translate="starter_yearly">Starter Yearly</div>
+                    <div class="plan-price">$115<span data-translate="per_year">/yr</span></div>
+                    <div class="price-comparison"><span data-translate="was_price">Was</span> $144 <span class="save" data-translate="save">save</span> $29</div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('starter',85900,'yearly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 85 900XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('starter',11500,'yearly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+                <div class="plan-card popular">
+                    <div class="plan-name" data-translate="pro_yearly">Pro Yearly</div>
+                    <div class="plan-price">$250<span data-translate="per_year">/yr</span></div>
+                    <div class="price-comparison"><span data-translate="was_price">Was</span> $300 <span class="save" data-translate="save">save</span> $58</div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('professional',109200,'yearly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 109 200XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('professional',2500,'yearly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+                <div class="plan-card">
+                    <div class="plan-name" data-translate="enterprise_yearly">Enterprise Yearly</div>
+                    <div class="plan-price">$420<span data-translate="per_year">/yr</span></div>
+                    <div class="price-comparison"><span data-translate="was_price">Was</span> $300 <span class="save" data-translate="save">save</span> $60</div>
+                    <div class="payment-options">
+                        <button class="btn btn-paystack" onclick="startPaystackSubscription('enterprise',136900,'yearly')"><i class="fas fa-mobile-alt"></i> <span data-translate="mobile_money">Mobile Money</span> 136 900XOF</button>
+                        <button class="btn btn-gumroad" onclick="startGumroadPayment('enterprise',42000,'yearly')"><i class="fas fa-credit-card"></i> <span data-translate="visa_card">VisaCard</span></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURE COMPARISON TABLE -->
+            <div class="feature-table-wrap">
+                <table class="feature-table">
+                    <thead>
+                        <tr>
+                            <th data-translate="feature_col">Feature</th>
+                            <th style="text-align:center" data-translate="starter_col">Starter</th>
+                            <th style="text-align:center" data-translate="professional_col">Professional</th>
+                            <th style="text-align:center" data-translate="enterprise_col">Enterprise</th>
+                            <th style="text-align:left" data-translate="why_lock_col">Why Lock It?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="feature-name" data-translate="feat_add_item">Add New Item</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_add_item">Core feature. Must remain free so they can use the app.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_current_stock">Current Stock</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_current_stock">Basic inventory viewing is essential for any user.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_stock_history">Stock History</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_stock_history">Tracking stock changes over time is critical for auditing & theft prevention. High-value feature.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_subcategory">Group by Sub-category</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_subcategory">Advanced organization. Businesses with large inventories need this and will pay for it.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_profit_loss">Profit/Loss Statement</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_profit_loss">Financial reporting is the #1 reason businesses upgrade from basic tracking to paid plans.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_weekly_sales">Weekly Sales Report</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_weekly_sales">Weekly analytics help owners optimize staffing and purchasing.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_monthly_sales">Monthly Sales Report</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_monthly_sales">Monthly trends are essential for tax season and business planning.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_loan_credit">Loan/Credit Management</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_loan_credit">Managing supplier/vendor credit is an advanced operational feature.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_note">Take a Note</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_note">Simple notes are low-value; keep them free to encourage daily usage.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_promo_cert">Promotion Certificate</td><td class="icon-cell">❌</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_promo_cert">HR/Team management feature for larger organizations.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_receipt">Create Receipt</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_receipt">Core feature. Must be free so they can use the app.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_sales_history">Sales History & Search</td><td class="icon-cell" data-translate="last_7_days">⚠️ Last 7 days</td><td class="icon-cell" data-translate="unlimited">✅ Unlimited</td><td class="icon-cell" data-translate="unlimited">✅ Unlimited</td><td class="reason" data-translate="reason_sales_history">Forces upgrade when they need to look at older financial records.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_export_excel">Export to Excel</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_export_excel">Business owners need spreadsheets for accounting/taxes. High conversion trigger.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_print_history">Print History / Multi-sales</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_print_history">Essential for busy shops with multiple daily transactions.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_credit_book">Credit Book</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_credit_book">Managing customer debt is a premium feature for growing businesses.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_refund_history">Refund History</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_refund_history">Advanced inventory/financial tracking.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_view_expenses">View Expenses</td><td class="icon-cell">❌</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_view_expenses">Full P&L (Profit & Loss) tracking is an Enterprise-level feature.</td></tr>
+                        <tr><td class="feature-name" data-translate="feat_promo_certs">Promotion Certificates</td><td class="icon-cell">❌</td><td class="icon-cell">✅</td><td class="icon-cell">✅</td><td class="reason" data-translate="reason_promo_certs">HR/Team management feature for larger organizations.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="font-size:0.75rem;color:#64748b;text-align:right;margin:-8px 0 20px;" data-translate="starter_sales_limit">* ⚠️ Starter: Sales history limited to 7 days</div>
+
+            <!-- Info box -->
+            <div class="info-box">
+                <h4><i class="fas fa-circle-info" style="color:#3b82f6;"></i> <span data-translate="payment_methods_title">Payment methods</span></h4>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> <strong data-translate="payment_methods_paystack">Mobile Money (Paystack): MTN, Airtel, Vodafone, etc. Auto-renew.</strong></li>
+                    <li><i class="fas fa-check-circle"></i> <strong data-translate="payment_methods_gumroad">VisaCard (Gumroad): Secure international card payments.</strong></li>
+                    <li><i class="fas fa-check-circle"></i> <span data-translate="payment_methods_save">Annual plans save 20% vs monthly billing.</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="/terms/" data-translate="terms_of_service">Terms of Service</a> · 
+        <a href="/refund/" data-translate="refund_policy">↩ Refund Policy</a> · 
+        <a href="/privacy/" data-translate="privacy_policy">Privacy Policy</a>
+        <br><br>
+        <span data-translate="copyright">&copy; 2025 StocksalesApp. All rights reserved.</span>
+    </footer>
+    <!-- Hidden anchor used by activation.js to trigger the Gumroad overlay -->
+<a id="gumroadOverlayAnchor"
+   class="gumroad-button"
+   data-gumroad-overlay-checkout="true"
+   style="display:none"
+   href="#">Buy</a>
+<div id="loadingState21"class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Confirming your payment...</p>
+</div>
+<div id="successState" class="hidden">
+    <i class="fas fa-check-circle" style="color:green;"></i>
+    <h2>Payment Successful!</h2>
+    <p>Your license is now active.</p>
+</div>
+
+
+    <script src="activation.js"></script>
+      
+</body>
+</html>

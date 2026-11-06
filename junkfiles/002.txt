@@ -1,0 +1,15 @@
+  window.history.pushState({ salesHistorySection: true }, '', window.location.href);
+
+        const salesHistorySection = document.getElementById('salesHistorySection');
+        if (salesHistorySection && !salesHistorySection.classList.contains('hidden')) {
+            salesHistorySection.classList.add('hidden');
+            const salesOptionsModal = document.getElementById('salesOptionsModal');
+              salesOptionsModal.classList.remove('hidden');
+            event.preventDefault();
+            return;
+        }
+
+
+
+
+

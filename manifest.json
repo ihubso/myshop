@@ -1,0 +1,114 @@
+{
+  "name": "Stock Sales App",
+  "short_name": "Stock Sales",
+  "description": "Smart inventory and sales management for your shop. Track stock, manage sales, and grow your business.",
+  "start_url": "/boot/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "categories": ["business", "finance", "productivity", "shopping", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "id": "/shop/",
+  "icons": [
+    {
+      "src": "app/logo-64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/logo-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/logo-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app/logo-maskable512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "app/screenshot-desktop.png",
+      "sizes": "1600x862",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard view of MyShop"
+    },
+    {
+      "src": "app/screenshot-mobile.png",
+      "sizes": "415x887",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile dashboard view"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your business dashboard",
+      "url": "/shop/#dashboard",
+      "icons": [
+        {
+          "src": "app/dashboard-icon.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Sales",
+      "short_name": "Sales",
+      "description": "Record new sales",
+      "url": "/shop/#sales",
+      "icons": [
+        {
+          "src": "app/sales-icon.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "short_name": "Stock",
+      "description": "Manage your inventory",
+      "url": "/shop/#inventory",
+      "icons": [
+        {
+          "src": "app/inventory-icon.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "display_override": ["standalone", "window-controls-overlay"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+}

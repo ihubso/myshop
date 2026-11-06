@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>Recover Password - StocksalesApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+   <script src="/meiou.js"></script>
+       <script src="/envofgethoing.js"></script>
+       <script src="/supabase-rpc-proxy.js"></script>
+  <script src="../js/env.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="bcrypt.min.js"></script>
+  <script src="../js/lan.js"></script>
+  <script src="../translations.js"></script>
+  <link rel="stylesheet" href="/styles/language-direction.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --accent: #7c3aed;
+      --accent-light: #8b5cf6;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --bg-panel: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4c1d95 60%, #5b21b6 100%);
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #2563eb;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .recovery-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ===== LEFT PANEL ===== */
+    .recovery-panel {
+      width: 45%;
+      min-width: 400px;
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .recovery-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .recovery-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -150px;
+      left: -80px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .panel-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 48px;
+    }
+    .panel-brand-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+    .panel-brand-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    .panel-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-step-content {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      animation: panelFadeIn 0.5s ease forwards;
+    }
+
+    .panel-step-content.active {
+      display: flex;
+    }
+
+    @keyframes panelFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-illustration {
+      width: 100%;
+      max-width: 280px;
+      height: 200px;
+      margin: 0 auto 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle {
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: spin 30s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .illustration-circle i {
+      font-size: 3.5rem;
+      color: white;
+    }
+
+    .float-badge {
+      position: absolute;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 8px 14px;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: floatBadge 4s ease-in-out infinite;
+    }
+
+    .float-badge:nth-child(2) { top: 10px; right: 10px; animation-delay: 0s; }
+    .float-badge:nth-child(3) { bottom: 20px; left: 5px; animation-delay: 1s; }
+    .float-badge:nth-child(4) { bottom: 5px; right: 20px; animation-delay: 2s; }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .panel-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .panel-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    .panel-tip {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-top: auto;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .panel-tip-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.85rem;
+    }
+
+    .panel-tip-text h5 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-tip-text p {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+    }
+
+    /* Progress Stepper in Panel */
+    .panel-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stepper-item {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .stepper-dot {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.3);
+      transition: var(--transition);
+    }
+
+    .stepper-item.active .stepper-dot {
+      background: white;
+      border-color: white;
+      color: var(--primary-dark);
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    .stepper-item.completed .stepper-dot {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .stepper-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stepper-line-fill {
+      position: absolute;
+      inset: 0;
+      background: white;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+
+    .stepper-item.completed .stepper-line .stepper-line-fill {
+      transform: scaleX(1);
+    }
+
+    .stepper-label {
+      display: none;
+    }
+
+    /* ===== RIGHT PANEL ===== */
+    .recovery-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .back-to-login {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .back-to-login:hover {
+      border-color: var(--primary-light);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .recovery-content-wrapper {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .recovery-step {
+      display: none;
+      animation: stepSlideIn 0.45s ease forwards;
+    }
+
+    .recovery-step.active {
+      display: block;
+    }
+
+    @keyframes stepSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Mobile stepper at top */
+    .mobile-stepper {
+      display: none;
+      margin-bottom: 32px;
+      padding: 20px 24px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .mobile-stepper-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .mobile-stepper-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mobile-stepper-count {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .mobile-progress-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mobile-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.5s ease;
+    }
+
+    /* Step Header */
+    .step-header {
+      margin-bottom: 32px;
+    }
+
+    .step-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .step-counter::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .step-header h2 {
+      font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .step-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Form */
+    .form-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .input-control::placeholder {
+      color: var(--text-light);
+    }
+
+    .input-control:hover {
+      border-color: #cbd5e1;
+    }
+
+    .input-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    }
+
+    .input-icon-wrapper {
+      position: relative;
+    }
+
+    .input-icon-wrapper .input-control {
+      padding-left: 44px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 0.95rem;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .input-icon-wrapper .input-control:focus ~ .input-icon,
+    .input-icon-wrapper .input-control:not(:placeholder-shown) ~ .input-icon {
+      color: var(--primary);
+    }
+
+    /* Radio Cards */
+    .method-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .method-card {
+      display: flex;
+      align-items: center;
+      padding: 16px 18px;
+      background: var(--bg-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .method-card:hover {
+      border-color: #cbd5e1;
+      background: var(--bg-light);
+    }
+
+    .method-card.selected {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.03);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.06);
+    }
+
+    .method-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .method-card-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(124,58,237,0.1));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-right: 16px;
+      transition: var(--transition);
+    }
+
+    .method-card.selected .method-card-icon {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+    }
+
+    .method-card-body {
+      flex: 1;
+    }
+
+    .method-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+
+    .method-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .method-card-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .method-card.selected .method-card-check {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+
+    .method-card.selected .method-card-check::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.7rem;
+    }
+
+    /* Verification Code */
+    .verify-info-box {
+      background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(124,58,237,0.04));
+      border: 1px solid rgba(37,99,235,0.15);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .verify-info-box-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      background: rgba(37,99,235,0.12);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .verify-info-box-text {
+      font-size: 0.88rem;
+      color: var(--text-body);
+      line-height: 1.5;
+    }
+
+    .verify-info-box-text strong {
+      color: var(--primary);
+      font-weight: 700;
+      word-break: break-all;
+    }
+
+    .code-input-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .code-input-group .input-control {
+      flex: 1;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 8px;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+
+    .resend-btn {
+      padding: 14px 20px;
+      background: var(--bg-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .resend-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(37,99,235,0.03);
+    }
+
+    .resend-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .timer-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .timer-text:empty {
+      display: none;
+    }
+
+    /* Security Questions */
+    .question-card {
+      padding: 20px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .question-card-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .answer-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text-dark);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .answer-input:focus {
+      border-color: var(--border-focus);
+      background: var(--bg-white);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    }
+
+    /* Password Strength */
+    .strength-meter {
+      display: flex;
+      gap: 4px;
+      height: 4px;
+      margin-bottom: 6px;
+    }
+
+    .strength-bar {
+      flex: 1;
+      background: var(--border);
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .strength-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .strength-text.weak { color: var(--danger); }
+    .strength-text.fair { color: var(--warning); }
+    .strength-text.good { color: #2563eb; }
+    .strength-text.strong { color: var(--success); }
+
+    /* Password wrapper */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 6px;
+      border-radius: 6px;
+      transition: var(--transition);
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+      background: rgba(37,99,235,0.06);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #059669);
+      color: white;
+      box-shadow: 0 4px 14px rgba(5,150,105,0.25);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(5,150,105,0.35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-body);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--bg-white);
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      margin-top: 8px;
+      gap: 12px;
+    }
+
+    .actions .btn-ghost {
+      padding: 13px 22px;
+    }
+
+    .actions .btn-primary,
+    .actions .btn-success {
+      flex: 1;
+      max-width: 240px;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    /* Success state */
+    .success-state {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .success-icon {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      color: var(--success);
+      animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes successPop {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .success-state h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+    }
+
+    .success-state p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    /* ===== MODAL ===== */
+    #messageModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    #messageModal.show {
+      display: flex;
+    }
+
+    #messageModal > div {
+      background: var(--bg-white);
+      padding: 36px;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.6rem;
+    }
+
+    .modal-icon.success { background: #d1fae5; color: var(--success); }
+    .modal-icon.error { background: #fee2e2; color: var(--danger); }
+    .modal-icon.warning { background: #fef3c7; color: var(--warning); }
+    .modal-icon.info { background: #dbeafe; color: var(--primary); }
+
+    #messageModal h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+
+    #messageModal p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* ===== LOADING ===== */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .recovery-panel {
+        width: 42%;
+        min-width: 340px;
+        padding: 36px 28px;
+      }
+
+      .recovery-main {
+        padding: 32px;
+      }
+
+      .panel-title {
+        font-size: 1.5rem;
+      }
+
+      .illustration-circle {
+        width: 130px;
+        height: 130px;
+      }
+
+      .illustration-circle i {
+        font-size: 2.8rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .recovery-container {
+        flex-direction: column;
+      }
+
+      .recovery-panel {
+        width: 100%;
+        min-width: unset;
+        padding: 24px 20px;
+        min-height: auto;
+      }
+
+      .recovery-panel::before,
+      .recovery-panel::after {
+        display: none;
+      }
+
+      .panel-brand {
+        margin-bottom: 20px;
+      }
+
+      .panel-illustration {
+        display: none;
+      }
+
+      .panel-content {
+        flex: unset;
+      }
+
+      .panel-step-content {
+        display: none !important;
+      }
+
+      .panel-step-content.mobile-visible {
+        display: flex !important;
+      }
+
+      .panel-title {
+        font-size: 1.2rem;
+        margin-bottom: 6px;
+      }
+
+      .panel-desc {
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .panel-tip {
+        display: none;
+      }
+
+      .panel-stepper {
+        margin-top: 16px;
+      }
+
+      .stepper-dot {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        font-size: 0.7rem;
+      }
+
+      .recovery-main {
+        padding: 28px 20px 40px;
+        min-height: auto;
+      }
+
+      .back-to-login {
+        top: 16px;
+        right: 16px;
+        padding: 8px 14px;
+        font-size: 0.78rem;
+      }
+
+      .mobile-stepper {
+        display: block;
+      }
+
+      .step-header h2 {
+        font-size: 1.4rem;
+      }
+
+      .form-body {
+        gap: 16px;
+      }
+
+      .input-control {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+      }
+
+      .code-input-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .resend-btn {
+        width: 100%;
+      }
+
+      .actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .actions .btn-primary,
+      .actions .btn-success,
+      .actions .btn-ghost {
+        width: 100%;
+        max-width: none;
+      }
+
+      .method-card {
+        padding: 14px;
+      }
+
+      .method-card-icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 1rem;
+        margin-right: 12px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .recovery-main {
+        padding: 24px 16px 36px;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+      }
+
+      .code-input-group .input-control {
+        letter-spacing: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="recovery-container">
+    <!-- LEFT PANEL -->
+    <aside class="recovery-panel">
+      <div class="panel-brand">
+         <div class="panel-brand-icon"><img src="../images/logo.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="Stock Sales App Logo"></div>
+        <span class="panel-brand-text">StocksalesApp</span>
+      </div>
+
+      <div class="panel-content">
+        <!-- Panel Step 1: Identify -->
+        <div class="panel-step-content active" id="panel-step-1">
+          <div class="panel-illustration">
+            <div class="illustration-circle">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="float-badge"><i class="fas fa-search"></i> Find</div>
+            <div class="float-badge"><i class="fas fa-user"></i> Account</div>
+            <div class="float-badge"><i class="fas fa-shield-alt"></i> Secure</div>
+          </div>
+          <h2 class="panel-title">Let's find your account</h2>
+          <p class="panel-desc">Don't worry — forgetting your password happens to the best of us. We'll help you regain access safely in just a few steps.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-lightbulb"></i></div>
+            <div class="panel-tip-text">
+              <h5>Tip</h5>
+              <p>Use the exact username you created during setup. You can recover via email or security questions.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Step 2: Verify -->
+        <div class="panel-step-content" id="panel-step-2">
+          <div class="panel-illustration">
+            <div class="illustration-circle">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="float-badge"><i class="fas fa-envelope"></i> Code</div>
+            <div class="float-badge"><i class="fas fa-check"></i> Verify</div>
+            <div class="float-badge"><i class="fas fa-lock"></i> Safe</div>
+          </div>
+          <h2 class="panel-title">Verify it's really you</h2>
+          <p class="panel-desc">For your security, we need to confirm your identity before allowing a password change.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="panel-tip-text">
+              <h5>Check your inbox</h5>
+              <p>Don't see the email? Check your spam folder. The code expires in 10 minutes for security.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Step 3: Verify -->
+        <div class="panel-step-content" id="panel-step-3">
+          <div class="panel-illustration">
+            <div class="illustration-circle">
+              <i class="fas fa-shield-check"></i>
+            </div>
+            <div class="float-badge"><i class="fas fa-envelope"></i> Code</div>
+            <div class="float-badge"><i class="fas fa-check"></i> Verify</div>
+            <div class="float-badge"><i class="fas fa-lock"></i> Safe</div>
+          </div>
+          <h2 class="panel-title">Verify your identity</h2>
+          <p class="panel-desc">Use the email code or security answers to confirm that the account belongs to you.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="panel-tip-text">
+              <h5>Security check</h5>
+              <p>We only continue when your verification matches the account on file.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Step 4: Reset -->
+        <div class="panel-step-content" id="panel-step-4">
+          <div class="panel-illustration">
+            <div class="illustration-circle">
+              <i class="fas fa-key"></i>
+            </div>
+            <div class="float-badge"><i class="fas fa-lock-open"></i> New</div>
+            <div class="float-badge"><i class="fas fa-fingerprint"></i> Strong</div>
+            <div class="float-badge"><i class="fas fa-user-shield"></i> Safe</div>
+          </div>
+          <h2 class="panel-title">Create a strong new password</h2>
+          <p class="panel-desc">Choose something memorable but secure. Mix uppercase, numbers, and symbols for the best protection.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="panel-tip-text">
+              <h5>Password tips</h5>
+              <p>Use at least 8 characters with a mix of letters, numbers, and symbols. Avoid dictionary words.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Step 5: Success -->
+        <div class="panel-step-content" id="panel-step-success">
+          <div class="panel-illustration">
+            <div class="illustration-circle" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3);">
+              <i class="fas fa-check" style="color: #34d399;"></i>
+            </div>
+          </div>
+          <h2 class="panel-title">You're all set! 🎉</h2>
+          <p class="panel-desc">Your password has been successfully reset. You can now sign in with your new credentials.</p>
+        </div>
+      </div>
+
+      <!-- Stepper -->
+      <div class="panel-stepper">
+        <div class="stepper-item active" id="stepper-1">
+          <div class="stepper-dot">1</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill" id="stepper-line-1"></div></div>
+        <div class="stepper-item" id="stepper-2">
+          <div class="stepper-dot">2</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill" id="stepper-line-2"></div></div>
+        <div class="stepper-item" id="stepper-3">
+          <div class="stepper-dot">3</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill" id="stepper-line-3"></div></div>
+        <div class="stepper-item" id="stepper-4">
+          <div class="stepper-dot">4</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill" id="stepper-line-4"></div></div>
+        <div class="stepper-item" id="stepper-5">
+          <div class="stepper-dot">5</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL -->
+    <main class="recovery-main">
+      <a href="/shop/" class="back-to-login">
+        <i class="fas fa-arrow-left"></i> <span>Back to Login</span>
+      </a>
+
+      <form id="resetPasswordForm" class="recovery-content-wrapper" novalidate>
+        <!-- Mobile Stepper (shown on mobile) -->
+        <div class="mobile-stepper">
+          <div class="mobile-stepper-header">
+            <span class="mobile-stepper-label" id="mobileStepLabel">Step 1 of 5</span>
+            <span class="mobile-stepper-count" id="mobileStepName">Identify Account</span>
+          </div>
+          <div class="mobile-progress-bar">
+            <div class="mobile-progress-fill" id="mobileProgressFill" style="width: 20%"></div>
+          </div>
+        </div>
+
+        <!-- STEP 1: IDENTIFY ACCOUNT -->
+        <div class="recovery-step active" id="step1Content">
+          <div class="step-header">
+            <div class="step-counter">Step 1 of 5</div>
+            <h2 data-translate="identifyAccount">Identify Your Account</h2>
+            <p data-translate="identifyDesc">Enter your username or email to find your account.</p>
+          </div>
+
+          <div class="form-body">
+            <div class="form-group">
+              <label class="form-label" for="recoveryUsername" data-translate="enterUsername">Username or Email</label>
+              <div class="input-icon-wrapper">
+                <input type="text" id="recoveryUsername" class="input-control" placeholder="Enter your username or email" autocomplete="username">
+                <i class="fas fa-user input-icon"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-primary" id="step1NextBtn">
+              <span data-translate="continue">Continue</span> <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: CHOOSE VERIFICATION METHOD -->
+        <div class="recovery-step" id="step2Content">
+          <div class="step-header">
+            <div class="step-counter">Step 2 of 5</div>
+            <h2 data-translate="selectRecoveryMethod">Choose Recovery Method</h2>
+            <p data-translate="selectRecoveryMethodDesc">Pick the verification method available for this account.</p>
+          </div>
+
+          <div class="form-body">
+            <div class="method-options" id="recoveryMethodOptions">
+              <label class="method-card selected" id="emailMethodCard">
+                <input type="radio" name="recoveryMethod" value="email" checked>
+                <div class="method-card-icon"><i class="fas fa-envelope"></i></div>
+                <div class="method-card-body">
+                  <div class="method-card-title" data-translate="viaEmail">Via Email</div>
+                  <div class="method-card-desc" data-translate="receiveCode">Receive a verification code</div>
+                </div>
+                <div class="method-card-check"></div>
+              </label>
+              <label class="method-card" id="securityMethodCard">
+                <input type="radio" name="recoveryMethod" value="security">
+                <div class="method-card-icon"><i class="fas fa-question-circle"></i></div>
+                <div class="method-card-body">
+                  <div class="method-card-title" data-translate="securityQuestions">Security Questions</div>
+                  <div class="method-card-desc" data-translate="answerQuestions">Answer your security questions</div>
+                </div>
+                <div class="method-card-check"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" id="backToStep1Btn">
+              <i class="fas fa-arrow-left"></i> <span data-translate="back">Back</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="step2NextBtn">
+              <span data-translate="continue">Continue</span> <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: VERIFY IDENTITY -->
+        <div class="recovery-step" id="step3Content">
+          <div id="emailVerificationContent" style="display: none;">
+            <div class="step-header">
+              <div class="step-counter">Step 3 of 5</div>
+              <h2 data-translate="verifyEmail">Verify Your Email</h2>
+              <p data-translate="verifyEmailDesc">Enter the 6-digit code we sent to your email.</p>
+            </div>
+
+            <div class="form-body">
+              <div class="verify-info-box">
+                <div class="verify-info-box-icon"><i class="fas fa-paper-plane"></i></div>
+                <div class="verify-info-box-text">
+                  <span data-translate="codeSentTo">We've sent a verification code to</span>
+                  <strong id="userEmailDisplay">your-email@example.com</strong>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-translate="enterCode">Verification Code</label>
+                <div class="code-input-group">
+                  <input type="text" id="verificationCode" class="input-control" placeholder="123456" maxlength="6" inputmode="numeric">
+                  <button type="button" id="resendCodeBtn" class="resend-btn" data-translate="resend">
+                    <i class="fas fa-redo"></i> Resend
+                  </button>
+                </div>
+                <p id="verificationTimer" class="timer-text"></p>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" id="backToStep2BtnFromEmail">
+                <i class="fas fa-arrow-left"></i> <span data-translate="back">Back</span>
+              </button>
+              <button type="button" class="btn btn-primary" id="step3VerifyBtn">
+                <span data-translate="verify">Verify</span> <i class="fas fa-check"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="securityVerificationContent" style="display: none;">
+            <div class="step-header">
+              <div class="step-counter">Step 3 of 5</div>
+              <h2 data-translate="securityQuestionsTitle">Security Questions</h2>
+              <p data-translate="securityQuestionsDesc">Answer the questions you set up during registration.</p>
+            </div>
+
+            <div class="form-body">
+              <div class="question-card">
+                <div class="question-card-number">1</div>
+                <p class="question-text" id="questionText1">Question 1</p>
+                <input type="text" class="answer-input" id="answer1" placeholder="Your answer" autocomplete="off">
+              </div>
+              <div class="question-card">
+                <div class="question-card-number">2</div>
+                <p class="question-text" id="questionText2">Question 2</p>
+                <input type="text" class="answer-input" id="answer2" placeholder="Your answer" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" id="backToStep2BtnFromSecurity">
+                <i class="fas fa-arrow-left"></i> <span data-translate="back">Back</span>
+              </button>
+              <button type="button" class="btn btn-primary" id="step3VerifyBtn2">
+                <span data-translate="verify">Verify</span> <i class="fas fa-check"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: RESET PASSWORD -->
+        <div class="recovery-step" id="step4Content">
+          <div class="step-header">
+            <div class="step-counter">Step 4 of 5</div>
+            <h2 data-translate="resetPassword">Create New Password</h2>
+            <p data-translate="resetDesc">Choose a strong password you'll remember. This will be your new login password.</p>
+          </div>
+
+          <div class="form-body">
+            <div class="form-group">
+              <label class="form-label" for="newPassword" data-translate="newPassword">New Password</label>
+              <div class="input-icon-wrapper password-wrapper">
+                <input type="password" id="newPassword" class="input-control" placeholder="Enter new password" style="padding-right: 44px;" autocomplete="new-password">
+                <i class="fas fa-lock input-icon"></i>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword', this)">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="confirmPassword" data-translate="confirmPassword">Confirm Password</label>
+              <div class="input-icon-wrapper password-wrapper">
+                <input type="password" id="confirmPassword" class="input-control" placeholder="Confirm new password" style="padding-right: 44px;" autocomplete="new-password">
+                <i class="fas fa-lock input-icon"></i>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword', this)">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="strength-meter">
+                <div id="strength1" class="strength-bar"></div>
+                <div id="strength2" class="strength-bar"></div>
+                <div id="strength3" class="strength-bar"></div>
+                <div id="strength4" class="strength-bar"></div>
+              </div>
+              <p id="strengthText" class="strength-text">Password strength</p>
+            </div>
+
+            <p id="passwordMatchError" style="color: var(--danger); font-size: 0.85rem; font-weight: 500; display: none;">
+              <i class="fas fa-exclamation-circle"></i> Passwords don't match
+            </p>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" id="backToStep3Btn">
+              <i class="fas fa-arrow-left"></i> <span data-translate="back">Back</span>
+            </button>
+            <button type="button" class="btn btn-success" id="resetPasswordBtn">
+              <span data-translate="resetPassword">Reset Password</span> <i class="fas fa-check"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 5: SUCCESS -->
+        <div class="recovery-step" id="step5Content">
+          <div class="success-state">
+            <div class="success-icon"><i class="fas fa-check"></i></div>
+            <h2 data-translate="passwordResetSuccess">Password Reset!</h2>
+            <p data-translate="resetSuccessDesc">Your password has been successfully updated. Redirecting you to login...</p>
+            <div style="margin-top: 28px;">
+              <i class="fas fa-spinner fa-spin" style="color: var(--primary); font-size: 1.3rem;"></i>
+            </div>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <!-- Message Modal -->
+  <div id="messageModal">
+    <div>
+      <div id="messageIcon" class="modal-icon info"><i class="fas fa-info-circle"></i></div>
+      <h3 id="messageTitle">Message</h3>
+      <p id="messageText"></p>
+      <button type="button" onclick="closeMessageModal()" class="btn btn-primary" style="width: 100%; justify-content: center;">OK</button>
+    </div>
+  </div>
+  <script src="reset-password.js"></script>
+
+
+</body>
+</html>

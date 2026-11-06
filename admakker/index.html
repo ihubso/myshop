@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0f172a">
+<title>IHUBS Pro Ad Editor — Mobile & Desktop</title>
+
+<!-- External libs required by your JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto&family=Montserrat:wght@400;600;700&family=Lato&family=Oswald&family=Raleway&family=Merriweather&family=Playfair+Display:wght@600;700&family=Nunito&family=Bangers&family=Pacifico&family=Caveat&display=swap" rel="stylesheet">
+
+<style>
+/* ============ RESET & BASE ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-900: #0b1020;
+  --bg-800: #111827;
+  --bg-700: #1e293b;
+  --bg-600: #273449;
+  --border: #334155;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --transition: .2s ease;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Poppins', system-ui, sans-serif;
+  background: var(--bg-900);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(99,102,241,.15), transparent 60%),
+    radial-gradient(800px 500px at 100% 0%, rgba(236,72,153,.12), transparent 60%),
+    var(--bg-900);
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font-family: inherit; color: inherit; }
+
+/* ============ APP LAYOUT ============ */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(17,24,39,.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 18px;
+}
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  display: grid; place-items: center; color: #fff; font-weight: 800;
+  box-shadow: 0 6px 18px rgba(99,102,241,.4);
+}
+.logo-sub { color: var(--text-dim); font-weight: 400; font-size: 12px; }
+
+.topbar-spacer { flex: 1; }
+
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn {
+  padding: 10px 14px; border-radius: 10px;
+  font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+.btn:active { transform: scale(.97); }
+
+.btn-ghost { background: rgba(255,255,255,.06); border: 1px solid var(--border); }
+.btn-ghost:hover { background: rgba(255,255,255,.12); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; box-shadow: 0 6px 18px rgba(99,102,241,.35);
+}
+.btn-primary:hover { box-shadow: 0 10px 24px rgba(99,102,241,.5); }
+
+.btn-accent { background: rgba(99,102,241,.15); color: #c7d2fe; border: 1px solid rgba(99,102,241,.35); }
+.btn-accent:hover { background: rgba(99,102,241,.25); }
+
+.btn-danger { background: rgba(239,68,68,.15); color: #fecaca; border: 1px solid rgba(239,68,68,.35); }
+
+/* ============ WORKSPACE ============ */
+.workspace {
+  display: grid;
+  grid-template-columns: 360px 1fr 320px;
+  gap: 16px;
+  padding: 16px;
+  flex: 1;
+}
+
+/* ============ PANEL (EDITOR) ============ */
+.panel {
+  background: var(--bg-800);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.02);
+}
+.panel-title { font-size: 14px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; color: var(--text-dim); }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 4px; padding: 10px;
+  background: var(--bg-900);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto;
+  padding: 8px 14px; font-size: 13px; font-weight: 500;
+  border-radius: 8px; color: var(--text-dim);
+  transition: all var(--transition);
+}
+.tab:hover { background: rgba(255,255,255,.05); color: var(--text); }
+.tab.active { background: var(--accent); color: #fff; }
+
+.tab-panel { display: none; padding: 16px; overflow-y: auto; flex: 1; }
+.tab-panel.active { display: block; }
+
+/* Form controls */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--text-dim); margin-bottom: 6px;
+  letter-spacing: .3px;
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.input, .select, .textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg-700);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.input:focus, .select:focus, .textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99,102,241,.18);
+}
+.textarea { min-height: 70px; resize: vertical; font-family: inherit; }
+.select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'><path d='M8 11L3 6h10z'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+.color-row { display: grid; grid-template-columns: 1fr 36px; gap: 8px; align-items: center; }
+.color-input { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; background: transparent; padding: 2px; }
+
+/* Features list */
+.feature-input-row { display: flex; gap: 6px; margin-bottom: 10px; }
+.feature-input-row .input { flex: 1; }
+.feature-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px; background: var(--bg-700); border-radius: 8px;
+  margin-bottom: 6px; font-size: 14px;
+  border: 1px solid var(--border);
+}
+.feature-text { display: flex; align-items: center; gap: 8px; color: var(--text); }
+.feature-text svg { color: var(--success); }
+.feature-delete {
+  color: #fca5a5; padding: 4px; border-radius: 6px;
+  transition: background var(--transition);
+}
+.feature-delete:hover { background: rgba(239,68,68,.15); }
+
+/* Image upload grid */
+.image-upload-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 12px;
+}
+.image-upload-card {
+  aspect-ratio: 1/1;
+  background: var(--bg-700); border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  cursor: pointer; position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.image-upload-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.image-upload-card.has-image { border-style: solid; border-color: var(--accent); }
+.upload-placeholder { text-align: center; color: var(--text-dim); font-size: 11px; padding: 6px; }
+.upload-preview {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  display: none;
+}
+.upload-preview.active { display: block; }
+.remove-image-btn {
+  position: absolute; top: 4px; right: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,0,0,.7); color: #fff;
+  font-size: 11px; display: none; place-items: center;
+  z-index: 2;
+}
+.image-upload-card.has-image .remove-image-btn { display: grid; }
+
+/* Image controls panel (right) */
+.control-group {
+  margin-bottom: 16px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.control-group:last-child { border-bottom: none; }
+.control-title { font-size: 12px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+
+.slider-row { margin-bottom: 10px; }
+.slider-label {
+  display: flex; justify-content: space-between;
+  font-size: 13px; margin-bottom: 4px; color: var(--text);
+}
+.slider-label span:last-child { color: var(--accent-hover); font-weight: 600; }
+
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px; border-radius: 3px;
+  background: var(--bg-700); outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); cursor: pointer;
+  box-shadow: 0 3px 8px rgba(99,102,241,.5);
+  border: 2px solid #fff;
+}
+input[type=range]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); cursor: pointer;
+  border: 2px solid #fff;
+}
+
+.align-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  margin-bottom: 8px;
+}
+.align-btn {
+  padding: 8px; background: var(--bg-700); border-radius: 8px;
+  font-size: 12px; color: var(--text);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.align-btn:hover { background: var(--bg-600); border-color: var(--accent); }
+
+.action-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.action-row .btn { flex: 1; min-width: 0; justify-content: center; font-size: 12px; padding: 8px 10px; }
+
+/* Empty state for right panel */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 40px 20px; color: var(--text-dim);
+  flex: 1; gap: 10px;
+}
+.empty-state-icon { font-size: 48px; opacity: .3; }
+.empty-state-text { font-size: 13px; line-height: 1.6; }
+
+/* ============ AD PREVIEW ============ */
+.preview-wrapper {
+  display: flex; flex-direction: column; gap: 10px;
+  min-width: 0;
+}
+.preview-toolbar {
+  display: flex; gap: 8px; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: var(--bg-800); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.preview-title { font-size: 13px; color: var(--text-dim); }
+.preview-zoom { display: flex; gap: 4px; }
+.zoom-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  background: var(--bg-700); border: 1px solid var(--border);
+  font-size: 14px; color: var(--text);
+}
+.zoom-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.preview-stage {
+  flex: 1;
+  background:
+    linear-gradient(45deg, #1a1f2e 25%, transparent 25%),
+    linear-gradient(-45deg, #1a1f2e 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1a1f2e 75%),
+    linear-gradient(-45deg, transparent 75%, #1a1f2e 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-color: #0f172a;
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 400px;
+  overflow: auto;
+}
+
+/* ============ THE AD CONTAINER ============ */
+#ad-container {
+  width: 100%; max-width: 420px;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  transition: transform .3s ease;
+}
+
+.ad-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; position: relative; z-index: 2;
+}
+#brand-logo {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(255,255,255,.15); object-fit: contain;
+  padding: 6px; display: none;
+}
+#ad-shop-name {
+  font-size: 14px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; opacity: .85;
+}
+
+#ad-discount {
+  display: none;
+  background: #ff3b3b; color: #fff;
+  padding: 6px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .5px;
+  box-shadow: 0 4px 12px rgba(255,59,59,.4);
+  position: absolute; top: 16px; right: 16px;
+  z-index: 3;
+}
+
+#ad-brand {
+  font-size: 32px; font-weight: 800; line-height: 1.1;
+  margin-bottom: 4px; position: relative; z-index: 2;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+#ad-model {
+  font-size: 16px; font-weight: 400; opacity: .85;
+  margin-bottom: 20px; position: relative; z-index: 2;
+}
+
+#ad-price {
+  font-size: 44px; font-weight: 800; line-height: 1;
+  margin-bottom: 20px; position: relative; z-index: 2;
+  text-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+
+#ad-features-list {
+  list-style: none; margin-bottom: 20px;
+  position: relative; z-index: 2;
+}
+#ad-features-list li {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500;
+  margin-bottom: 6px;
+}
+#ad-features-list svg { flex-shrink: 0; }
+
+#ad-contact {
+  font-size: 12px; line-height: 1.6;
+  opacity: .9; position: relative; z-index: 2;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.2);
+  white-space: pre-line;
+}
+
+#ad-image { display: none; }
+
+/* Draggable image layers */
+#image-layers { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.image-layer {
+  position: absolute;
+  cursor: move;
+  pointer-events: auto;
+  transition: box-shadow .2s;
+  border-radius: 12px;
+  overflow: hidden;
+  transform-origin: center;
+}
+.image-layer img {
+  width: 100%; height: 100%; object-fit: cover;
+  user-select: none; -webkit-user-drag: none;
+  display: block;
+}
+.image-layer.selected {
+  box-shadow: 0 0 0 2px var(--accent), 0 0 0 5px rgba(99,102,241,.3);
+}
+.image-layer .resize-handle {
+  position: absolute; right: -6px; bottom: -6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); border: 2px solid #fff;
+  cursor: nwse-resize;
+  opacity: 0; transition: opacity .2s;
+}
+.image-layer.selected .resize-handle { opacity: 1; }
+
+/* Random shapes */
+.random-shape {
+  position: absolute;
+  pointer-events: none;
+  filter: blur(30px);
+}
+
+@keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-30px)} }
+@keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,20px)} }
+@keyframes float3 { 0%,100%{transform:translate(0,0) rotate(0)} 50%{transform:translate(15px,15px) rotate(5deg)} }
+
+@keyframes slideIn { from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes slideOut { to{transform:translateX(120%);opacity:0} }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============ MOBILE TOGGLE ============ */
+.mobile-tabs { display: none; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1100px) {
+  .workspace { grid-template-columns: 320px 1fr; }
+  .right-panel { display: none; }
+  .right-panel.mobile-show {
+    display: flex;
+    position: fixed; inset: auto 0 0 0;
+    max-height: 60vh; z-index: 40;
+    border-top-left-radius: 20px; border-top-right-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 -10px 40px rgba(0,0,0,.5);
+    transform: translateY(100%);
+    animation: slideUp .3s forwards;
+  }
+  @keyframes slideUp { to { transform: translateY(0); } }
+}
+
+@media (max-width: 768px) {
+  .topbar { padding: 10px 12px; gap: 8px; }
+  .logo-sub { display: none; }
+  .top-actions .btn { padding: 8px 10px; font-size: 12px; }
+  .top-actions .btn span.btn-label { display: none; }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .preview-wrapper { order: 1; }
+  .left-panel { order: 2; }
+  .right-panel { order: 3; }
+
+  .mobile-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    background: var(--bg-800);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    order: 2;
+  }
+  .mobile-tab {
+    flex: 1;
+    padding: 10px; font-size: 12px; font-weight: 500;
+    border-radius: 8px; text-align: center;
+    color: var(--text-dim);
+  }
+  .mobile-tab.active { background: var(--accent); color: #fff; }
+
+  .left-panel, .right-panel { display: none; }
+  .left-panel.mobile-active, .right-panel.mobile-active { display: flex; }
+
+  .preview-stage { min-height: 300px; padding: 12px; }
+  #ad-container { max-width: 320px; }
+  #ad-brand { font-size: 24px; }
+  #ad-price { font-size: 32px; }
+
+  .image-upload-grid { grid-template-columns: repeat(3, 1fr); }
+  .field-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .logo-mark { width: 30px; height: 30px; font-size: 14px; }
+  .logo { font-size: 15px; }
+  .top-actions .btn { padding: 8px; }
+  .btn svg { width: 16px; height: 16px; }
+  #ad-container { padding: 18px; }
+  #ad-brand { font-size: 22px; }
+  #ad-price { font-size: 28px; }
+  #ad-shop-name { font-size: 11px; }
+  #ad-model { font-size: 13px; }
+  #ad-features-list li { font-size: 11px; }
+  #ad-contact { font-size: 11px; }
+  .image-upload-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .upload-placeholder { font-size: 10px; }
+}
+
+/* ============ NOTIFICATION TOAST ============ */
+#notification-toast {
+  animation: slideIn .3s ease;
+}
+
+/* Mobile bottom sheet close */
+.sheet-close {
+  display: none;
+  margin-left: auto;
+  padding: 6px 12px; font-size: 12px;
+  background: var(--bg-700); border-radius: 6px;
+  color: var(--text);
+}
+@media (max-width: 1100px) {
+  .sheet-close { display: inline-flex; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark">iH</div>
+      <div>
+        <div>Ad Editor <span class="logo-sub">· IHUBS Pro</span></div>
+      </div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="top-actions">
+      <button id="back-to-shop-btn" class="btn btn-ghost" title="Back to Shop" aria-label="Back to Shop">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        <span class="btn-label">Back to Shop</span>
+      </button>
+      <button id="random-gradient-btn" class="btn btn-accent" title="Random style">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="btn-label">Random</span>
+      </button>
+      <button id="save-template-btn" class="btn btn-ghost" onclick="saveTemplate()" title="Save template">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span class="btn-label">Save</span>
+      </button>
+      <button id="download-btn" class="btn btn-primary" title="Download PNG">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="btn-label">Download</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE TABS (switches between editor / layers panel on small screens) -->
+  <div class="mobile-tabs" style="margin: 10px 10px 0;">
+    <button class="mobile-tab active" data-target="left-panel">🎨 Editor</button>
+    <button class="mobile-tab" data-target="right-panel">🖼️ Layers</button>
+  </div>
+
+  <!-- WORKSPACE -->
+  <main class="workspace">
+
+    <!-- LEFT PANEL: Editor -->
+    <section class="panel left-panel mobile-active">
+      <div class="panel-header">
+        <span class="panel-title">✏️ Editor</span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="brand">Brand</button>
+        <button class="tab" data-tab="pricing">Pricing</button>
+        <button class="tab" data-tab="features">Features</button>
+        <button class="tab" data-tab="images">Images</button>
+        <button class="tab" data-tab="style">Style</button>
+      </div>
+
+      <!-- Brand -->
+      <div class="tab-panel active" data-panel="brand">
+        <div class="field">
+          <label>Shop / Business Name</label>
+          <input id="shop-name" class="input" type="text" value="IHUBS" placeholder="Your shop name">
+        </div>
+        <div class="field">
+          <label>Brand</label>
+          <input id="brand-input" class="input" type="text" value="SAMSUNG" placeholder="Brand">
+        </div>
+        <div class="field">
+          <label>Model / Product</label>
+          <input id="model-input" class="input" type="text" value="Galaxy S24 Ultra" placeholder="Product model">
+        </div>
+        <div class="field">
+          <label>Contact Info</label>
+          <textarea id="contact-info" class="textarea">📞 +1 234 567 890
+📍 123 Tech Street</textarea>
+        </div>
+        <div class="field">
+          <label>Brand Logo</label>
+          <input id="logo-upload" type="file" accept="image/*" class="input" style="padding:6px;">
+          <img id="brand-logo" alt="logo">
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="tab-panel" data-panel="pricing">
+        <div class="field">
+          <label>Price</label>
+          <input id="price-input" class="input" type="text" value="$999">
+        </div>
+        <div class="field">
+          <label>Discount / Offer</label>
+          <input id="discount-input" class="input" type="text" value="10% OFF" placeholder="e.g. 20% OFF">
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="tab-panel" data-panel="features">
+        <div class="feature-input-row">
+          <input id="new-feature-input" class="input" type="text" placeholder="Add a feature...">
+          <button id="add-feature-btn" class="btn btn-primary">+</button>
+        </div>
+        <div id="features-list"></div>
+      </div>
+
+      <!-- Images -->
+      <div class="tab-panel" data-panel="images">
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">
+          Upload up to 5 images. Click to select, then drag on canvas or use layers panel.
+        </p>
+        <div id="image-grid" class="image-upload-grid"></div>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px;" onclick="resetAllImages()">
+          🗑️ Clear All Images
+        </button>
+      </div>
+
+      <!-- Style -->
+      <div class="tab-panel" data-panel="style">
+        <div class="field">
+          <label>Template Preset</label>
+          <select id="template-select" class="select">
+            <option value="">— Custom —</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="minimal-white">Minimal White</option>
+            <option value="amoled-dark">AMOLED Dark</option>
+            <option value="sunset-grad">Sunset Gradient</option>
+            <option value="nature-green">Nature Green</option>
+            <option value="tech-blue">Tech Blue</option>
+            <option value="luxury-gold">Luxury Gold</option>
+            <option value="instagram-pink">Instagram Pink</option>
+            <option value="matrix">Matrix</option>
+            <option value="ocean-wave">Ocean Wave</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Color Start</label>
+            <div class="color-row">
+              <input id="bg-color-start" class="input" type="text" value="#000000">
+              <input id="bg-color-start-pick" class="color-input" type="color" value="#000000">
+            </div>
+          </div>
+          <div class="field">
+            <label>Color End</label>
+            <div class="color-row">
+              <input id="bg-color-end" class="input" type="text" value="#4f46e5">
+              <input id="bg-color-end-pick" class="color-input" type="color" value="#4f46e5">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Text Color</label>
+          <div class="color-row">
+            <input id="text-color" class="input" type="text" value="#ffffff">
+            <input id="text-color-pick" class="color-input" type="color" value="#ffffff">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Gradient Type</label>
+          <select id="gradient-type" class="select">
+            <option value="linear">Linear</option>
+            <option value="radial">Radial</option>
+            <option value="conic">Conic</option>
+            <option value="diamond">Diamond</option>
+            <option value="stripe">Stripe</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Font Style</label>
+          <select id="font-style" class="select">
+            <option value="default">Default</option>
+            <option value="modern" selected>Modern (Poppins)</option>
+            <option value="roboto">Roboto</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="lato">Lato</option>
+            <option value="oswald">Oswald</option>
+            <option value="raleway">Raleway</option>
+            <option value="merriweather">Merriweather</option>
+            <option value="playfair">Playfair Display</option>
+            <option value="nunito">Nunito</option>
+            <option value="bangers">Bangers</option>
+            <option value="pacifico">Pacifico</option>
+            <option value="caveat">Caveat</option>
+            <option value="elegant">Elegant (Georgia)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER: Preview -->
+    <section class="preview-wrapper">
+      <div class="preview-toolbar">
+        <span class="preview-title">🖼️ Live Preview</span>
+        <div class="preview-zoom">
+          <button class="zoom-btn" data-zoom="0.75">75%</button>
+          <button class="zoom-btn active" data-zoom="1">100%</button>
+          <button class="zoom-btn" data-zoom="1.25">125%</button>
+        </div>
+      </div>
+      <div class="preview-stage">
+        <!-- ===== AD CONTAINER ===== -->
+        <div id="ad-container" style="background: linear-gradient(135deg, #000000, #4f46e5); color:#ffffff; font-family:'Poppins',sans-serif;">
+          <div class="ad-header">
+            <img id="brand-logo-preview" src="" alt="" style="display:none;width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.1);object-fit:contain;padding:4px;">
+            <div id="ad-shop-name">IHUBS</div>
+          </div>
+          <div id="ad-discount">10% OFF</div>
+          <div id="ad-brand">SAMSUNG</div>
+          <div id="ad-model">Galaxy S24 Ultra</div>
+          <div id="ad-price">$999</div>
+          <ul id="ad-features-list">
+            <li>200MP Camera</li>
+          </ul>
+          <img id="ad-image" alt="">
+          <div id="image-layers"></div>
+          <div id="ad-contact">📞 +1 234 567 890<br>📍 123 Tech Street</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: Image/Layer Controls -->
+    <aside class="panel right-panel">
+      <div class="panel-header">
+        <span class="panel-title">🖼️ Layer Controls</span>
+        <button class="sheet-close" onclick="closeMobileSheet()">Close ✕</button>
+      </div>
+
+      <div id="image-controls" style="display:none;padding:16px;overflow-y:auto;flex:1;">
+        <div class="control-group">
+          <div class="control-title">Selected: <span id="selected-image-index" style="color:var(--accent-hover)">Image 1</span></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Transform</div>
+          <div class="slider-row">
+            <div class="slider-label"><span>Size</span><span id="size-value">150px</span></div>
+            <input id="image-size-slider" type="range" min="50" max="400" value="150">
+          </div>
+          <div class="slider-row">
+            <div class="slider-label"><span>Rotate</span><span id="rotate-value">0°</span></div>
+            <input id="image-rotate-slider" type="range" min="-180" max="180" value="0">
+          </div>
+          <div class="slider-row">
+            <div class="slider-label"><span>Opacity</span><span id="opacity-value">100%</span></div>
+            <input id="image-opacity-slider" type="range" min="0" max="1" step="0.05" value="1">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Align</div>
+          <div class="align-grid">
+            <button class="align-btn" onclick="alignImage('left')">⬅️ Left</button>
+            <button class="align-btn" onclick="alignImage('center')">↔️ Center</button>
+            <button class="align-btn" onclick="alignImage('right')">➡️ Right</button>
+            <button class="align-btn" onclick="alignImage('top')">⬆️ Top</button>
+            <button class="align-btn" onclick="alignImage('middle')">⬍ Middle</button>
+            <button class="align-btn" onclick="alignImage('bottom')">⬇️ Bottom</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Layers</div>
+          <div class="action-row">
+            <button class="btn btn-ghost" onclick="bringForward()">⬆ Front</button>
+            <button class="btn btn-ghost" onclick="sendBackward()">⬇ Back</button>
+            <button class="btn btn-ghost" onclick="duplicateImage()">📋 Copy</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">AI Tools</div>
+          <button id="bg-remove-btn" class="btn btn-accent" style="width:100%;justify-content:center;" onclick="removeBackground()">
+            <span id="bg-remove-text">✨ Remove Background</span>
+            <span id="bg-remove-spinner" style="display:none;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-left:6px;"></span>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="removeImage(selectedImageIndex)">🗑️ Delete Image</button>
+        </div>
+      </div>
+
+      <div id="empty-layers" class="empty-state">
+        <div class="empty-state-icon">🖼️</div>
+        <div class="empty-state-text">
+          <strong>No image selected</strong><br>
+          Upload images in the Editor tab, then click a layer on the canvas to control it here.
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+/* ============ TAB SWITCHING ============ */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelector(`.tab-panel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ============ MOBILE PANEL SWITCH ============ */
+document.querySelectorAll('.mobile-tab').forEach(mt => {
+  mt.addEventListener('click', () => {
+    document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+    mt.classList.add('active');
+    const target = mt.dataset.target;
+    document.querySelector('.left-panel').classList.toggle('mobile-active', target === 'left-panel');
+    document.querySelector('.right-panel').classList.toggle('mobile-active', target === 'right-panel');
+  });
+});
+
+function closeMobileSheet() {
+  document.querySelector('.right-panel').classList.remove('mobile-show','mobile-active');
+}
+
+/* ============ ZOOM BUTTONS ============ */
+document.querySelectorAll('.zoom-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.zoom-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('ad-container').style.transform = `scale(${btn.dataset.zoom})`;
+  });
+});
+
+/* ============ COLOR INPUT SYNC ============ */
+function syncColorInputs(textId, pickId) {
+  const text = document.getElementById(textId);
+  const pick = document.getElementById(pickId);
+  if (text && pick) {
+    pick.addEventListener('input', e => { text.value = e.target.value; text.dispatchEvent(new Event('input')); });
+    text.addEventListener('input', e => { if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) pick.value = e.target.value; });
+  }
+}
+syncColorInputs('bg-color-start', 'bg-color-start-pick');
+syncColorInputs('bg-color-end', 'bg-color-end-pick');
+syncColorInputs('text-color', 'text-color-pick');
+
+/* ============ HOOK INTO YOUR STATE ============ */
+// When image controls become visible/hidden, show/hide empty state
+const imgControls = document.getElementById('image-controls');
+const emptyLayers = document.getElementById('empty-layers');
+const rightPanel = document.querySelector('.right-panel');
+
+const observer = new MutationObserver(() => {
+  const visible = imgControls.style.display !== 'none';
+  emptyLayers.style.display = visible ? 'none' : 'flex';
+  // On mobile, auto-open layers panel when image selected
+  if (visible && window.innerWidth <= 1100 && window.innerWidth > 768) {
+    rightPanel.classList.add('mobile-show');
+  }
+  if (visible && window.innerWidth <= 768) {
+    document.querySelector('.left-panel').classList.remove('mobile-active');
+    document.querySelector('.right-panel').classList.add('mobile-active');
+    document.querySelectorAll('.mobile-tab').forEach((t,i) => t.classList.toggle('active', i===1));
+  }
+});
+observer.observe(imgControls, { attributes: true, attributeFilter: ['style'] });
+</script>
+
+<script src="js/admaker.js"></script>
+
+</body>
+</html>

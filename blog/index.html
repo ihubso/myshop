@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Stocksales Blog — Retail, POS & Inventory Insights</title>
+    <meta name="description" content="Practical guides on inventory management, POS workflows, payments, and team management for small retailers — from the StocksalesApp team.">
+    <link rel="canonical" href="https://stocksalesapp.store/blog/">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    dark: { 950: '#07070d', 900: '#0a0a12', 800: '#12121c', 700: '#1a1a2a' },
+                    primary: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' },
+                    accent: '#8b5cf6'
+                }
+            } }
+        }
+    </script>
+    <style>
+        body { background: #07070d; }
+        .gradient-text { background: linear-gradient(135deg,#60a5fa,#a78bfa,#60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gradient-border { position: relative; background: #12121c; border-radius: 20px; }
+        .gradient-border::before { content:''; position:absolute; inset:-1px; border-radius:20px; padding:1px;
+            background: linear-gradient(135deg, rgba(59,130,246,.5), rgba(139,92,246,.3), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none; }
+        .glass { background: rgba(18,18,28,.7); backdrop-filter: blur(16px); }
+        .glow-orb { position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+        .reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease, transform .7s ease; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+    </style>
+</head>
+<body class="text-gray-200 font-sans antialiased overflow-x-hidden">
+
+<!-- NAVBAR -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent flex items-center justify-center shadow-lg shadow-primary-500/30">
+                <i class="fas fa-cash-register text-white"></i>
+            </div>
+            <span class="text-xl font-extrabold text-white">Stocksales<span class="gradient-text">App</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a href="/" class="text-gray-400 hover:text-white transition">Home</a>
+            <a href="/#features" class="text-gray-400 hover:text-white transition">Features</a>
+            <a href="/pricing/" class="text-gray-400 hover:text-white transition">Pricing</a>
+            <a href="/blog/" class="text-white font-bold">Blog</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+            <a href="/login/" class="px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition">Log in</a>
+            <a href="/setup/?step=start&source=blog" class="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-primary-500 to-accent rounded-xl hover:shadow-lg hover:shadow-primary-500/40 transition transform hover:scale-105">Start Free Trial</a>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden text-2xl text-white"><i class="fas fa-bars"></i></button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden glass border-t border-gray-800 px-6 py-4 space-y-3">
+        <a href="/" class="block py-2 text-gray-300">Home</a>
+        <a href="/#features" class="block py-2 text-gray-300">Features</a>
+        <a href="/pricing/" class="block py-2 text-gray-300">Pricing</a>
+        <a href="/blog/" class="block py-2 text-white font-bold">Blog</a>
+        <a href="/login/" class="block py-2 text-gray-300">Log in</a>
+        <a href="/setup/?step=start&source=blog" class="block text-center px-4 py-2.5 bg-gradient-to-r from-primary-500 to-accent rounded-xl font-bold text-white">Start Free Trial</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="relative pt-36 pb-16 px-6 overflow-hidden">
+    <div class="glow-orb w-[400px] h-[400px] bg-primary-500/15 top-[-80px] left-[-120px]"></div>
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+        <p class="reveal text-sm font-bold text-primary-400 uppercase tracking-widest mb-4">The Stocksales Blog</p>
+        <h1 class="reveal text-4xl md:text-6xl font-black text-white leading-tight">
+            Retail Insights That <span class="gradient-text">Grow Your Business</span>
+        </h1>
+        <p class="reveal mt-6 text-lg text-gray-400">Practical guides on inventory, POS workflows, payments, and team management — written by retailers, for retailers.</p>
+    </div>
+</header>
+
+<!-- FEATURED ARTICLE -->
+<section class="px-6 pb-16">
+    <div class="max-w-6xl mx-auto">
+        <a href="/blog/best-inventory-management-software-2026.html" class="reveal gradient-border block p-8 md:p-10 hover:-translate-y-1 transition duration-300">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-primary-500/15 text-primary-400 rounded-full text-xs font-bold uppercase tracking-wider">Inventory</span>
+                        <span class="text-xs text-gray-500"><i class="far fa-clock mr-1"></i> 12 min read</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-white leading-snug">Best Inventory Management Software for Small Business in 2026</h2>
+                    <p class="mt-4 text-gray-400 leading-relaxed">Stockouts, overstock, and manual counts quietly drain small retailers every day. Here's how to pick software that gives you total visibility — and the features that actually matter.</p>
+                    <span class="inline-flex items-center gap-2 mt-6 text-primary-400 font-bold">Read the guide <i class="fas fa-arrow-right"></i></span>
+                </div>
+                <div class="bg-dark-700 rounded-xl p-6 border border-gray-800">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-dark-800 rounded-lg p-3 border-l-4 border-primary-500">
+                            <p class="text-[10px] uppercase text-gray-500">Stock Value</p>
+                            <p class="text-lg font-extrabold text-white">$18.4K</p>
+                        </div>
+                        <div class="bg-dark-800 rounded-lg p-3 border-l-4 border-red-500">
+                            <p class="text-[10px] uppercase text-gray-500">Low Stock</p>
+                            <p class="text-lg font-extrabold text-white">3 alerts</p>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-1.5 h-20 mt-4">
+                        <div class="flex-1 bg-gradient-to-t from-primary-600 to-primary-400 rounded-t" style="height:40%"></div>
+                        <div class="flex-1 bg-gradient-to-t from-primary-600 to-primary-400 rounded-t" style="height:65%"></div>
+                        <div class="flex-1 bg-gradient-to-t from-primary-600 to-primary-400 rounded-t" style="height:50%"></div>
+                        <div class="flex-1 bg-gradient-to-t from-accent to-purple-300 rounded-t" style="height:90%"></div>
+                        <div class="flex-1 bg-gradient-to-t from-primary-600 to-primary-400 rounded-t" style="height:70%"></div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</section>
+
+<!-- ARTICLE GRID -->
+<section class="px-6 pb-24">
+    <div class="max-w-6xl mx-auto">
+        <h2 class="reveal text-2xl font-extrabold text-white mb-8">Latest Articles</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <a href="/blog/best-inventory-management-software-2026.html" class="reveal gradient-border p-6 hover:-translate-y-1 transition duration-300">
+                <span class="px-3 py-1 bg-primary-500/15 text-primary-400 rounded-full text-xs font-bold uppercase">Inventory</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">Best Inventory Management Software for Small Business in 2026</h3>
+                <p class="text-sm text-gray-500 mt-3">Compare the tools and features that give small retailers real visibility.</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="far fa-clock mr-1"></i> 12 min · Jan 2026</p>
+            </a>
+
+            <div class="reveal gradient-border p-6 opacity-70">
+                <span class="px-3 py-1 bg-green-500/15 text-green-400 rounded-full text-xs font-bold uppercase">POS & Payments</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">Cash, Credit, or Split? Mastering Mixed Payments at the Counter</h3>
+                <p class="text-sm text-gray-500 mt-3">How to handle partial cash + credit sales without losing track of balances.</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="fas fa-hourglass-half mr-1"></i> Coming soon</p>
+            </div>
+
+            <div class="reveal gradient-border p-6 opacity-70">
+                <span class="px-3 py-1 bg-amber-500/15 text-amber-400 rounded-full text-xs font-bold uppercase">Strategy</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">How to Prevent Stockouts Before They Cost You Customers</h3>
+                <p class="text-sm text-gray-500 mt-3">Low-stock alerts, sales velocity, and reorder points explained simply.</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="fas fa-hourglass-half mr-1"></i> Coming soon</p>
+            </div>
+
+            <div class="reveal gradient-border p-6 opacity-70">
+                <span class="px-3 py-1 bg-purple-500/15 text-purple-400 rounded-full text-xs font-bold uppercase">POS & Payments</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">Barcode Scanning 101: Cut Your Checkout Time in Half</h3>
+                <p class="text-sm text-gray-500 mt-3">Keyboard wedges, USB scanners, and QR — choosing the right setup.</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="fas fa-hourglass-half mr-1"></i> Coming soon</p>
+            </div>
+
+            <div class="reveal gradient-border p-6 opacity-70">
+                <span class="px-3 py-1 bg-amber-500/15 text-amber-400 rounded-full text-xs font-bold uppercase">Strategy</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">ABC Analysis: Focus on the Products That Make You Money</h3>
+                <p class="text-sm text-gray-500 mt-3">Rank your catalog by value and velocity so your best stock never runs out.</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="fas fa-hourglass-half mr-1"></i> Coming soon</p>
+            </div>
+
+            <div class="reveal gradient-border p-6 opacity-70">
+                <span class="px-3 py-1 bg-red-500/15 text-red-400 rounded-full text-xs font-bold uppercase">Team Management</span>
+                <h3 class="text-lg font-bold text-white mt-4 leading-snug">From Sales Associate to Manager: Building a Team You Can Trust</h3>
+                <p class="text-sm text-gray-500 mt-3">Roles, permissions, and per-user sales logs that end "mysterious losses."</p>
+                <p class="text-xs text-gray-600 mt-4"><i class="fas fa-hourglass-half mr-1"></i> Coming soon</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- NEWSLETTER CTA -->
+<section class="px-6 pb-24">
+    <div class="max-w-4xl mx-auto gradient-border p-10 text-center relative overflow-hidden">
+        <div class="glow-orb w-[250px] h-[250px] bg-accent/15 top-[-60px] right-[-60px]"></div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-white relative z-10">Get one retail tip every week</h2>
+        <p class="text-gray-400 mt-3 relative z-10">No spam. Just practical ideas to sell more and lose less.</p>
+        <form onsubmit="event.preventDefault(); this.innerHTML='<p class=\'text-green-400 font-bold py-3\'>✓ You\'re on the list!</p>';" class="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative z-10">
+            <input type="email" required placeholder="your@email.com" class="flex-1 px-4 py-3 rounded-xl bg-dark-700 border border-gray-700 text-white focus:border-primary-500 outline-none">
+            <button class="px-6 py-3 bg-gradient-to-r from-primary-500 to-accent rounded-xl font-bold text-white hover:shadow-lg hover:shadow-primary-500/40 transition">Subscribe</button>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-800/60 py-10 px-6 bg-dark-950 text-center text-sm text-gray-600">
+    <a href="/" class="font-extrabold text-white">Stocksales<span class="gradient-text">App</span></a>
+    <p class="mt-3">© 2026 StocksalesApp. All rights reserved. · <a href="/terms/" class="hover:text-primary-400">Terms</a> · <a href="/privacy/" class="hover:text-primary-400">Privacy</a></p>
+</footer>
+
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+    navbar.classList.toggle('glass', window.scrollY > 40);
+    navbar.classList.toggle('border-b', window.scrollY > 40);
+    navbar.classList.toggle('border-gray-800/60', window.scrollY > 40);
+});
+document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+});
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

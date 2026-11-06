@@ -1,0 +1,317 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import webpush from 'https://esm.sh/web-push@3.6.6';
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
+// Get VAPID keys from environment variables
+// Get VAPID keys from environment variables
+const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY") || "";
+const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY") || "";
+const VAPID_EMAIL = Deno.env.get("VAPID_EMAIL") || "admin@stockapp.com";
+
+// Configure web-push
+if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    `mailto:${VAPID_EMAIL}`,
+    VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY
+  );
+  console.log("✅ Web-push configured with VAPID keys");
+} else {
+  console.warn("⚠️ VAPID keys not set. Push notifications will not work!");
+}
+
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
+    // Create Supabase client with service role (bypasses RLS)
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+
+    const body = await req.json();
+    console.log("📨 Received request:", JSON.stringify(body, null, 2));
+
+    let title, message, type, businessId, notificationData;
+
+    // Check if this is from a database trigger or direct API call
+    if (body.type === "INSERT" || body.type === "UPDATE") {
+      // 🔥 FROM DATABASE TRIGGER
+      const record = body.record;
+      const table = body.table;
+      
+      console.log(`📊 Processing ${body.type} on ${table}`);
+
+      if (table === "sales") {
+        const sale = record;
+        businessId = sale.business_id;
+        type = "sale";
+        
+        // Get user info for the notification
+        const { data: userData } = await supabase
+          .from("users")
+          .select("username")
+          .eq("username", sale.username)
+          .maybeSingle();
+          
+        const username = userData?.username || sale.username || "Someone";
+        const productName = sale.product_name || sale.productName || "a product";
+        const amount = sale.price || sale.total_amount || 0;
+        
+        title = "💰 New Sale!";
+        message = `${username} sold ${productName} for ${amount.toLocaleString()} CFA`;
+        notificationData = { 
+          saleId: sale.id, 
+          type: "sale",
+          url: "https://www.StocksalesApp.store/my/shop/" 
+        };
+        
+      } else if (table === "tasks") {
+        const task = record;
+        businessId = task.business_id;
+        type = "task";
+        title = "📋 New Task";
+        message = task.title || "New task assigned to you";
+        notificationData = { 
+          taskId: task.id, 
+          type: "task",
+          url: "https://www.StocksalesApp.store/my/shop/" 
+        };
+        
+      } else if (table === "reminders") {
+        const reminder = record;
+        businessId = reminder.business_id;
+        type = "reminder";
+        title = "🔔 Reminder";
+        message = reminder.title || reminder.message || "You have a new reminder";
+        notificationData = { 
+          reminderId: reminder.id, 
+          type: "reminder",
+          url: "https://www.StocksalesApp.store/my/shop/" 
+        };
+        
+      } else if (table === "stock") {
+        const item = record;
+        // Only send for low stock
+        if (item.quantity < 3) {
+          businessId = item.business_id;
+          type = "low_stock";
+          title = "⚠️ Low Stock Alert";
+          message = `${item.name} has only ${item.quantity} left!`;
+          notificationData = { 
+            itemId: item.id, 
+            type: "low_stock",
+            url: "https://www.StocksalesApp.store/my/shop/" 
+          };
+        } else {
+          return new Response(
+            JSON.stringify({ success: true, message: "Stock above threshold, no notification needed" }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      } else {
+        throw new Error(`Unknown table: ${table}`);
+      }
+    } else {
+      // 📱 DIRECT API CALL
+      title = body.title;
+      message = body.body;
+      type = body.type;
+      businessId = body.business_id;
+      notificationData = body.data || {};
+    }
+
+    // Validate required fields
+    if (!businessId || !title) {
+      console.error("❌ Missing required fields:", { businessId, title });
+      throw new Error("Missing required fields: business_id and title");
+    }
+
+    console.log(`🔔 Preparing push: "${title}" for business: ${businessId}`);
+
+    // Get all push subscriptions for this business
+    const { data: subscriptions, error: subError } = await supabase
+      .from("push_subscriptions")
+      .select("*")
+      .eq("business_id", businessId);
+
+    if (subError) {
+      console.error("❌ Error fetching subscriptions:", subError);
+      throw subError;
+    }
+
+    if (!subscriptions || subscriptions.length === 0) {
+      console.log(`ℹ️ No subscribers for business: ${businessId}`);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "No subscribers found for this business",
+          total: 0,
+          sent: 0,
+          failed: 0
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`📱 Found ${subscriptions.length} subscribers for business ${businessId}`);
+
+    // Send push notifications to all subscribers
+    const results = await Promise.allSettled(
+      subscriptions.map(async (sub) => {
+        try {
+          // Validate subscription data
+          if (!sub.endpoint || !sub.p256dh || !sub.auth) {
+            console.error("❌ Invalid subscription data:", sub);
+            return { success: false, error: "Invalid subscription data" };
+          }
+
+          const pushSubscription = {
+            endpoint: sub.endpoint,
+            keys: {
+              p256dh: sub.p256dh,
+              auth: sub.auth
+            }
+          };
+
+          // Prepare notification payload
+          const payload = JSON.stringify({
+            title: title,
+            body: message,
+            icon: "https://www.StocksalesApp.store/image/logo.jpg",
+            badge: "https://www.StocksalesApp.store/image/200.png",
+            vibrate: [200, 100, 200],
+            tag: `${type}-${Date.now()}`,
+            requireInteraction: type === "sale" || type === "low_stock",
+            data: {
+              ...notificationData,
+              timestamp: Date.now()
+            },
+            actions: [
+              { action: "view", title: "View Details" },
+              { action: "dismiss", title: "Dismiss" }
+            ],
+            silent: false,
+            timestamp: Date.now()
+          });
+
+          // Send the notification
+          await webpush.sendNotification(pushSubscription, payload);
+          
+          console.log(`✅ Sent to: ${sub.endpoint.substring(0, 50)}...`);
+          return { success: true, endpoint: sub.endpoint };
+          
+        } catch (error) {
+          console.error(`❌ Failed to send to ${sub.endpoint}:`, error.message);
+          
+          // Remove invalid/expired subscriptions
+          if (error.statusCode === 410 || error.statusCode === 404 || 
+              error.message?.includes("expired") || error.message?.includes("invalid")) {
+            const { error: deleteError } = await supabase
+              .from("push_subscriptions")
+              .delete()
+              .eq("endpoint", sub.endpoint);
+            
+            if (deleteError) {
+              console.error("Failed to delete invalid subscription:", deleteError);
+            } else {
+              console.log(`🗑️ Removed invalid subscription: ${sub.endpoint}`);
+            }
+          }
+          
+          return { success: false, endpoint: sub.endpoint, error: error.message };
+        }
+      })
+    );
+
+    // Count results
+    const successful = results.filter(r => r.status === "fulfilled" && r.value?.success).length;
+    const failed = results.filter(r => r.status === "rejected" || !r.value?.success).length;
+
+    console.log(`📊 Results: ${successful} sent, ${failed} failed out of ${subscriptions.length}`);
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        total: subscriptions.length,
+        sent: successful,
+        failed: failed,
+        message: `Sent ${successful} of ${subscriptions.length} notifications`
+      }),
+      { 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json" 
+        } 
+      }
+    );
+
+  } catch (error) {
+    console.error("❌ Edge function error:", error);
+    
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || "Unknown error occurred",
+        details: error.toString()
+      }),
+      { 
+        status: 500,
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json" 
+        } 
+      }
+    );
+  }
+});
+
+
+
+
+
+
+
+
+
+
+    const stockBtn = document.getElementById("stockOptionBtn");
+    const salesBtn = document.getElementById("salesOptionBtn");
+    const historyBtn = document.getElementById("historyOptionBtn");
+    const creditBtn = document.getElementById("creditBookOptionBtn");
+
+    if (stockBtn) {
+        stockBtn.addEventListener("click", async () => {
+            await loadSection("stock");
+        });
+    }
+
+    if (salesBtn) {
+        salesBtn.addEventListener("click", async () => {
+            await loadSection("sales");
+        });
+    }
+
+    if (historyBtn) {
+        historyBtn.addEventListener("click", async () => {
+            await loadSection("history");
+        });
+    }
+
+    if (creditBtn) {
+        creditBtn.addEventListener("click", async () => {
+            await loadSection("credit");
+        });
+    }

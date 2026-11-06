@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Receipt - StocksalesApp</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="image/icon.ico">
+      <link rel="manifest" href="/manifest.webmanifest">
+    <script>
+        (function () {
+            let deferredReceiptInstallPrompt = null;
+            let receiptLoaded = false;
+
+            function isAppInstalled() {
+                return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+            }
+
+            function showReceiptInstallPrompt() {
+                receiptLoaded = true;
+                if (isAppInstalled()) return;
+
+                const modal = document.getElementById('receiptInstallModal');
+                if (!modal) return;
+                modal.classList.remove('hidden');
+                document.getElementById('receiptInstallButton')?.focus();
+            }
+
+            function closeReceiptInstallPrompt() {
+                document.getElementById('receiptInstallModal')?.classList.add('hidden');
+            }
+
+            window.addEventListener('receiptloaded', showReceiptInstallPrompt);
+            window.addEventListener('beforeinstallprompt', function (event) {
+                event.preventDefault();
+                deferredReceiptInstallPrompt = event;
+                if (receiptLoaded) showReceiptInstallPrompt();
+            });
+            window.addEventListener('appinstalled', function () {
+                deferredReceiptInstallPrompt = null;
+                closeReceiptInstallPrompt();
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const modal = document.getElementById('receiptInstallModal');
+                const closeButton = document.getElementById('receiptInstallClose');
+                const installButton = document.getElementById('receiptInstallButton');
+                let showingInstallInstructions = false;
+
+                closeButton?.addEventListener('click', closeReceiptInstallPrompt);
+                modal?.addEventListener('click', function (event) {
+                    if (event.target === modal) closeReceiptInstallPrompt();
+                });
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') closeReceiptInstallPrompt();
+                });
+                installButton?.addEventListener('click', async function () {
+                    if (!deferredReceiptInstallPrompt) {
+                        if (showingInstallInstructions) {
+                            closeReceiptInstallPrompt();
+                            return;
+                        }
+
+                        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+                        document.getElementById('receiptInstallMessage').textContent = isIOS
+                            ? 'To install, tap the Share button, then choose “Add to Home Screen”.'
+                            : 'To install, open your browser menu and choose “Install app” or “Add to Home Screen”.';
+                        installButton.textContent = 'Close';
+                        showingInstallInstructions = true;
+                        return;
+                    }
+
+                    const installPrompt = deferredReceiptInstallPrompt;
+                    deferredReceiptInstallPrompt = null;
+                    await installPrompt.prompt();
+                    await installPrompt.userChoice;
+                    closeReceiptInstallPrompt();
+                });
+            });
+        })();
+    </script>
+    
+    <!-- ============ CDN STYLESHEETS ============ -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- ============ LOCAL STYLESHEETS (keep - small files) ============ -->
+         <script src="/envofgethoing.js"></script>
+ <link rel="stylesheet" href="/styles/bundle.css">
+    
+    <!-- ============ CDN LIBRARIES (free hosting) ============ -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/supabase-rpc-proxy.js"></script>
+    
+    <!-- Local env.js (small - keep) -->
+    <script src="/js/env.js"></script>
+    
+    <!-- Libraries from jsDelivr CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.2.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+ <script src="translations.js"></script>
+    <script src="/js/curency.js"></script>
+    <script src="/js/hideme.js"></script>
+    
+    <style>
+        /* Your existing styles stay the same */
+        .receiptnofound-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .not-found {
+            width: 100%;
+            max-width: 500px;
+        }
+        .not-found.hidden {
+            display: none;
+        }
+        .not-found h2 {
+            font-weight: bold;
+            text-align: center;
+        }
+        .not-found p {
+            font-weight: bold;
+            text-align: center;
+        }
+        .not-found button:hover {
+            background-color: #2563eb !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .not-found input:focus {
+            outline: none;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .festive-badge-receipt {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+.festive-badge-receipt svg {
+    width: 20px;
+    height: 20px;
+}
+
+.receipt-install-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.receipt-install-overlay.hidden {
+    display: none;
+}
+
+.receipt-install-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    padding: 24px;
+    border-radius: 16px;
+    background: #fff;
+    color: #1f2937;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.receipt-install-dialog button {
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.receipt-install-primary {
+    width: 100%;
+    margin-top: 18px;
+    padding: 11px 16px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+}
+
+.receipt-install-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    padding: 4px 8px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 22px;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@media print {
+    .festive-badge-receipt {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #667eea !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+        @media print {
+            .receipt-install-overlay {
+                display: none !important;
+            }
+            body {
+                color: white !important;
+                background-color: white !important;
+            }
+            .not-found {
+                display: none !important;
+            }
+            .loading {
+                display: none !important;
+            }
+            button, 
+            #manualReceiptInput {
+                display: none !important;
+            }
+            #receiptContent:not(.hidden) {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="receiptContainer" class="receiptnofound-container">
+    <!-- Loading State -->
+    <div id="loadingState" class="loading">
+        <div class="spinner"></div>
+        <p>Loading receipt...</p>
+    </div>
+    
+    <!-- Receipt Content (hidden initially) -->
+    <div id="receiptContent" class="hidden"></div>
+    
+    <!-- Not Found State -->
+    <div id="notFoundState" class="not-found hidden">
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+            padding: 40px 20px;
+        ">
+            <i class="fas fa-receipt" style="font-size: 64px; color: #999; margin-bottom: 20px;"></i>
+            <h2 style="font-weight: bold; font-size: 24px; margin-bottom: 10px;color: #fff;">Receipt Not Found</h2>
+            <p style="font-weight: bold; font-size: 16px; margin-bottom: 20px; color: #fff;">The receipt you're looking for doesn't exist or has been removed.</p>
+            <input type="text" 
+                   id="manualReceiptInput" 
+                   placeholder="Enter Receipt ID (e.g., CR-283059)" 
+                   style="padding: 12px 16px; width: 100%; max-width: 400px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; text-align: center;">
+            <button onclick="searchManualReceipt()" 
+                    style="padding: 12px 24px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+                Search Receipt
+            </button>
+            <button onclick="window.location.href='/login/'" 
+                    style="padding: 12px 24px; background-color: #6b7280; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px;">
+                Create your shop now
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="receiptInstallModal" class="receipt-install-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="receiptInstallTitle">
+    <div class="receipt-install-dialog">
+        <button id="receiptInstallClose" class="receipt-install-close" type="button" aria-label="Close install prompt">&times;</button>
+        <div style="font-size: 32px; color: #2563eb; margin-bottom: 8px;">
+            <i class="fas fa-mobile-screen-button" aria-hidden="true"></i>
+        </div>
+        <h2 id="receiptInstallTitle" style="margin: 0 0 8px; font-size: 20px; font-weight: 700;">Install StocksalesApp</h2>
+        <p id="receiptInstallMessage" style="margin: 0; color: #6b7280; font-size: 14px;">Install the app for quicker access to your shop tools.</p>
+        <button id="receiptInstallButton" class="receipt-install-primary" type="button">Install app</button>
+    </div>
+</div>
+    
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal-overlay hidden">
+        <div class="receipt-content w-full md:w-1/2 lg:w-1/3 p-6">
+            <button class="receipt-modal-close-btn" onclick="closeReceiptModal()">&times;</button>
+            
+            <div id="receiptPrintArea" class="text-black font-mono text-sm">
+                <div id="receiptWatermark" class="absolute inset-0 opacity-10 pointer-events-none z-0 print-visible"></div>
+                
+                <!-- Business Header -->
+                <div class="text-center mb-4">
+                    <img id="receiptBusinessLogo" src="" alt="Business Logo" class="mx-auto h-12 w-auto object-contain mb-2 hidden print-visible">
+                    <h3 id="receiptBusinessName" class="text-lg font-bold mb-1"></h3>
+                    <p id="receiptBusinessDetails" class="text-xs italic"></p>
+                </div>
+                
+                <!-- Festive Badge -->
+<!-- Festive Badge for Receipt -->
+<div id="festiveBadge" class="festive-badge-receipt hidden">
+    <span id="badgeIcon"></span>
+    <span id="badgeText"></span>
+</div>
+                
+                <!-- Title with decorative lines -->
+                <div style="text-align: center; margin: 15px 0 20px 0; position: relative; height: 50px;">
+                    <!-- Top Blue Line -->
+                    <div style="
+                        position: absolute;
+                        left: 0;
+                        top: 30%;
+                        width: 100%;
+                        height: 12px;
+                        background: linear-gradient(
+                            90deg,
+                            #0a3d8f 0%,
+                            #0d47a1 20%,
+                            #1565c0 45%,
+                            #42a5f5 65%,
+                            #90caf9 85%,
+                            transparent 100%
+                        );
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                        z-index: 0;
+                    "></div>
+                    
+                    <!-- Bottom Red Line -->
+                    <div style="
+                        position: absolute;
+                        left: 0;
+                        top: 55%;
+                        width: 100%;
+                        height: 12px;
+                        background: linear-gradient(
+                            90deg,
+                            transparent 0%,
+                            #ef9a9a 15%,
+                            #ef5350 35%,
+                            #e53935 55%,
+                            #c62828 80%,
+                            #8e0000 100%
+                        );
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                        z-index: 0;
+                    "></div>
+                    
+                    <!-- Title Text -->
+                    <h3 style="
+                        display: inline-block;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        margin: 0;
+                        padding: 0 15px;
+                        font-size: 22px;
+                        font-weight: 800;
+                        letter-spacing: 1px;
+                        z-index: 2;
+                        color: #000000;
+                        background: transparent;
+                        text-transform: none;
+                        white-space: nowrap;
+                        text-shadow: 
+                            -1px -1px 0 #ffffff,
+                            1px -1px 0 #ffffff,
+                            -1px  1px 0 #ffffff,
+                            1px  1px 0 #ffffff;
+                    " data-translate="receiptInvoice">
+                        RECEIPT • INVOICE
+                    </h3>
+                </div>
+                
+                <!-- Receipt Details & QR Code -->
+                <div class="flex items-start gap-6">                  
+                    <div class="text-center" id="qrContainer">
+                        <img id="receiptQRCode" src="" alt="QR Code" class="w-30 h-30 hidden border-2 border-black p-1">
+                        <p class="text-xs mt-1" data-translate="scanToVerify">Scan to verify</p>
+                    </div>
+                    
+                    <div class="flex-1">
+                        <div class="border-t border-b border-gray-400 py-1 mb-1">
+                            <div class="grid grid-cols-2 gap-y-1 gap-x-3">
+                                <div>
+                                    <p id="receiptCustomerInfo" class="font-semibold leading-tight text-lg"></p>
+                                    <p id="receiptCustomerPhoneNumber" class="text-xs leading-tight"></p>
+                                    <input type="text"
+                                        id="receiptCustomerNameInput"
+                                        class="hidden block w-full px-2 py-1 text-xs border border-pink-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 mt-0.5"
+                                        placeholder="Enter customer name (optional)">
+                                </div>
+                                
+                                <p>
+                                    <span class="font-semibold">Receipt ID:</span>
+                                    <span id="receiptSaleId" class="font-semibold"></span>
+                                </p>
+                                
+                                <p>
+                                    <span class="font-semibold">Date:</span>
+                                    <span id="receiptDate"></span>
+                                </p>
+                                
+                                <p>
+                                    <span class="font-semibold">Cashier:</span>
+                                    <span id="receiptCashierName"></span>
+                                </p>
+                                
+                                <p>
+                                    <span class="font-semibold">Payment:</span>
+                                    <span id="receiptPaymentTypeDisplay"></span>
+                                    <input type="text"
+                                        id="receiptPaymentTypeInput"
+                                        class="hidden block w-full px-2 py-1 text-xs border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 mt-0.5"
+                                        value="Cash">
+                                </p>
+                                
+                                <p>
+                                    <span id="receiptSerialNumberDisplay" class="hidden font-semibold"></span>
+                                    <input type="text"
+                                        id="receiptSerialNumberInput"
+                                        class="hidden block w-full px-2 py-1 text-xs border border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Serial number (optional)">
+                                </p>
+                                
+                                <p id="receiptGuaranteeSection" class="col-span-2 mt-1 pt-1 border-t border-dashed text-xs font-semibold"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Items Table -->
+                <div class="table-container mb-4">
+                    <table class="receipt-table min-w-full border-collapse">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="text-left text-lg text-white-805 font-bold pb-1 w-2/5" data-translate="tableItem">Item</th>
+                                <th class="text-left text-lg text-white-805 font-bold pb-1 w-1/5" data-translate="tableType">Type</th>
+                                <th class="text-right text-lg text-white-805 font-bold pb-1 w-1/6" data-translate="tableQty">Qty</th>
+                                <th class="text-right text-lg text-white-805 font-bold pb-1 w-1/6" data-translate="tableUnitPrice">Unit Price</th>
+                                <th class="text-right text-lg text-white-805 font-bold pb-1 w-1/6" data-translate="tableSubtotal">Subtotal</th>
+                            </tr>
+                            <tr><td colspan="5"><div class="border-b text-lg border-white-800"></div></td></tr>
+                        </thead>
+                        <tbody id="receiptItemsTableBody" class="table-body text-lg divide-y divide-white-300">
+                            <!-- Table rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="border-t border-red-800 my-1"></div>
+                
+                <!-- Payment Summary -->
+                <div id="receiptfooter2" class="mb-2 w-full">
+                    <div class="flex justify-between items-start">
+                        <div class="text-left w-1/2">
+                            <p id="receiptAdvancePayment" class="text-sm mb-0">
+                                <span class="font-semibold" data-translate="advancePayment">Advance Payment:</span>
+                                <span id="receiptAdvanceValue">00</span>
+                                <input type="text" id="receiptAdvanceValueInput" class="receiptEditInput hidden border px-1 py-0 rounded w-20" value="00" step="0.01">
+                            </p>
+                            <p id="receiptAmountPaid" class="text-sm mb-0">
+                                <span class="font-semibold" data-translate="amountPaid">Amount Paid:</span>
+                                <span id="receiptAmountPaidValue">00</span>
+                                <input type="text" id="receiptAmountPaidValueInput" class="receiptEditInput hidden border px-1 py-0 rounded w-20" value="00" step="0.01">
+                            </p>
+                            <p id="receiptBalanceDue" class="text-sm text-red-700 font-semibold mb-0">
+                                <span class="font-semibold" data-translate="balanceDue">Balance Due:</span>
+                                <span id="receiptBalanceValue">00</span>
+                                <input type="text" id="receiptBalanceValueInput" class="receiptEditInput hidden border px-1 py-0 rounded w-20 bg-red-50" value="00" step="0.01">
+                            </p>
+                            <p id="receiptAdvancePaymentDate" class="text-sm hidden">
+                                <span data-translate="toBePaidOn">to be paid on</span> 
+                                <span id="receiptAdvanceDateValue"></span>
+                            </p>
+                        </div>
+                        
+                        <div class="text-right w-1/2">
+                            <p class="mb-0 text-sm">
+                                <span class="font-semibold" data-translate="subtotal">Subtotal:</span>
+                                <span id="receiptSubtotal">0.00</span>
+                            </p>
+                            <p class="mb-0 text-sm">
+                                <span class="font-semibold" data-translate="tax">Tax:</span>
+                                <span id="receiptTax">0.00</span>
+                            </p>
+                            <div id="reptotel" class="text-right text-lg font-bold">
+                                <span class="font-semibold" data-translate="total">Total:</span>
+                                <span id="receiptTotalAmount">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-300 my-1"></div>
+                </div>
+                
+                <!-- Footer -->
+                <div id="receiptfooter" class="text-center text-xs text-white-700 mt-2">
+                    <p id="receiptBusinessAddress" class="text-xs mb-0"></p>
+                    <p id="receiptBusinessContact" class="text-xs"></p>
+                    <p id="receiptBusinessSocial" class="text-xs mb-0"></p>
+                    <div style="display: inline;">
+                        <p class="italic" style="display: inline;" data-translate="thankYou">Thank you for your business!</p>
+                        <p class="" style="display: inline;" data-translate="pleaseComeAgain"> Please Come Again</p>
+                        <p class="text-white-800" style="display: inline;" data-translate="computerGenerated"> This is a computer-generated document.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="mt-6 flex justify-center space-x-4">
+                <button id="printReceiptBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out" data-translate="printReceipt">
+                    Print Receipt
+                </button>
+                <button id="downloadPdfBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out" data-translate="downloadPdf">
+                    Download PDF
+                </button>
+                <button id="shareReceiptBtn"
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-150 ease-in-out">
+                    Share Receipt
+                </button>
+            </div>
+        </div>
+    </div>
+<script src="script2.js"></script>
+<script src="script202.js"></script>
+
+</body>
+</html>

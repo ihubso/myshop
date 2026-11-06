@@ -1,0 +1,1867 @@
+/* =====================================
+   GLOBAL ADAPTIVE MODAL SYSTEM
+===================================== */
+
+.reciptmoadl {
+    display: flex;
+    z-index: 9999999999999999999999999999999999999999999;
+    transition: opacity 0.3s ease;
+}
+
+/* Default modal panel safety */
+.reciptmoadl > * {
+    max-height: 90vh;
+    overflow-y: auto;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+.retry-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.retry-btn:hover {
+    background: #2563eb;
+}
+
+.connection-error {
+    text-align: center;
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+/* ===============================
+   PHONE → BOTTOM SHEET
+================================ */
+@media (max-width: 767px) {
+    .reciptmoadl {
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .reciptmoadl > * {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+    }
+
+    .reciptmoadl.show > * {
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+   TABLET → CENTERED (FIXED!)
+================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .reciptmoadl {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reciptmoadl > * {
+        width: 92%;
+        max-width: 960px;
+        border-radius: 20px;
+        transform: scale(0.96);
+        opacity: 0;
+    }
+
+    .reciptmoadl.show > * {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===============================
+   DESKTOP → CENTERED
+================================ */
+@media (min-width: 1024px) {
+    .reciptmoadl {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reciptmoadl > * {
+        width: 90%;
+        max-width: 1100px;
+        border-radius: 20px;
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    .reciptmoadl.show > * {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+/* =====================================
+   GLOBAL ADAPTIVE MODAL SYSTEM
+===================================== */
+
+.adaptive-modal {
+    display: flex;
+    transition: opacity 0.3s ease;
+             z-index: 20000000000000999999999999999999999999999999;
+}
+
+/* Default modal panel safety */
+.adaptive-modal > * {
+    max-height: 90vh;
+    overflow-y: auto;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+        z-index: 20000000000000999999999999999999999999999999;
+}
+
+/* ===============================
+   PHONE → BOTTOM SHEET
+================================ */
+@media (max-width: 767px) {
+    .adaptive-modal {
+        width: 100vw;
+        height: 100dvh;
+        justify-content: center;
+              z-index: 20000000000000999999999999999999999999999999;
+    }
+
+    .adaptive-modal > * {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+    }
+
+    .adaptive-modal.show > * {
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+   TABLET → CENTERED (FIXED!)
+================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .adaptive-modal {
+        align-items: center;
+        justify-content: center;
+              z-index: 20000000000000999999999999999999999999999999;
+    }
+
+    .adaptive-modal > * {
+        width: 92%;
+        max-width: 960px;
+        border-radius: 20px;
+        transform: scale(0.96);
+        opacity: 0;
+    }
+
+    .adaptive-modal.show > * {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===============================
+   DESKTOP → CENTERED
+================================ */
+@media (min-width: 1024px) {
+    .adaptive-modal {
+        align-items: center;
+        justify-content: center;
+              z-index: 20000000000000999999999999999999999999999999;
+    }
+
+    .adaptive-modal > * {
+        width: 90%;
+        max-width: 1100px;
+        border-radius: 20px;
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    .adaptive-modal.show > * {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+/* ===========================
+   REFUND MODAL PANEL
+=========================== */
+.refund-modal-panel {
+    position: relative;
+
+    width: 100%;
+    max-width: 520px;
+
+    background: white;
+    padding: 1.25rem;
+    border-radius: 20px;
+
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+/* Close button safe for all modes */
+.refund-modal-panel .modal-close-btn {
+    position: sticky;
+    top: 0;
+    float: right;
+
+    font-size: 28px;
+    line-height: 1;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* ===========================
+   TABLET FIX (CENTERED)
+=========================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .refund-modal-panel {
+        max-width: 680px;
+    }
+}
+
+/* ===========================
+   MOBILE → BOTTOM SHEET
+=========================== */
+@media (max-width: 767px) {
+    .refund-modal-panel {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding-bottom: 1.5rem;
+    }
+}
+
+
+/* ===============================
+   CUSTOMER SEARCH MODAL PANEL
+=============================== */
+.customer-search-panel {
+ background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Header */
+.customer-search-panel .modal-header {
+
+    padding: 1.25rem;
+}
+
+.customer-search-panel .subtitle {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* Body */
+.customer-search-panel .modal-body {
+    padding: 1.25rem;
+    overflow-y: auto;
+}
+
+/* Search */
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 0.7rem;
+    opacity: 0.5;
+}
+
+.clear-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+/* Results */
+.results-area {
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+/* Scan section */
+.scan-area {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.scan-btn {
+    background: #2563eb;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+}
+
+.scan-desc {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* ===============================
+   MOBILE → BOTTOM SHEET
+=============================== */
+@media (max-width: 767px) {
+    .customer-search-panel {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+    }
+}
+/* ===============================
+   CUSTOMER TRANSACTIONS MODAL
+=============================== */
+.customer-transactions-panel {
+    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 1100px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Header */
+.ct-header {
+    background: rgba(0, 0, 0, 0.4);
+
+    padding: 1.25rem;
+}
+
+/* Summary */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.summary-card {
+    padding: 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+.summary-card strong {
+    display: block;
+    font-size: 1.2rem;
+}
+
+/* Body */
+.ct-body {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+.filters select,
+.filters input {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-wrapper th,
+.table-wrapper td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #eee;
+}
+.table-header th {
+    color: black;
+}
+/* Footer */
+.ct-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Buttons */
+.primary-btn { background:#2563eb;color:#fff;padding:.5rem 1rem;border-radius:8px; }
+.secondary-btn { background:#e5e7eb;padding:.5rem 1rem;border-radius:8px; }
+.accent-btn { background:#7c3aed;color:#fff;padding:.5rem 1rem;border-radius:8px; }
+
+/* ===============================
+   MOBILE BOTTOM SHEET
+=============================== */
+@media (max-width: 768px) {
+    .customer-transactions-panel {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* Add to your CSS file */
+#notificationLoadingOverlay {
+    transition: opacity 0.3s ease;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1024px) {
+  #makeadminsection > div {
+    width: 95vw;
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+}
+@media (max-width: 1024px) {
+  #makeadminsection .flex.flex-1 {
+    flex-direction: column;
+  }
+
+  #makeadminsection .w-64 {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+  }
+
+  #makeadminsection .w-64 button {
+    flex: 1;
+    white-space: nowrap;
+  }
+}
+#makeadminsection {
+  align-items: center !important;
+  justify-content: center !important;
+}
+#makeadminsection > div {
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  #makeadminsection {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  #makeadminsection > .bg-white.dark\\:bg-slate-900 {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+}
+
+#adminModalContent {
+  overflow-y: auto;
+}
+.flash-green-animate {
+    animation: flashGreen 2s ease-in-out;
+}
+
+@keyframes flashGreen {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: rgba(34, 197, 94, 0.3); }
+}
+
+
+/* Add to your existing CSS */
+#reminderList li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#reminderEditModal input:focus, 
+#reminderEditModal textarea:focus, 
+#reminderEditModal select:focus {
+    border-color: #3b82f6;
+    outline: 2px solid #3b82f6;
+}
+
+.edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.filter-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 14px;
+
+    border-radius: 10px;
+    color: #374151; /* gray-700 */
+    background: transparent;
+
+    transition: all 0.2s ease;
+}
+
+.dark .filter-tab-btn {
+    color: #e5e7eb; /* gray-200 */
+}
+
+.filter-tab-btn:hover {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+.filter-tab-btn.active {
+    background: #2563eb; /* blue-600 */
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.filter-tab-btn .badge {
+    min-width: 22px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 700;
+
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.filter-tab-btn.active .badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+.filter-tab-btn {
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.filter-tab-btn.active {
+    transform: scale(1.02);
+}
+.modal-overlay {
+    overscroll-behavior: contain;
+}
+
+.modal-content {
+    max-height: 90vh;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+    }
+}
+/* Main Content Container - Responsive */
+#mainContentContainer {
+    /* Base styles */
+    width: 100%;
+    min-height: 100vh;
+    
+    /* Flexible layout */
+  
+    flex-direction: column;
+    
+    /* Spacing */
+    padding: 1rem;
+    
+
+    
+    /* Transition for smooth resizing */
+    transition: all 0.3s ease;
+    
+    /* Box sizing */
+    box-sizing: border-box;
+}
+
+/* Content wrapper inside */
+.main-content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+/* Large Desktops (1400px and above) */
+@media screen and (min-width: 1400px) {
+    #mainContentContainer {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+         flex: 1;
+    }
+}
+
+/* Desktops (1024px - 1399px) */
+@media screen and (min-width: 1024px) and (max-width: 1399px) {
+    #mainContentContainer {
+        padding: 1.5rem;
+    }
+}
+
+/* Tablets Landscape (768px - 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    #mainContentContainer {
+        padding: 1.25rem;
+    }
+}
+@media screen and (max-width: 768px) {
+  #loginLoadingContainer {
+    flex-direction: column; /* Stack text and icon vertically */
+    padding: 2rem;
+  }
+
+  #loginLoadingContainer h1.liquid-text {
+    font-size: 10vw; /* Scale font based on screen width */
+    text-align: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    word-wrap: break-word;
+  }
+
+  #loginLoadingContainer svg {
+    width: 60px; /* Smaller icon for mobile */
+    height: auto;
+  }
+}
+
+/* --- Desktop Styles (Screens larger than 768px) --- */
+@media screen and (min-width: 769px) {
+  #loginLoadingContainer {
+    flex-direction: row; /* Horizontal layout */
+  }
+
+  #loginLoadingContainer h1.liquid-text {
+    font-size: 120px; /* Original large font */
+    margin-right: 2rem;
+  }
+
+  #loginLoadingContainer svg {
+    width: 100px;
+  }
+}
+/* Mobile: Full Screen */
+@media (max-width: 640px) {
+  #notifDropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    border-radius: 0;
+    z-index: 9999;
+    overflow-y: auto;
+  }
+
+}
+
+/* Desktop: Dropdown style */
+@media (min-width: 641px) {
+  #notifDropdown {
+    position: fixed;
+    top: 4rem;
+    right: 1rem;
+    width: 24rem;
+    max-height: 500px;
+    border-radius: 0.5rem;
+    /* ... other styles */
+  }
+}
+/* Tablets Portrait (480px - 767px) */
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    #mainContentContainer {
+        padding: 1rem;
+    }
+}
+
+/* Mobile Phones (320px - 479px) */
+@media screen and (min-width: 320px) and (max-width: 479px) {
+    #mainContentContainer {
+        padding: 0.75rem;
+
+    }
+}
+
+/* Small Phones (below 320px) */
+@media screen and (max-width: 319px) {
+    #mainContentContainer {
+        padding: 0.5rem;
+    }
+}
+
+/* ========================================
+   LANDSCAPE MODE ON MOBILE
+   ======================================== */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    #mainContentContainer {
+     
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* ========================================
+   FLEXIBLE GRID FOR CHILDREN
+   ======================================== */
+#mainContentContainer .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+/* Responsive font sizes */
+@media screen and (max-width: 768px) {
+    #mainContentContainer {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #mainContentContainer {
+        font-size: 13px;
+    }
+}
+
+/* ========================================
+   HOME OVERLAY - FULL RESPONSIVE FIX
+   ======================================== */
+
+
+
+
+/* Responsive padding */
+@media screen and (min-width: 640px) {
+    #homeOverlay .relative.z-10 {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    #homeOverlay .relative.z-10 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* Centered Content */
+#homeOverlay .text-center {
+    text-align: center;
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+/* Main Heading */
+.stock-app-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientShift 8s ease infinite;
+    background-size: 200% 200%;
+}
+
+/* Responsive text sizes */
+@media screen and (max-width: 640px) {
+    .stock-app-text {
+        font-size: 2.5rem !important;
+    }
+}
+
+@media screen and (min-width: 641px) and (max-width: 768px) {
+    .stock-app-text {
+        font-size: 3.5rem !important;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .stock-app-text {
+        font-size: 5rem !important;
+    }
+}
+
+@media screen and (min-width: 1025px) {
+    .stock-app-text {
+        font-size: 6rem !important;
+    }
+}
+
+/* Subtitle */
+#homeOverlay span[data-translate="welcomeSubtitle"] {
+    display: inline-block;
+    font-size: 1rem;
+    color: #cbd5e1;
+    margin-top: 0.5rem;
+}
+
+@media screen and (min-width: 640px) {
+    #homeOverlay span[data-translate="welcomeSubtitle"] {
+        font-size: 1.125rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    #homeOverlay span[data-translate="welcomeSubtitle"] {
+        font-size: 1.25rem;
+    }
+}
+
+/* Footer - Fixed at bottom */
+#homeOverlay footer {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 20;
+}
+
+@media screen and (max-width: 640px) {
+    #homeOverlay footer {
+        bottom: 0.75rem;
+    }
+}
+
+/* Copyright text */
+#homeOverlay footer p {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+@media screen and (min-width: 640px) {
+    #homeOverlay footer p {
+        font-size: 0.875rem;
+    }
+}
+
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) rotate(5deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) rotate(-3deg);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ========================================
+   RESPONSIVE LANDSCAPE MODE
+   ======================================== */
+
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    #homeOverlay .relative.z-10 {
+        min-height: auto;
+        padding: 2rem 1rem;
+    }
+    
+    #homeOverlay footer {
+        position: relative;
+        margin-top: 1rem;
+    }
+}
+
+/* ========================================
+   EXTRA SMALL DEVICES
+   ======================================== */
+
+@media screen and (max-width: 480px) {
+    #homeOverlay .blob-1 {
+        width: 150px;
+        height: 150px;
+        top: -50px;
+        left: -50px;
+    }
+    
+    #homeOverlay .blob-2 {
+        width: 200px;
+        height: 200px;
+        bottom: -80px;
+        right: -80px;
+    }
+}
+
+/* --- FULL MOBILE RESPONSIVE CSS --- */
+@media screen and (max-width: 640px) {
+    /* 1. Modal Overlay & Bottom Sheet Layout */
+    #moreInfoModal {
+        display: flex !important;
+        align-items: flex-end !important;
+    
+    }
+
+    #moreInfoModal .moreinfo-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 30px 30px 0 0 !important;
+        max-height: 95vh !important;
+        animation: modalSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    
+   
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark #moreInfoModal .moreinfo-container {
+  
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 2. Glassmorphic Header & Stacked Layout */
+    #moreInfoModal .moreinfo-container > div:first-child {
+  
+        backdrop-filter: blur(15px) brightness(1.1) !important;
+        padding: 1.25rem 1rem !important;
+    }
+
+    /* Stack header content: controls move UNDER text */
+    #moreInfoModal .moreinfo-container > div:first-child .flex.justify-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+    }
+
+    /* 3. Text Straight Line (No Wrap) */
+    #moreInfoTitle, 
+    #moreInfoSubtitle {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: block !important;
+        width: 100% !important;
+    }
+
+    /* 4. Stats: 2x2 Grid */
+    #moreInfoModal .statsgrid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+
+    /* 5. Graph Area */
+    #moreInfoModal .h-80 {
+        height: 250px !important;
+   
+        border-radius: 16px;
+    }
+
+    /* 6. Footer (Glassmorphic) */
+    #moreInfoModal .sticky.bottom-0 {
+
+        backdrop-filter: blur(15px) !important;
+        display: flex !important;
+        flex-direction: column-reverse !important;
+        gap: 0.75rem !important;
+    }
+
+    #moreInfoModal .sticky.bottom-0 button {
+        width: 100% !important;
+        height: 48px !important;
+        border-radius: 12px !important;
+    }
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+#profitLossSection {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 100%;
+  max-width: none;
+}
+@media (max-width: 640px) {
+
+#stock-history-section {
+
+.items-end {
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+div {
+  margin-left: 0px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  margin: 0px;
+  width: auto;
+}
+
+.space-x-4>:not([hidden])~:not([hidden]) {
+  margin-left: 0px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  margin: 0px;
+  width: auto;
+}
+
+.space-x-4>:not([hidden])~:not([hidden]) {
+  margin-left: 0px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  margin: 0px;
+  width: auto;
+}
+
+.space-x-4>:not([hidden])~:not([hidden]) {
+  margin-left: 0px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  margin: 0px;
+  width: auto;
+}
+
+.space-x-4>:not([hidden])~:not([hidden]) {
+  margin-left: 0px;
+  flex: 1 1 140px;
+  min-width: 120px;
+  margin: 0px;
+  width: auto;
+}
+
+}
+#profitLossSection {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  width: 100%;
+  max-width: none;
+}
+#profitLossSection {
+.px-4 {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  max-width: 100%;
+  width: 100%;
+}
+
+
+
+body.night-mode .bg-white-800 {
+  width: 100%;
+  max-width: none;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 0px;
+}
+.gap-6 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.p-6 {
+  padding: 1rem;
+  min-height: 120px;
+}
+
+body.night-mode .bg-white-800 {
+  width: 98%;
+  max-width: none;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-4 {
+  padding-left: 8px;
+  padding-right: 8px;
+  max-width: 100%;
+}
+}
+}
+@media (max-width: 640px) {
+  /* 1. Force the page wrapper to be full width */
+  .w-full.mx-auto.px-4.sm\:px-6.lg\:px-8 {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 2. Remove all margins and padding from the section */
+  #profitLossSection {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    margin: 0px !important;
+    width: 100% !important;
+  }
+
+  /* 3. Make the white card container edge-to-edge */
+  #profitLossSection .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0px !important;
+    border-radius: 0px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  /* 4. Force the 2x2 grid for cards */
+  #profitLossSection .grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* 5. Adjust card padding so they fit 2x2 */
+  #profitLossSection .summary-card {
+    padding: 12px !important;
+    min-height: 100px !important;
+  }
+}
+@media (max-width: 640px) {
+  /* ===== SECTION CONTAINER ===== */
+  #monthlySalesSection {
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* ===== HEADER ===== */
+  #monthlySalesSection h2 {
+    font-size: 1.75rem !important;
+    font-weight: 900 !important;
+    text-align: left !important;
+    letter-spacing: -0.05em !important;
+    margin-bottom: 2rem !important;
+    background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== TARGET MANAGEMENT CARD (Glassmorphism) ===== */
+  #monthlySalesSection .mb-4.flex.flex-col.space-y-2 {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)) !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 1.25rem !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+    margin: 0 0 2rem 0 !important;
+    width: auto !important;
+  }
+
+  /* Labels */
+  #monthlySalesSection .mb-4.flex.flex-col.space-y-2 label {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Input rows - stacked */
+  #monthlySalesSection .mb-4.flex.flex-col.space-y-2 .flex.items-center.space-x-2 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* Input fields */
+  #monthlySalesSection input {
+    width: 100% !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 2px !important;
+    height: 2.5rem !important;
+    color: white !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Apply Filter button */
+  #applyMonthlySalesFilterBtn {
+    background: #475569 !important;
+    height: 2.5rem !important;
+    border-radius: 2px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    width: 100% !important;
+  }
+
+  /* Set Target button */
+  #monthlySalesSection button.bg-blue-600 {
+    width: 100% !important;
+    height: 2.5rem !important;
+    background: #2563eb !important;
+    border-radius: 2px !important;
+    font-weight: 700 !important;
+    color: white !important;
+  }
+
+  /* ===== INSIGHTS GRID (2-column) ===== */
+  #monthlySalesInsights {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Chart card - full width */
+  #monthlySalesInsights > div:nth-child(2) {
+    grid-column: span 2 !important;
+  }
+
+  #monthlySalesInsights > div {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  #monthlyAvgSaleValue {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* ===== ACTION BUTTONS (Print/Export) ===== */
+  #monthlySalesSection .mt-4.flex.justify-end {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    margin-top: 2.5rem !important;
+  }
+
+  #monthlySalesSection .mt-4.flex.justify-end button {
+    height: 3.5rem !important;
+    border-radius: 1rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+  }
+
+  /* Print button */
+  #monthlySalesSection .mt-4.flex.justify-end button:first-child {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Export button */
+  #monthlySalesSection .mt-4.flex.justify-end button:last-child {
+    background: transparent !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    margin-left: 0 !important;
+  }
+}
+@media screen and (max-width: 768px) {
+  #weeklySalesSection {
+    flex-direction: column !important;
+    padding: 10px !important;
+  }
+}
+@media only screen and (max-width: 767px) {
+  #allTasksModal .gap-8 {
+    gap: 2rem;
+    display: grid;
+    flex-direction: column;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    width: 100%;
+    max-width: 1000px;
+    margin: 0px auto;
+  }
+
+  #allTasksModal .p-6 {
+    padding: 0px;
+    margin-bottom: 2rem;
+    background: transparent;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  #allTasksModal .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  #allTasksModal .p-6 {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 10px 25px;
+    margin: 0px auto;
+    border-width: 6px;
+  }
+
+  #allTasksModal .space-y-6 {
+    display: grid;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    background: none;
+    padding: 0px;
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  #allTasksModal .space-y-6 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  #allTasksModal .modal-overlay {
+    display: flex;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  body.night-mode #allTasksModal .bg-white {
+    width: 95%;
+    max-width: none;
+    height: 90vh;
+    margin: auto;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #allTasksModal .border-b {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgb(238, 238, 238);
+  }
+
+  #allTasksModal .overflow-y-auto {
+    padding: 1rem;
+    flex: 1 1 0%;
+    overflow-y: auto;
+  }
+}
+
+
+@media only screen and (max-width: 767px) {
+  .sales-history .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    width: 100%;
+  }
+
+  .sales-history .grid > div:nth-child(1) {
+    grid-column: span 1;
+  }
+
+  .sales-history .grid > div:nth-child(2) {
+    grid-column: span 1;
+  }
+
+  .sales-history .grid > div:nth-child(3) {
+    grid-column: span 1;
+  }
+
+  .sales-history .grid > div:nth-child(4) {
+    grid-column: span 1;
+  }
+
+  .sales-history .grid > div:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .sales-history label {
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .sales-history input,
+  .sales-history select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+  }
+
+  .sales-history button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+  }
+
+  body.night-mode .sales-history {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+
+  body.night-mode .sales-history label {
+    color: #d1d5db;
+  }
+
+  body.night-mode .sales-history input,
+  body.night-mode .sales-history select {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+  }
+}
+
+
+@media (max-width: 767px) {
+#SecondaryActions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+}
+
+#SecondaryActions button {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 0.875rem !important;
+}
+
+
+.sales-history .grid {
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  align-items: end;
+  justify-content: center;
+  margin: 0px auto;
+}
+
+.sales-history .grid > div:nth-child(1) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sales-history .grid > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sales-history .grid > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sales-history .grid > div:nth-child(4) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sales-history .grid > div:nth-child(5) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+
+}
+/* Desktop (768px and above) */
+@media only screen and (min-width: 768px) {
+    .mb-4.flex.items-center {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    
+    .mb-4.flex.items-center h2 {
+        flex: 1;
+    }
+}
+
+/* Mobile (767px and below) */
+@media only screen and (max-width: 767px) {
+    .mb-4.flex.items-center {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .mb-4.flex.items-center h2 {
+        width: 100%;
+    }
+    
+    .mb-4.flex.items-center .expenses-wrapper {
+        width: 100%;
+    }
+}
+
+
+@media only screen and (max-width: 767px) {
+  #refundHistoryModal .modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  #refundHistoryModal.refund-adaptive.show .dmodal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0px;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #refundHistoryModal .overflow-x-auto {
+    flex: 1 1 0%;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #refundHistoryModal button.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    padding: 0.5rem;
+  }
+}
+@media only screen and (max-width: 767px) {
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        align-items: center !important;
+    }
+    
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > div {
+        width: 100% !important;
+    }
+    
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > div:nth-child(1),
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > div:nth-child(2),
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > button:nth-child(3),
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > button:nth-child(4) {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > button:nth-child(3),
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end > button:nth-child(4) {
+        margin-left: 0 !important;
+    }
+    
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end input,
+    #refundHistoryModal .mb-4.flex.space-x-4.items-end button {
+        width: 100% !important;
+    }
+}
+
+
+
+/* Supermarket Mode Styles */
+.supermarket-container {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-card {
+    transition: all 0.2s ease;
+}
+
+.product-card:active {
+    transform: scale(0.98);
+}
+
+/* Custom scrollbar for supermarket mode */
+.supermarket-container ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.supermarket-container ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.supermarket-container ::-webkit-scrollbar-thumb {
+    background: #c084fc;
+    border-radius: 10px;
+}
+
+.supermarket-container ::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+}
+
+/* Toggle switch */
+.toggle-switch {
+    width: 44px;
+    height: 24px;
+    background-color: #ddd;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    appearance: none;
+    transition: background-color 0.3s;
+}
+
+.toggle-switch:checked {
+    background-color: #a855f7;
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+}
+
+.toggle-switch:checked::before {
+    transform: translateX(20px);
+}
+
+/* Dark mode adjustments */
+.dark .supermarket-container ::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+.dark .supermarket-container ::-webkit-scrollbar-thumb {
+    background: #6b21a5;
+}
+
+
+/* HIDE PRODUCTS LIST ON MOBILE (up to 640px) */
+@media (max-width: 640px) {
+  .ProductsList .flex-1.overflow-y-auto.p-4 {
+    display: none !important;
+  }
+  
+  #supermarketProductsGrid {
+    display: none !important;
+  }
+}
+#supermarketProductsGrid.overflow-y-auto {
+  max-height: 500px;
+  overflow-y: auto;
+}
+/* STACK COLUMNS VERTICALLY ON TABLETS & MOBILE (up to 768px) */
+@media (max-width: 768px) {
+  /* Make parent container stack vertically */
+  #supermarketModeModal .flex.flex-1.overflow-hidden {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+
+  /* Make both columns full width */
+  #supermarketModeModal .w-1\/2.border-r.border-gray-200,
+  #supermarketModeModal .w-1\/2.flex.flex-col {
+    width: 100% !important;
+    border-right: none !important;
+    height: auto !important;
+  }
+}
+
+/* STACK BUTTONS VERTICALLY ON MOBILE (up to 640px) */
+@media (max-width: 640px) {
+  .supbtn .flex.space-x-3 {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  #supermarketCheckoutBtn,
+  #supermarketPrintCartBtn {
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    justify-content: center !important;
+  }
+
+  .supbtn .flex.space-x-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0 !important;
+  }
+}
+
+/* KEEP SCANNER INPUT SIDE-BY-SIDE ON MOBILE (up to 640px) */
+@media (max-width: 640px) {
+  .supscan .flex.items-center.space-x-3 {
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
+  }
+
+  .supscan .flex-1.relative {
+    flex: 1 !important;
+  }
+
+  #supermarketOpenScannerBtn {
+    width: 50px !important;
+    height: 50px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .supscan .flex-1.relative input {
+    height: 50px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* MODAL WIDTH FOR TABLETS (769px to 1023px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+  #supermarketModeModal {
+    width: 90vw !important;
+    max-width: none !important;
+  }
+}

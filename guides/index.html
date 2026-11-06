@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link rel="icon" type="image/x-icon" href="/image/icon.ico">
+    <title>Stocksales APP - User Guide</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+       <link rel="stylesheet" href="/css/fontawesome/css/all.min.css">
+       <script src="../js/env.js"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --teal: #10b981;
+            --purple: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--teal), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Ripple effect styles */
+        .ripple-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(8);
+                opacity: 0;
+            }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .search-container {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            width: 100%;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-button {
+            padding: 15px 20px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .search-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            align-self: flex-start;
+            top: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-left: 20px;
+        }
+        
+        .sidebar h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: var(--dark);
+            display: block;
+            padding: 8px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover {
+            background-color: var(--light);
+            color: var(--primary);
+        }
+        
+        .guide-section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .guide-section h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .guide-section h3 {
+            color: var(--secondary);
+            margin: 15px 0 10px;
+        }
+        
+        .guide-section p {
+            margin-bottom: 15px;
+        }
+        
+        .highlight {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid var(--warning);
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .note {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid var(--info);
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .warning {
+            background-color: #ffebee;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .search-results {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-item h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            background-color: #ffebee;
+            border-radius: 4px;
+            color: var(--accent);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .ad-generator-feature {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--teal);
+        }
+        
+        .ad-generator-feature h4 {
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+        
+        .social-media-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .social-media-links a {
+            color: white;
+            background-color: var(--secondary);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 24px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        
+        .social-media-links a:hover {
+            transform: scale(1.1);
+        }
+        
+        .social-media-links a.facebook-link:hover { background-color: #3b5998; }
+        .social-media-links a.instagram-link:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .social-media-links a.tiktok-link:hover { background-color: #000; }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+                margin-right: 0;
+                margin-bottom: 20px;
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="ripple-container" id="ripple-container"></div>
+        <div class="header-content">
+            <div class="logo">Stocksales APP System</div>
+            <h1>Complete User Guide</h1>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search the user guide...">
+                    <button id="search-button" class="search-button">Search</button>
+                </div>
+            </div>
+            <div style="margin-bottom: 24px;">
+                <button id="backToHomeBtn" style="display: flex; align-items: center; gap: 10px; background: var(--primary); color: #fff; border: none; padding: 12px 28px; border-radius: 6px; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: background 0.2s;">
+                    <!-- Home SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="22" height="22">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h3m10-11v10a1 1 0 01-1 1h-3m-6 0h6" />
+                    </svg>
+                    Back to Home
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#getting-started">1. Getting Started</a></li>
+                <li><a href="#app-navigation">2. App Navigation</a></li>
+                <li><a href="#dashboard">3. Dashboard and Analytics</a></li>
+                <li><a href="#stock-management">4. Stock Management</a></li>
+                <li><a href="#sales-transactions">5. Sales and Transactions</a></li>
+                <li><a href="#credit-sales">6. Managing Credit Sales</a></li>
+                <li><a href="#expenses-reporting">7. Expenses and Reporting</a></li>
+                <li><a href="#ad-generator">8. Phone Ad Generator</a></li>
+                <li><a href="#troubleshooting">9. Troubleshooting</a></li>
+                <li><a href="#social-media-links">10. Social Media</a></li>
+                <li><a href="#advanced-features">11. Advanced Features</a></li>
+                <li><a href="#payment-types">12. Handling Payment Types</a></li>
+                <li><a href="#admin-role">13. The Role of the Admin</a></li>
+                <li><a href="#sales-payments">14. Sales, Credit & Payments</a></li>
+                <li><a href="#sale-issues">15. Sale Recording Issues</a></li>
+                <li><a href="#stock-management-detailed">16. Stock Management Details</a></li>
+                <li><a href="#offline-syncing">17. Offline Functionality</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content">
+            <div id="search-results" class="search-results"></div>
+            
+            <div id="guide-content">
+                <section id="getting-started" class="guide-section">
+                    <h2>1. Getting Started: The Splash Screen and Login</h2>
+                    <p>When you first open the application, you will see a splash screen with a loading bar. This screen is used to initialize all the necessary modules and prepare the application for use. Once the loading is complete, you will be taken to the login page.</p>
+                    
+                    <p>To log in to the application, use the following credentials:</p>
+                    
+                    <div class="highlight">
+                        <p>
+                            <strong>Username:</strong>
+                            <span id="copyUsername" style="cursor:pointer; color:#3498db;" title="Click to copy">admin</span>
+                        </p>
+                        <p id="adminPasswordRow" style="display:none;">
+                            <strong>Password:</strong>
+                            <span id="copyPassword" style="cursor:pointer; color:#e74c3c;" title="Click to copy">admin123</span>
+                        </p>
+                        <p id="salesAssociateNote" style="display:none; color:#e74c3c; margin-top:8px;">
+                            If you are a Sales Associate, please visit your Admin to view your password in the "View Sales Associate" section.
+                        </p>
+                    </div>
+                    
+                    <p>Enter these credentials into the login form and click the "Login" button. Once logged in, you will be taken to the main dashboard, which provides a real-time overview of your business performance.</p>
+                </section>
+                
+                <section id="app-navigation" class="guide-section">
+                    <h2>2. App Navigation</h2>
+                    <p>The system is designed to provide a seamless experience across different functions. From the main dashboard, you can easily navigate to other parts of the application.</p>
+                    <ul>
+                        <li><strong>Dashboard:</strong> This is the main landing page, which shows a quick overview of your sales, stock, and business data.</li>
+                        <li><strong>/shop/POS:</strong> This section is where you record sales and manage your inventory. It's the core of your daily operations.</li>
+                        <li><strong>Ad Generator:</strong> This is a separate tool for creating professional advertisements. You can access it directly or from a link within the main app.</li>
+                    </ul>
+                    <p>All navigation is handled through the menu or by specific buttons. For example, to create an ad for a product, you can click on the "Ad Maker" button from the main shop page, and the product details will be pre-filled automatically.</p>
+                </section>
+                
+                <section id="dashboard" class="guide-section">
+                    <h2>3. Dashboard and Analytics</h2>
+                    <p>The dashboard is the central hub of your application. It provides real-time business insights through a series of charts and metrics.</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>Sales Overview</h4>
+                            <p>See your total sales, number of items sold, and top-performing items at a glance.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Time Period Analysis</h4>
+                            <p>The charts can be configured to show performance over different time periods, allowing you to track trends and make informed decisions.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Inventory Insights</h4>
+                            <p>Get a quick view of your current stock levels, including low-stock alerts.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Expense Summary</h4>
+                            <p>Monitor your spending with a breakdown of your business expenses.</p>
+                        </div>
+                    </div>
+                    
+                    <p>From here, you can navigate to different sections using the buttons or icons provided.</p>
+                </section>
+                
+                <section id="stock-management" class="guide-section">
+                    <h2>4. Stock Management</h2>
+                    <p>Managing your stock is a critical function of the app. It allows you to maintain accurate inventory levels, prevent stockouts, and track your most popular items.</p>
+                    
+                    <h3>Adding a New Stock Item</h3>
+                    <p>Click the button to "Add New Item". A pop-up form will appear.</p>
+                    <p>Fill in the details for the new item. The required fields include the item's name, its price, and the quantity in stock.</p>
+                    <p>You can also upload a product image. If an image is selected, it will appear in the preview area.</p>
+                    <p>Click "Save" to add the item to your stock. The new item will now be available for sale.</p>
+                    
+                    <h3>Viewing and Editing Stock Items</h3>
+                    <p>Navigate to the main Stock view. All your items are displayed in a list.</p>
+                    <p>To edit an item, click the edit button (often a pencil icon) next to its entry. A form will open with the item's current details pre-filled. You can change any of the information, including the name, price, or quantity.</p>
+                    <p>To delete an item, click the delete button (trash can icon). The app will ask for confirmation before removing the item permanently.</p>
+                    
+                    <h3>Low Stock Alerts and Tracking</h3>
+                    <p>The app automatically monitors your inventory. You can set a low-stock threshold for each item. When an item's quantity falls below this level, a visual alert will be triggered on your dashboard and in the stock list. This helps you know when to reorder and prevents you from running out of popular products.</p>
+                    <p>The system also provides real-time updates on stock levels as sales are made, ensuring your inventory count is always accurate.</p>
+                    
+                    <h3>Stock History</h3>
+                    <p>The application keeps a detailed record of all changes to your inventory.</p>
+                    <p>Every time you add, edit, or remove an item, or when a sale is completed, the event is logged in the stock history.</p>
+                    <p>You can view this history to see a full audit trail of inventory movements. This is a valuable tool for tracking shrinkage, identifying discrepancies, and reconciling physical inventory counts.</p>
+                </section>
+                
+                <section id="sales-transactions" class="guide-section">
+                    <h2>5. Sales and Transactions</h2>
+                    <p>The app simplifies the process of recording sales and generating receipts.</p>
+                    
+                    <h3>Recording a Sale</h3>
+                    <p>Click the "Record Sale" button.</p>
+                    <p>A list of your stock items will appear. Select the items the customer is purchasing.</p>
+                    <p>Specify the quantity for each item. The total price will be calculated automatically.</p>
+                    <p>Click the "Complete Sale" button.</p>
+                    
+                    <h3>Generating Receipts</h3>
+                    <p>After a sale is completed, a receipt will be generated. You can print this receipt or save it as a PDF for your records. The receipt will include all transaction details and your business information.</p>
+                    <p>The app also features a "Custom Receipt" option, allowing you to create and print a receipt for items not in your current stock.</p>
+                    
+                    <h3>Viewing Sales History</h3>
+                    <p>Navigate to the "Sales History" section to view all past transactions. You can filter this list by date, customer, or payment type to analyze your sales performance over time.</p>
+                </section>
+                
+                <section id="credit-sales" class="guide-section">
+                    <h2>6. Managing Credit Sales and Payments</h2>
+                    <p>For transactions where the customer pays later, the app has a dedicated credit sales feature.</p>
+                    
+                    <h3>Recording a Credit Sale</h3>
+                    <p>When processing a sale, choose the "Credit" option as the payment method.</p>
+                    <p>Fill in the customer's name and any other required details.</p>
+                    <p>The sale will be recorded as a credit sale, and the amount will be added to the customer's outstanding balance.</p>
+                    
+                    <h3>Processing a Payment</h3>
+                    <p>Navigate to the "Credit Sales" section.</p>
+                    <p>Find the customer's name and the outstanding sale.</p>
+                    <p>Click the "Process Payment" button.</p>
+                    <p>Enter the amount of the payment received. The app will update the customer's balance accordingly.</p>
+                    
+                    <h3>Customer Management</h3>
+                    <p>The "Credit Sales" section also serves as a basic customer management tool. You can see a list of all customers with outstanding credit and monitor their payment history.</p>
+                </section>
+                
+                <section id="expenses-reporting" class="guide-section">
+                    <h2>7. Expenses and Reporting</h2>
+                    <p>The application provides robust tools for managing your business finances.</p>
+                    
+                    <h3>Handling Expenses</h3>
+                    <p>The "Expenses" section allows you to record and track all your business expenses. This is crucial for accurate financial reporting.</p>
+                    <p>To add an expense, click the "Add Expense" button.</p>
+                    <p>Fill in the details, including the expense amount, a brief description, the date, and the category (e.g., rent, utilities, supplies).</p>
+                    <p>Click "Save". The expense is now logged in the system and will be factored into your financial reports.</p>
+                    
+                    <h3>Generating Reports</h3>
+                    <p>The app can generate comprehensive reports to help you analyze your business performance. All reports are created as downloadable PDF files.</p>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>Weekly/Monthly Sales Report</h4>
+                            <p>To generate a weekly or monthly sales report, navigate to the "Reports" section. Select the "Sales Report" option and then specify the date range for the week or month you want to review. The report will include details on total sales, number of transactions, and a breakdown of payment methods.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Stock Report</h4>
+                            <p>This report provides a complete overview of your current inventory. It includes a list of all items, their current stock levels, and their purchase price. This is useful for stocktaking and valuation.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Profit/Loss Statements</h4>
+                            <p>While there isn't a dedicated button for this, you can generate a Profit/Loss statement by combining the data from your Sales Reports and your Expenses log. The app calculates your total income from sales and subtracts your total expenses for a specified period, giving you a clear picture of your net profit or loss.</p>
+                        </div>
+                    </div>
+                </section>
+                
+    <section id="ad-generator" class="guide-section">
+                    <h2>8. Phone Ad Generator</h2>
+                    <p>The Phone Ad Generator allows you to create professional, eye-catching advertisements for your mobile phone products with customizable templates, colors, and content.</p>
+                    
+                    <h3>Accessing the Ad Generator</h3>
+                    <p>To access the Ad Generator, navigate to the "Ad Maker" section from the main menu or directly open <a href="https://myshop.stocksalesapp.store/admakker" target="_blank">the Ad Generator</a> in your browser.</p>
+                    
+                    <h3>Understanding the Interface</h3>
+                    <p>The Ad Generator interface is divided into two main sections:</p>
+                    <ul>
+                        <li><strong>Left Panel:</strong> Controls for customizing your ad</li>
+                        <li><strong>Right Panel:</strong> Live preview of your ad</li>
+                    </ul>
+                    
+                    <div class="ad-generator-feature">
+                        <h4>Pre-filled Information</h4>
+                        <p>If you're coming from the shop page, your product details may already be pre-filled from your inventory!</p>
+                    </div>
+                    
+                    <h3>Step-by-Step Ad Creation</h3>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4><span class="step-number">1</span>Selecting a Template</h4>
+                            <p>Start by selecting a template from the dropdown menu. Choose from various designs like Cyberpunk Neon, Minimal White, Luxury Gold, and more.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4><span class="step-number">2</span>Adding Your Content</h4>
+                            <p>Fill in your shop name, phone brand, model, price, and discount information. Add product features using the "Add Features" section.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4><span class="step-number">3</span>Uploading Images</h4>
+                            <p>Upload your shop logo and a high-quality product image. Use the sliders to adjust the image size for perfect placement.</p>
+                            <div class="note">
+                                <strong>Tip:</strong> For best results, use product images with transparent backgrounds.
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4><span class="step-number">4</span>Customizing Colors</h4>
+                            <p>Use the color pickers to change gradient colors and text color. Experiment with different gradient types (Linear, Radial, Conic, Diamond).</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4><span class="step-number">5</span>Using AI Generator</h4>
+                            <p>Click the "I HUBS AI" button to automatically generate harmonious color combinations and decorative shapes.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4><span class="step-number">6</span>Adding Features</h4>
+                            <p>Type features in the input field and click "Add". Features will automatically get appropriate icons based on keywords.</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Downloading Your Ad</h3>
+                    <p>When you're satisfied with your ad:</p>
+                    <ol>
+                        <li>Select your preferred download format (PNG or JPEG)</li>
+                        <li>Click the "Download Ad" button</li>
+                        <li>The image will be saved with a filename based on your brand and model</li>
+                    </ol>
+                    
+                    <h3>Taking a Screenshot</h3>
+                    <p>If you cannot download your ad, you can easily capture it using your device's built-in screenshot function:</p>
+                    <ul>
+                        <li><strong>Windows:</strong> Press the `PrtScn` key to capture the entire screen. The image is copied to your clipboard. You can also use `Windows key + Shift + S` for more options.</li>
+                        <li><strong>Mac:</strong> Press `Shift + Command + 3` to capture the entire screen, or `Shift + Command + 4` to capture a specific area.</li>
+                        <li><strong>iPhone/iPad (iOS):</strong> Press the side button and the volume up button at the same time.</li>
+                        <li><strong>Android:</strong> Press the power button and the volume down button at the same time.</li>
+                    </ul>
+                    
+                    <h3>Pro Tips for Best Results</h3>
+                    <div class="highlight">
+                        <p><strong>Optimize Image Size:</strong> Adjust the image dimensions using the sliders to ensure your product fits perfectly.</p>
+                        <p><strong>Check Readability:</strong> Ensure there's enough contrast between your text and background colors.</p>
+                        <p><strong>Use Feature Icons:</strong> The system automatically assigns icons based on keywords like "camera", "battery", or "display".</p>
+                        <p><strong>Experiment with Templates:</strong> Try different templates to see which one best showcases your product.</p>
+                    </div>
+                </section>
+                
+                <section id="ad-generator-keywords" class="guide-section">
+                    <h2>9. Ad Generator: Automatic Icon System</h2>
+                    <p>One of the smartest features of this Ad Maker is its ability to automatically add professional-looking icons next to your product's features. You don't need to choose icons yourself; the tool does it for you by detecting keywords in your text.</p>
+                    
+                    <h3>How It Works (In Simple Terms)</h3>
+                    <ol>
+                        <li><strong>You Type a Feature:</strong> In the "Add Features" box, you type a description of a phone feature (e.g., "200MP Camera").</li>
+                        <li><strong>The System Scans Your Text:</strong> As soon as you add the feature, a hidden function scans every word you typed.</li>
+                        <li><strong>It Matches Keywords:</strong> It looks for specific trigger words like "camera," "battery," or "unlock."</li>
+                        <li><strong>It Adds the Icon Automatically:</strong> If it finds a match, it places the correct icon right next to your text in the ad preview.</li>
+                    </ol>
+                    
+                    <p>It's like having a designer read your mind and instantly illustrate your points.</p>
+                    
+                    <h3>Complete Keyword & Icon Cheat Sheet</h3>
+                    <p>Here is the full list of keywords the system recognizes and what icon it will show for each. Use these words in your feature descriptions to get the desired icon.</p>
+                    
+                    <table class="keyword-table">
+                        <thead>
+                            <tr>
+                                <th>If Your Feature Contains This Keyword...</th>
+                                <th>You Will Get This Icon...</th>
+                                <th>What It Represents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>camera</td>
+                                <td>A classic camera with a lens</td>
+                                <td>Photography, cameras</td>
+                            </tr>
+                            <tr>
+                                <td>battery</td>
+                                <td>A standard battery symbol</td>
+                                <td>Battery life, power</td>
+                            </tr>
+                            <tr>
+                                <td>unlock or lock</td>
+                                <td>A padlock</td>
+                                <td>Security, face unlock, fingerprint unlock</td>
+                            </tr>
+                            <tr>
+                                <td>core or processor</td>
+                                <td>A computer chip</td>
+                                <td>Processing power, CPU, performance</td>
+                            </tr>
+                            <tr>
+                                <td>inch, display, or screen</td>
+                                <td>A computer monitor</td>
+                                <td>Screen size, display quality</td>
+                            </tr>
+                            <tr>
+                                <td>scan or sensor</td>
+                                <td>A radio wave symbol</td>
+                                <td>Fingerprint sensor, NFC, scanning</td>
+                            </tr>
+                            <tr>
+                                <td>storage, rom, tb, or gb</td>
+                                <td>A hard drive</td>
+                                <td>Internal storage, memory capacity</td>
+                            </tr>
+                            <tr>
+                                <td>ram or memory</td>
+                                <td>A memory stick</td>
+                                <td>RAM, multitasking speed</td>
+                            </tr>
+                            <tr>
+                                <td>charge or fast charge</td>
+                                <td>A lightning bolt</td>
+                                <td>Fast charging capability</td>
+                            </tr>
+                            <tr>
+                                <td>dual sim or sim</td>
+                                <td>A mobile phone</td>
+                                <td>Dual SIM functionality</td>
+                            </tr>
+                            <tr>
+                                <td>headset or headphone</td>
+                                <td>A pair of over-ear headphones</td>
+                                <td>Audio jack, headphone support</td>
+                            </tr>
+                            <tr>
+                                <td>speaker</td>
+                                <td>A speaker symbol</td>
+                                <td>Speaker quality, stereo sound</td>
+                            </tr>
+                            <tr>
+                                <td>wireless</td>
+                                <td>A radiating signal</td>
+                                <td>Wireless charging, WiFi, Bluetooth</td>
+                            </tr>
+                            <tr>
+                                <td>wired or cable</td>
+                                <td>A plug and cable</td>
+                                <td>Wired charging, data transfer</td>
+                            </tr>
+                            <tr>
+                                <td>earbud, earphone, or audio</td>
+                                <td>A single earbud</td>
+                                <td>Audio quality, included earbuds</td>
+                            </tr>
+                            <tr>
+                                <td>warranty or guarantee</td>
+                                <td>A shield</td>
+                                <td>Warranty protection</td>
+                            </tr>
+                            <tr>
+                                <td>waterproof or water resistant</td>
+                                <td>A water droplet on a shield</td>
+                                <td>Water resistance rating</td>
+                            </tr>
+                            <tr>
+                                <td>gps or navigation</td>
+                                <td>A satellite dish</td>
+                                <td>GPS, location services</td>
+                            </tr>
+                            <tr>
+                                <td>touch, touchscreen, multi-touch, or capacitive</td>
+                                <td>A finger touching a screen</td>
+                                <td>Touchscreen responsiveness</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3>Step-by-Step: How to Use This Feature</h3>
+                    <ol>
+                        <li><strong>Locate the "Add Features" Box:</strong> On the left control panel, find the input field labeled "Add Features."</li>
+                        <li><strong>Type Your Feature:</strong> Think about what you want to say and try to include one of the keywords from the list above.
+                            <div class="note">
+                                <p><strong>Example 1:</strong> Instead of just "5000mAh", type "5000mAh Battery" to get the battery icon.</p>
+                                <p><strong>Example 2:</strong> Instead of "Face recognition", type "Face Unlock" to get the lock icon.</p>
+                                <p><strong>Example 3:</strong> Type "108MP Triple Camera System" to get the camera icon.</p>
+                            </div>
+                        </li>
+                        <li><strong>Add the Feature:</strong> Click the "Add" button or press the "Enter" key on your keyboard.</li>
+                        <li><strong>See the Magic Happen:</strong> Immediately look at the ad preview on the right. Your text will now appear in the list with a beautiful icon next to it!</li>
+                    </ol>
+                    
+                    <h3>Pro Tips for Best Results</h3>
+                    <div class="highlight">
+                        <p><strong>Be Natural:</strong> Write your features normally. You don't need to force the keyword to the beginning; the system will find it anywhere in the text. "Massive battery that lasts all day" will work just as well as "5000mAh battery."</p>
+                        <p><strong>Check the Cheat Sheet:</strong> If you're unsure what keyword to use, quickly refer to the list above.</p>
+                        <p><strong>No Icon?</strong> If you use a word that isn't in the system's list, the feature will still be added, but it just won't have an icon next to it. This is fine for more general descriptions.</p>
+                    </div>
+                    
+                    <p>This intelligent system ensures your ads look consistently professional and visually appealing, making your product's features instantly recognizable to customers.</p>
+                </section>
+                
+                <section id="troubleshooting" class="guide-section">
+                    <h2>9. Troubleshooting Common Issues</h2>
+                    <p>Here are some common issues you might face and how to resolve them quickly.</p>
+
+                    <h3>Image Not Appearing</h3>
+                    <p>If your uploaded product image or logo doesn't appear in the preview, try these solutions:</p>
+                    <ul>
+                        <li>Check that the image format is supported (JPG, PNG).</li>
+                        <li>Try a smaller image file size. Large files can take longer to load and may fail.</li>
+                        <li>Refresh the page and try uploading the image again.</li>
+                    </ul>
+
+                    <h3>Download Issues</h3>
+                    <p>If you're having trouble downloading your ad:</p>
+                    <ul>
+                        <li>Ensure pop-ups are allowed for the site. The download might be blocked by your browser's pop-up settings.</li>
+                        <li>Check that you have sufficient storage space on your device.</li>
+                        <li>Try using a different web browser if problems persist.</li>
+                    </ul>
+
+                    <h3>Text Not Visible</h3>
+                    <p>If your text is hard to read or seems to disappear:</p>
+                    <ul>
+                        <li>Change the text color using the color picker. Make sure it contrasts well with the background.</li>
+                        <li>Adjust the background colors or gradients to improve contrast.</li>
+                        <li>Try a different template with a built-in color scheme that offers better readability.</li>
+                    </ul>
+                </section>
+                
+                <section id="social-media-links" class="guide-section">
+                    <h2>10. Social Media</h2>
+                    <p>Stay connected with us on social media for updates, tips, and special offers. You can like and follow our pages or share our content with your network.</p>
+                    <div class="social-media-links">
+                            <a href="https://www.facebook.com/profile.php?id=61567060898605" target="_blank" aria-label="Follow us on Facebook" class="facebook-link">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@hubzone01" target="_blank" aria-label="Follow us on TikTok" class="tiktok-link">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                            <a href="https://www.instagram.com/hubzone01" target="_blank" aria-label="Follow us on Instagram" class="instagram-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                    </div>
+                </section>
+                
+                <section id="advanced-features" class="guide-section">
+                    <h2>11. Advanced Features and Customization</h2>
+                    
+                    <h3>Editing and Removing Product Images</h3>
+                    <p>When you are adding or editing a stock item, you have the option to upload a product image.</p>
+                    <p>To remove an existing image, click the "Remove Image" button that appears below the image preview. This will clear the image and allow you to upload a new one.</p>
+                    
+                    <h3>Comprehensive Business Details</h3>
+                    <p>Beyond the basic information, you can also add more details to your business profile.</p>
+                    <p>In the "Business Information" section, you can input a second phone number, your business email or website, social media handles, and a short description. This ensures your receipts and reports contain all the necessary contact information for your customers.</p>
+                </section>
+                
+                <section id="payment-types" class="guide-section">
+                    <h2>12. Handling Different Payment Types</h2>
+                    <p>The application is designed to handle cash, credit, and even mixed payments seamlessly. When you complete a sale, you will be prompted to select the payment method.</p>
+                    
+                    <h3>Cash Payments</h3>
+                    <p>This is the standard payment method for a completed sale. When the customer pays with cash, you select "Cash" as the payment type. The app will automatically calculate the change to be given back to the customer.</p>
+                    
+                    <h3>Credit Payments</h3>
+                    <p>If a customer wants to buy items on credit, you would select "Credit" as the payment type. The total amount of the sale will be recorded as an outstanding balance for that customer. This amount is automatically added to the Credit Sales section of your app, where you can easily track it.</p>
+                    
+                    <h3>Mixed Payments (Cash and Credit)</h3>
+                    <p>For situations where a customer pays a partial amount in cash and the rest on credit, the app can handle this as well.</p>
+                    
+                    <div class="note">
+                        <p><strong>Example:</strong> A customer is purchasing items for a total of $100. They want to pay $40 in cash and put the remaining $60 on credit.</p>
+                        <p>When you are at the payment screen, you would first enter the $40 that the customer is paying in cash.</p>
+                        <p>The app will then show the remaining balance, which is $60.</p>
+                        <p>You would then select the "Credit" payment option. The app will record the $60 as an outstanding credit balance for that customer, and the entire sale will be finalized. The receipt will show both payment methods.</p>
+                    </div>
+                    
+                    <p>This feature ensures that all transactions are accurately recorded and that you have a clear record of both cash payments and outstanding credit.</p>
+                </section>
+                
+                <section id="admin-role" class="guide-section">
+                    <h2>13. The Role of the Admin</h2>
+                    <p>The Administrator (Admin) is the highest-level user in the system. They have full control over business operations, settings, and user management. Unlike a Sales Associate, who can mainly record sales and view their own activity, the Admin manages the entire platform.</p>
+                    
+                    <h3>Key Responsibilities of the Admin</h3>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>User Management</h4>
+                            <p>Create new admins and sales associates. Change or reset passwords. Assign roles and remove inactive users.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Business Settings</h4>
+                            <p>Configure business information, upload logo, and add contact details that appear on receipts and reports.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Sales Oversight</h4>
+                            <p>Monitor all sales activity in real time. View sales history and track credit sales.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Stock Management</h4>
+                            <p>Add new products, update stock levels, review stock history, and get low stock alerts.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Reports & Analytics</h4>
+                            <p>Access weekly and monthly sales reports. Analyze sales by payment type and check sales target progress.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>System Control</h4>
+                            <p>Use the Admin Panel to add admins, change passwords, open notes, reset system settings, and manage network configuration.</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Difference Between Admin and Sales Associate</h3>
+                    <div class="note">
+                        <p><strong>Admin:</strong> Business manager/owner - oversees users, stock, sales, reports, and system settings.</p>
+                        <p><strong>Sales Associate:</strong> Cashier/salesperson - only records sales and views their own work.</p>
+                    </div>
+                </section>
+                
+                <section id="sales-payments" class="guide-section">
+                    <h2>Sales, Credit, Mixed Payments & Profit/Loss</h2>
+                    
+                    <h3>Normal Sales (Cash / Mobile Money)</h3>
+                    <p>When recording a sale, select a product and enter quantity. The system calculates the total. Choose payment method (Cash or Mobile Money).</p>
+                    
+                    <div class="note">
+                        <p><strong>Example:</strong> Product: Itel Phone 2160<br>
+                        Cost Price: 5,500<br>
+                        Selling Price: 10,500<br>
+                        Quantity Sold: 2<br>
+                        Payment Type: Cash<br>
+                        Total Sale = 2 × 10,500 = 21,000</p>
+                    </div>
+                    
+                    <p>The system deducts units from stock and logs the sale.</p>
+                    
+                    <h3>Credit Sales</h3>
+                    <p>Credit sales let customers take items now but pay later.</p>
+                    
+                    <div class="note">
+                        <p><strong>Example:</strong> Product: Itel Phone 5606<br>
+                        Cost Price: 7,000<br>
+                        Selling Price: 12,000<br>
+                        Quantity: 1<br>
+                        Customer: John Doe<br>
+                        Advance Payment: 5,000<br>
+                        Balance Due: 7,000</p>
+                    </div>
+                    
+                    <p>The sale goes into Credit Sales Section until the customer clears the balance.</p>
+                    
+                    <h3>Mixed (Hybrid) Payments</h3>
+                    <p>For split payments across different methods.</p>
+                    
+                    <div class="note">
+                        <p><strong>Example:</strong> Product: Itel Phone 2163<br>
+                        Selling Price: 10,000<br>
+                        Payment Breakdown:<br>
+                        - Cash: 4,000<br>
+                        - Mobile Money: 3,000<br>
+                        - Credit: 3,000<br>
+                        Total = 10,000</p>
+                    </div>
+                    
+                    <p>The system logs both immediate revenue and pending credit.</p>
+                    
+                    <h3>Profit/Loss Calculation</h3>
+                    <p>Profit/Loss = Revenue – Costs</p>
+                    <p>The system uses Revenue = Total Sales Amount and COGS = Total cost price of items sold.</p>
+                    
+                    <div class="note">
+                        <p><strong>Formula:</strong> Net Profit = (Selling Price × Quantity Sold) – (Cost Price × Quantity Sold)</p>
+                    </div>
+                    
+                    <p>If expenses are recorded, the system can deduct them to show Net Profit after Expenses.</p>
+                </section>
+                
+                <section id="sale-issues" class="guide-section">
+                    <h2>Reasons Why a Sale May Not Be Recorded</h2>
+                    
+                    <div class="warning">
+                        <h4>Product Not Found in Stock</h4>
+                        <p>If the product name doesn't exist in Current Stock, the system can't link it to cost/price.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Insufficient Stock Quantity</h4>
+                        <p>If requested quantity is greater than available stock, the system rejects the sale.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Missing or Invalid Input</h4>
+                        <p>Required fields not filled: product name, quantity, price, payment type.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Payment Type Errors</h4>
+                        <p>Hybrid payments that don't add up to total price, or credit sales without customer name.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Network or Offline Issues</h3>
+                        <p>If the server is unreachable, sales may fail to sync (though the app tries to save locally).</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Duplicate Sale Attempt</h4>
+                        <p>The system might ignore duplicate "new-sale" events at the same timestamp.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Role Restrictions</h4>
+                        <p>Sales Associates have limited permissions and can't perform all actions.</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <h4>Script or App Errors</h4>
+                        <p>JavaScript errors during recording might prevent the Record Sale button from working.</p>
+                    </div>
+                </section>
+                
+                <section id="stock-management-detailed" class="guide-section">
+                    <h2>Stock Management in the System</h2>
+                    <p>Your app treats stock as the foundation of sales. Every product you sell is linked to a stock item, and every change is logged in Stock History.</p>
+                    
+                    <h3>Adding New Stock</h3>
+                    <p>Admins can add new products via the Stock Management menu with required details including product name, category, quantity, cost price, selling price, and type.</p>
+                    
+                    <h3>Updating Stock</h3>
+                    <p>Stock updates happen in two ways:</p>
+                    <ol>
+                        <li><strong>Manual Update:</strong> Admin edits product details directly</li>
+                        <li><strong>Automatic Update:</strong> System reduces stock after a sale is recorded</li>
+                    </ol>
+                    
+                    <h3>Low Stock Alerts</h3>
+                    <p>System monitors stock levels and shows a red dot (lowStockDot) when quantity drops below threshold.</p>
+                    
+                    <h3>Current Stock View</h3>
+                    <p>Shows all active items with search, edit, and delete functionality.</p>
+                    
+                    <h3>Stock History</h3>
+                    <p>Audit trail of every stock action with timestamps and action types. Can be filtered by date range or category.</p>
+                    
+                    <h3>Profit/Loss Link to Stock</h3>
+                    <p>System compares Cost Price (COGS) vs Selling Price of stock sold to calculate profit margins.</p>
+                    
+                    <h3>Security & Roles</h3>
+                    <p>Admins have full access while Sales Associates can only sell products (which auto-updates stock).</p>
+                </section>
+
+                <section id="offline-syncing" class="guide-section">
+                    <h2>Offline Functionality and Data Syncing</h2>
+                    <p>The app is designed to work even when you don't have an internet connection. This is handled through a local storage mechanism that saves all your data directly on your device.</p>
+                    
+                    <h3>How it Works</h3>
+                    <p>When you lose your connection, a message will notify you. You can continue to use the app to record sales, manage stock, and add expenses. All these actions are saved locally. When your connection is restored, the app will automatically sync all the saved data to the server, ensuring your records are up-to-date across all devices.</p>
+                    
+                    <h3>Real-Time Notifications</h3>
+                    <p>The app also uses real-time notifications to alert you to new sales or important updates when you are online. This ensures you're always in the loop, especially in a multi-user environment.</p>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <a href="#" class="back-to-top">↑</a>
+    
+    <footer>
+        <p>ihubs Inventory Management System & Ad Generator User Guide | © 2023 All Rights Reserved</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ripple effect functionality
+            const rippleContainer = document.getElementById('ripple-container');
+            const colors = [
+                'rgba(255, 255, 255, 0.3)',
+                'rgba(173, 216, 230, 0.3)',
+                'rgba(144, 238, 144, 0.3)',
+                'rgba(255, 228, 196, 0.3)',
+                'rgba(221, 160, 221, 0.3)',
+                'rgba(255, 99, 132, 0.3)',    // pink/red
+                'rgba(54, 162, 235, 0.3)',    // blue
+                'rgba(255, 206, 86, 0.3)',    // yellow
+                'rgba(75, 192, 192, 0.3)',    // teal
+                'rgba(153, 102, 255, 0.3)',   // purple
+                'rgba(255, 159, 64, 0.3)',    // orange
+                'rgba(0, 212, 255, 0.3)',     // cyan
+                'rgba(0, 255, 135, 0.3)',     // green
+                'rgba(255, 0, 255, 0.3)',     // magenta
+                'rgba(255, 255, 0, 0.3)'      // bright yellow
+            ];
+            
+        function createRipple() {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+
+            // Random properties
+            const size = Math.random() * 100 + 50; // Random size between 50 and 150
+            const color1 = colors[Math.floor(Math.random() * colors.length)];
+            let color2 = colors[Math.floor(Math.random() * colors.length)];
+            while (color2 === color1 && colors.length > 1) {
+                color2 = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            // Random position
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * 200; // Only in header area
+
+            // Apply styles
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (x - size/2) + 'px';
+            ripple.style.top = (y - size/2) + 'px';
+            ripple.style.background = `radial-gradient(circle, ${color1} 0%, ${color2} 100%)`;
+            ripple.style.animationDuration = (Math.random() * 3 + 3) + 's'; // 3-6 seconds
+
+            rippleContainer.appendChild(ripple);
+
+            // Remove ripple after animation completes
+            setTimeout(() => {
+                if (ripple.parentNode) {
+                    ripple.parentNode.removeChild(ripple);
+                }
+            }, 6000);
+        }
+            
+            // Create initial ripples
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createRipple, i * 300);
+            }
+            
+            // Set up continuous ripples
+            setInterval(createRipple, 1500);
+            
+            function getRole() {
+                const params = new URLSearchParams(window.location.search);
+                let role = params.get('role');
+                if (!role) {
+                    role = localStorage.getItem('currentRole');
+                    console.log('Role from localStorage:', role);
+                }
+                return role;
+            }
+            const role = getRole();
+
+            if (window.opener || role === 'administrator') {
+                document.getElementById('adminPasswordRow').style.display = 'flex';
+                document.getElementById('salesAssociateNote').style.display = 'none';
+            } else if (role === 'sales') {
+                document.getElementById('adminPasswordRow').style.display = 'none';
+                document.getElementById('salesAssociateNote').style.display = 'block';
+            } else {
+                document.getElementById('adminPasswordRow').style.display = 'none';
+                document.getElementById('salesAssociateNote').style.display = 'none';
+            }
+
+            document.getElementById('copyUsername').onclick = function() {
+                navigator.clipboard.writeText('admin');
+                this.title = "Copied!";
+            };
+            document.getElementById('copyPassword').onclick = function() {
+                navigator.clipboard.writeText('admin123');
+                this.title = "Copied!";
+            };
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const searchResults = document.getElementById('search-results');
+            const guideContent = document.getElementById('guide-content');
+            const backToTop = document.querySelector('.back-to-top');
+            
+            // Search functionality
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const query = searchInput.value.trim().toLowerCase();
+                
+                if (query === '') {
+                    searchResults.innerHTML = '';
+                    searchResults.style.display = 'none';
+                    guideContent.style.display = 'block';
+                    return;
+                }
+                
+                // Hide main content and show search results
+                guideContent.style.display = 'none';
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = '<h3>Search Results</h3>';
+                
+                // Find all sections and content
+                const sections = document.querySelectorAll('.guide-section');
+                let resultsFound = false;
+                
+                sections.forEach(section => {
+                    const sectionTitle = section.querySelector('h2').textContent;
+                    const sectionContent = section.textContent.toLowerCase();
+                    
+                    if (sectionContent.includes(query)) {
+                        resultsFound = true;
+                        
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item';
+                        
+                        const titleLink = document.createElement('a');
+                        titleLink.href = `#${section.id}`;
+                        titleLink.innerHTML = `<h4>${sectionTitle}</h4>`;
+                        
+                        // Add click event to scroll to section
+                        titleLink.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            document.querySelector(section).scrollIntoView({ behavior: 'smooth' });
+                            searchResults.style.display = 'none';
+                            guideContent.style.display = 'block';
+                            searchInput.value = '';
+                        });
+                        
+                        resultItem.appendChild(titleLink);
+                        
+                        // Highlight the matching text in the content
+                        const contentPreview = document.createElement('p');
+                        const startIndex = sectionContent.indexOf(query);
+                        const previewStart = Math.max(0, startIndex - 50);
+                        const previewEnd = Math.min(sectionContent.length, startIndex + query.length + 100);
+                        
+                        let previewText = sectionContent.substring(previewStart, previewEnd);
+                        
+                        // Highlight the search term
+                        previewText = previewText.replace(new RegExp(query, 'gi'), match => 
+                            `<span style="background-color: yellow;">${match}</span>`
+                        );
+                        
+                        contentPreview.innerHTML = `...${previewText}...`;
+                        resultItem.appendChild(contentPreview);
+                        
+                        searchResults.appendChild(resultItem);
+                    }
+                });
+                
+                if (!resultsFound) {
+                    searchResults.innerHTML = '<div class="no-results">No results found for your search. Please try different keywords.</div>';
+                }
+            }
+                document.getElementById('backToHomeBtn').addEventListener('click', function() {
+                    window.location.href = '../index.html';
+                });
+            // Back to top button functionality
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Smooth scrolling for table of contents links
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

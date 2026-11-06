@@ -1,0 +1,120 @@
+
+/* =========================================================
+   LANGUAGE DIRECTION SUPPORT
+   Arabic = right-to-left; all other supported languages = left-to-right
+   ========================================================= */
+html[lang="ar"],
+html[dir="rtl"],
+body[dir="rtl"] {
+    direction: rtl;
+}
+
+html[lang="ar"] body,
+html[dir="rtl"] body,
+body[dir="rtl"] {
+    text-align: right;
+}
+
+html[lang="ar"] [data-translate],
+html[lang="ar"] [data-i18n],
+html[lang="ar"] [data-translate-placeholder],
+html[dir="rtl"] [data-translate],
+html[dir="rtl"] [data-i18n],
+html[dir="rtl"] [data-translate-placeholder],
+body[dir="rtl"] [data-translate],
+body[dir="rtl"] [data-i18n],
+body[dir="rtl"] [data-translate-placeholder] {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: plaintext;
+}
+
+html[lang="ar"] input,
+html[lang="ar"] textarea,
+html[lang="ar"] select,
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select,
+body[dir="rtl"] input,
+body[dir="rtl"] textarea,
+body[dir="rtl"] select {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Keep navigation geometry and icon order unchanged in Arabic. */
+html[lang="ar"] .sidebar-wrapper,
+html[lang="ar"] .sidebar-main,
+html[lang="ar"] aside#sidebar-main,
+html[lang="ar"] #mobile-bottom-nav,
+html[dir="rtl"] .sidebar-wrapper,
+html[dir="rtl"] .sidebar-main,
+html[dir="rtl"] aside#sidebar-main,
+html[dir="rtl"] #mobile-bottom-nav,
+body[dir="rtl"] .sidebar-wrapper,
+body[dir="rtl"] .sidebar-main,
+body[dir="rtl"] aside#sidebar-main,
+body[dir="rtl"] #mobile-bottom-nav {
+    direction: ltr;
+}
+
+html[lang="ar"] .sidebar-main,
+html[dir="rtl"] .sidebar-main,
+body[dir="rtl"] .sidebar-main {
+    left: 0;
+    right: auto;
+}
+
+html[lang="ar"] .sidebar-main [data-translate],
+html[dir="rtl"] .sidebar-main [data-translate],
+body[dir="rtl"] .sidebar-main [data-translate] {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="ar"] th,
+html[lang="ar"] td,
+html[dir="rtl"] th,
+html[dir="rtl"] td,
+body[dir="rtl"] th,
+body[dir="rtl"] td {
+    text-align: right;
+}
+
+html[lang="ar"] button,
+html[lang="ar"] .btn,
+html[dir="rtl"] button,
+html[dir="rtl"] .btn,
+body[dir="rtl"] button,
+body[dir="rtl"] .btn {
+    unicode-bidi: plaintext;
+}
+
+.numeric,
+.price,
+.amount,
+.barcode,
+.sku,
+.code,
+.date,
+.number,
+input[type="number"] {
+    direction: ltr;
+    unicode-bidi: plaintext;
+}
+
+html[lang="en"],
+html[lang="fr"],
+html[lang="zh"],
+html[dir="ltr"],
+body[dir="ltr"] {
+    direction: ltr;
+}
+
+html[lang="en"] body,
+html[lang="fr"] body,
+html[lang="zh"] body,
+html[dir="ltr"] body,
+body[dir="ltr"] {
+    text-align: left;
+}

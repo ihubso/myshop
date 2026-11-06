@@ -1,0 +1,2757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>StocksalesApp - Setup</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+ <link rel="icon" href="../image/logo.jpg">
+  <script src="js/env.js"></script>
+  <script src="js/lan.js"></script>
+  <script src="translations.js"></script>
+  <link href="../libs/fonts/inter.css" rel="stylesheet">
+  
+  <script src="hid20eme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/supabase-rpc-proxy.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --accent: #7c3aed;
+      --accent-light: #8b5cf6;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --bg-panel: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4c1d95 60%, #5b21b6 100%);
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-focus: #2563eb;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+      --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .setup-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ===== LEFT PANEL ===== */
+    .setup-panel {
+      width: 45%;
+      min-width: 400px;
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative shapes */
+    .setup-panel::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .setup-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -150px;
+      left: -80px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .panel-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 48px;
+    }
+
+    .panel-brand-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .panel-brand-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    /* Panel Content Area */
+    .panel-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-step-content {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      animation: panelFadeIn 0.5s ease forwards;
+    }
+
+    .panel-step-content.active {
+      display: flex;
+    }
+
+    @keyframes panelFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-illustration {
+      width: 100%;
+      max-width: 280px;
+      height: 200px;
+      margin: 0 auto 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle {
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .illustration-circle::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: spin 30s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .illustration-circle i {
+      font-size: 3.5rem;
+      color: white;
+    }
+
+    /* Floating badges around illustration */
+    .float-badge {
+      position: absolute;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 8px 14px;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: floatBadge 4s ease-in-out infinite;
+    }
+
+    .float-badge:nth-child(2) { top: 10px; right: 10px; animation-delay: 0s; }
+    .float-badge:nth-child(3) { bottom: 20px; left: 5px; animation-delay: 1s; }
+    .float-badge:nth-child(4) { bottom: 5px; right: 20px; animation-delay: 2s; }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .panel-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .panel-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+
+    /* Panel Tips */
+    .panel-tip {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-top: auto;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .panel-tip-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.85rem;
+    }
+
+    .panel-tip-text h5 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .panel-tip-text p {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.5;
+    }
+
+    /* Progress Stepper in Panel */
+    .panel-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stepper-item {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .stepper-dot {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.3);
+      transition: var(--transition);
+    }
+
+    .stepper-item.active .stepper-dot {
+      background: white;
+      border-color: white;
+      color: var(--primary-dark);
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    .stepper-item.completed .stepper-dot {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .stepper-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stepper-line-fill {
+      position: absolute;
+      inset: 0;
+      background: white;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+
+    .stepper-item.completed + .stepper-item .stepper-line .stepper-line-fill,
+    .stepper-item.completed .stepper-line .stepper-line-fill {
+      transform: scaleX(1);
+    }
+
+    /* ===== RIGHT PANEL (MAIN) ===== */
+    .setup-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .setup-content-wrapper {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    .setup-step {
+      display: none;
+      animation: stepSlideIn 0.45s ease forwards;
+    }
+
+    .setup-step.active {
+      display: block;
+    }
+
+    @keyframes stepSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ===== WELCOME STEP ===== */
+    .welcome-step .step-header {
+      margin-bottom: 36px;
+    }
+
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08));
+      border: 1px solid rgba(37,99,235,0.15);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .step-header h1 span {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .step-header > p {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .welcome-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .feature-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      transition: var(--transition);
+      cursor: default;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(124,58,237,0.1));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .feature-card h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .feature-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .welcome-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-top: 24px;
+    }
+
+    .welcome-meta i {
+      color: var(--primary-light);
+    }
+
+    /* ===== FORM STEPS ===== */
+    .form-step-header {
+      margin-bottom: 32px;
+    }
+
+    .step-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .step-counter::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .form-step-header h2 {
+      font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-step-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .form-step-header .warning-text {
+      font-size: 0.85rem;
+      color: var(--warning);
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    .scrollable {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+
+    .form-label .required {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    .input-control {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .input-control::placeholder {
+      color: var(--text-light);
+    }
+
+    .input-control:hover {
+      border-color: #cbd5e1;
+    }
+
+    .input-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    }
+
+    textarea.input-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select.input-control {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    /* Logo Dropzone */
+    .logo-dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: 44px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--bg-white);
+    }
+
+    .logo-dropzone:hover {
+      border-color: var(--primary);
+      background: rgba(37,99,235,0.02);
+    }
+
+    .logo-dropzone .drop-icon {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .logo-dropzone p:first-of-type {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .logo-dropzone p:last-of-type {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Password wrapper */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 6px;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+      background: rgba(37,99,235,0.06);
+    }
+
+    /* ===== ACTION BAR ===== */
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 32px;
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .actions-info {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .actions-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-body);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-white);
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-large {
+      padding: 16px 36px;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    /* ===== SUCCESS STATE ===== */
+    .success-state {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 28px;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--success);
+      animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes successPop {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    .success-state h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+    }
+
+    .success-state p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* ===== MODAL ===== */
+    #setupMessageModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    #setupMessageModal > div {
+      background: var(--bg-white);
+      padding: 36px;
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #setupMessageModal .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: #fef3c7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.6rem;
+      color: var(--warning);
+    }
+
+    #setupMessageModal h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+
+    #setupMessageModal p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .setup-panel {
+        width: 42%;
+        min-width: 340px;
+        padding: 36px 28px;
+      }
+
+      .setup-main {
+        padding: 32px;
+      }
+
+      .panel-title {
+        font-size: 1.5rem;
+      }
+
+      .illustration-circle {
+        width: 130px;
+        height: 130px;
+      }
+
+      .illustration-circle i {
+        font-size: 2.8rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .setup-container {
+        flex-direction: column;
+      }
+
+      .setup-panel {
+        width: 100%;
+        min-width: unset;
+        padding: 24px 20px;
+        min-height: auto;
+      }
+
+      .setup-panel::before,
+      .setup-panel::after {
+        display: none;
+      }
+
+      .panel-brand {
+        margin-bottom: 20px;
+      }
+
+      .panel-illustration {
+        display: none;
+      }
+
+      .panel-content {
+        flex: unset;
+      }
+
+      .panel-step-content {
+        display: none !important;
+      }
+
+      .panel-step-content.mobile-visible {
+        display: flex !important;
+      }
+
+      .panel-title {
+        font-size: 1.3rem;
+        margin-bottom: 6px;
+      }
+
+      .panel-desc {
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .panel-tip {
+        display: none;
+      }
+
+      .panel-stepper {
+        margin-top: 16px;
+      }
+
+      .stepper-dot {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        font-size: 0.65rem;
+      }
+
+      .setup-main {
+        padding: 28px 20px 40px;
+        min-height: auto;
+      }
+
+      .welcome-features {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .feature-card {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .feature-icon {
+        margin-bottom: 0;
+        min-width: 44px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+
+      .actions-info {
+        text-align: center;
+        order: 2;
+      }
+
+      .actions-buttons {
+        flex-direction: column-reverse;
+        width: 100%;
+        order: 1;
+      }
+
+      .actions-buttons .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .step-header h1 {
+        font-size: 1.6rem;
+      }
+
+      .form-step-header h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .setup-main {
+        padding: 24px 16px 36px;
+      }
+
+      .input-control {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.85rem;
+      }
+
+      .logo-dropzone {
+        padding: 32px 16px;
+      }
+    }
+
+    /* Utility */
+    .mt-2 { margin-top: 8px; }
+    .flex { display: flex; }
+    .flex-wrap { flex-wrap: wrap; }
+    .gap-2 { gap: 8px; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xs { font-size: 0.75rem; }
+  </style>
+  <link rel="stylesheet" href="../libs/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="../css/fontawesome/css/all.min.css">
+  <link href="../styles/output.css" rel="stylesheet" type="text/css">
+
+  <script src="js/hideme.js"></script>
+  
+
+</head>
+<body>
+  <div class="setup-container">
+    <!-- LEFT PANEL -->
+    <aside class="setup-panel">
+      <div class="panel-brand">
+        <div class="panel-brand-icon"><img src="../images/logo.jpg" alt="Stock Sales App Logo"></div>
+        <span class="panel-brand-text">StocksalesApp</span>
+      </div>
+
+      <div class="panel-content">
+        <!-- Welcome panel -->
+        <div class="panel-step-content active" id="panel-0">
+          <div class="panel-illustration">
+            <div class="illustration-circle">
+              <i class="fas fa-store-alt"></i>
+            </div>
+            <div class="float-badge"><i class="fas fa-box"></i> Inventory</div>
+            <div class="float-badge"><i class="fas fa-chart-line"></i> Analytics</div>
+            <div class="float-badge"><i class="fas fa-receipt"></i> Invoices</div>
+          </div>
+          <h2 class="panel-title">Welcome to your new inventory system</h2>
+          <p class="panel-desc">Let's configure your workspace in just a few quick steps. Everything you need to get your shop running.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-lightbulb"></i></div>
+            <div class="panel-tip-text">
+              <h5>Pro Tip</h5>
+              <p>Have your business details and logo ready for the fastest setup experience.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 1 -->
+        <div class="panel-step-content" id="panel-1">
+          <div class="panel-illustration">
+            <div class="illustration-circle"><i class="fas fa-building"></i></div>
+            <div class="float-badge"><i class="fas fa-map-marker-alt"></i> Location</div>
+            <div class="float-badge"><i class="fas fa-phone"></i> Contact</div>
+          </div>
+          <h2 class="panel-title">Tell us about your business</h2>
+          <p class="panel-desc">These details will appear on your invoices and receipts, creating a professional presence for your customers.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="panel-tip-text">
+              <h5>Why we need this</h5>
+              <p>Your shop name and address are used for tax reports, customer receipts, and business records.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2 -->
+        <div class="panel-step-content" id="panel-2">
+          <div class="panel-illustration">
+            <div class="illustration-circle"><i class="fas fa-palette"></i></div>
+            <div class="float-badge"><i class="fas fa-image"></i> Logo</div>
+            <div class="float-badge"><i class="fas fa-pen-fancy"></i> Tagline</div>
+          </div>
+          <h2 class="panel-title">Make it uniquely yours</h2>
+          <p class="panel-desc">Add your brand identity. A logo makes your receipts memorable and builds trust with customers.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-star"></i></div>
+            <div class="panel-tip-text">
+              <h5>Brand matters</h5>
+              <p>Businesses with logos see 33% more brand recognition from repeat customers.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3 -->
+        <div class="panel-step-content" id="panel-3">
+          <div class="panel-illustration">
+            <div class="illustration-circle"><i class="fas fa-user-shield"></i></div>
+            <div class="float-badge"><i class="fas fa-lock"></i> Secure</div>
+            <div class="float-badge"><i class="fas fa-key"></i> Admin</div>
+          </div>
+          <h2 class="panel-title">Secure your administrator account</h2>
+          <p class="panel-desc">Create strong credentials. This account has full control over your system — keep it safe.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="panel-tip-text">
+              <h5>Security first</h5>
+              <p>Use a mix of uppercase, numbers, and symbols. Never share your admin password.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 4 -->
+        <div class="panel-step-content" id="panel-4">
+          <div class="panel-illustration">
+            <div class="illustration-circle"><i class="fas fa-cogs"></i></div>
+            <div class="float-badge"><i class="fas fa-coins"></i> Currency</div>
+            <div class="float-badge"><i class="fas fa-globe"></i> Language</div>
+          </div>
+          <h2 class="panel-title">Final configuration</h2>
+          <p class="panel-desc">Set your preferred currency and language. These can always be changed later from settings.</p>
+          <div class="panel-tip">
+            <div class="panel-tip-icon"><i class="fas fa-rocket"></i></div>
+            <div class="panel-tip-text">
+              <h5>Almost there!</h5>
+              <p>One more step and your workspace will be ready to use. Enjoy your 7-day free trial.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success panel -->
+        <div class="panel-step-content" id="panel-success">
+          <div class="panel-illustration">
+            <div class="illustration-circle" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3);">
+              <i class="fas fa-check" style="color: #34d399;"></i>
+            </div>
+          </div>
+          <h2 class="panel-title">You're all set! 🎉</h2>
+          <p class="panel-desc">Your workspace is ready. Check your email for a welcome message with next steps.</p>
+        </div>
+      </div>
+
+      <!-- Stepper -->
+      <div class="panel-stepper">
+        <div class="stepper-item active" id="stepper-0">
+          <div class="stepper-dot">1</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill"></div></div>
+        <div class="stepper-item" id="stepper-1">
+          <div class="stepper-dot">2</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill"></div></div>
+        <div class="stepper-item" id="stepper-2">
+          <div class="stepper-dot">3</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill"></div></div>
+        <div class="stepper-item" id="stepper-3">
+          <div class="stepper-dot">4</div>
+        </div>
+        <div class="stepper-line"><div class="stepper-line-fill"></div></div>
+        <div class="stepper-item" id="stepper-4">
+          <div class="stepper-dot">5</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL (MAIN) -->
+    <main class="setup-main">
+      <div class="setup-content-wrapper">
+        <div id="setupSteps">
+          <!-- WELCOME -->
+          <div class="setup-step welcome-step active" id="step0-content">
+            <div class="step-header">
+              <div class="welcome-badge">
+                <i class="fas fa-rocket"></i> <span data-translate="first_time_setup">First-Time Setup</span>
+              </div>
+              <h1><span data-translate="welcome_to">Let's launch</span> <span>StocksalesApp</span></h1>
+              <p data-translate="setup_description">Configure your inventory management system in about 5 minutes with this guided wizard.</p>
+            </div>
+            <div class="welcome-features">
+              <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-building"></i></div>
+                <div>
+                  <h4 data-translate="feature_business_profile">Business Profile</h4>
+                  <p data-translate="feature_business_desc">Shop details & contact info</p>
+                </div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                <div>
+                  <h4 data-translate="feature_brand_customization">Brand Customization</h4>
+                  <p data-translate="feature_brand_desc">Logo & workspace styling</p>
+                </div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                <div>
+                  <h4 data-translate="feature_admin_account">Admin Account</h4>
+                  <p data-translate="feature_admin_desc">Secure admin credentials</p>
+                </div>
+              </div>
+              <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                <div>
+                  <h4 data-translate="feature_system_settings">System Settings</h4>
+                  <p data-translate="feature_system_desc">Currency & language</p>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-large" onclick="startSetup()">
+              <span data-translate="begin_setup">Begin Setup</span> <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="welcome-meta">
+              <i class="far fa-clock"></i> <span data-translate="estimated_time">Estimated time: 3-5 minutes</span>
+            </div>
+          </div>
+
+          <!-- STEP 1 -->
+          <div class="setup-step" id="step1-content">
+            <div class="form-step-header">
+              <div class="step-counter">Step 1 of 4</div>
+              <h2 data-translate="business_identity">Business Identity</h2>
+              <p data-translate="tell_about_business">Provide the official details for your shop profile.</p>
+            </div>
+            <div class="scrollable">
+              <div class="form-group">
+                <label class="form-label" data-translate="business_name_label">Registered Shop Name <span class="required">*</span></label>
+                <input type="text" id="businessName" class="input-control" placeholder="e.g. Apex Retail Solutions" maxlength="25">
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-translate="business_address_label">Physical Location</label>
+                <input type="text" id="businessAddress" class="input-control" placeholder="City, Street Address">
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" data-translate="primary_phone_label">Primary Contact <span class="required">*</span></label>
+                  <input type="tel" id="primaryPhone" class="input-control" placeholder="+237 ...">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-translate="business_email_label">Business Email</label>
+                  <input type="email" id="businessEmail" class="input-control" placeholder="contact@shop.com">
+                  <div id="emailSuggestion"></div>
+                  <div id="emailVerificationBlock" style="display: none; margin-top: 10px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-white);">
+                    <p id="emailVerificationPrompt" style="margin-bottom: 10px; font-size: 0.88rem; color: var(--text-body);">
+                      We sent a verification code to <strong id="emailVerificationTarget"></strong>.
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                      <input type="text" id="emailVerificationInput" class="input-control" placeholder="Enter code" maxlength="6" style="flex: 1; min-width: 140px;">
+                      <button type="button" id="verifyEmailCodeBtn" class="btn btn-ghost">Verify</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                      <button type="button" id="resendVerificationBtn" class="btn btn-ghost">Resend Code</button>
+                      <span id="verificationStatus" style="font-size: 0.82rem; color: var(--text-muted);"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-translate="business_email_website">Business Website</label>
+                <input type="text" id="businesswebsite" class="input-control" placeholder="www.shop.com">
+              </div>
+            </div>
+            <div class="actions">
+              <span class="actions-info"><span class="required">*</span> Required fields</span>
+              <div class="actions-buttons">
+                <button class="btn btn-primary" onclick="nextStep()">
+                  <span data-translate="continue_button">Continue</span> <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="setup-step" id="step2-content">
+            <div class="form-step-header">
+              <div class="step-counter">Step 2 of 4</div>
+              <h2 data-translate="brand_assets">Brand Assets</h2>
+              <p data-translate="add_more_details">Customize your workspace and invoice branding.</p>
+            </div>
+            <div class="scrollable">
+              <div class="form-group">
+                <label class="form-label" data-translate="business_description_label">Tagline or Description</label>
+                <textarea id="businessDescription" class="input-control" rows="3" placeholder="A brief catchphrase for your receipts..." maxlength="143"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-translate="business_logo_label">Company Logo</label>
+                <div class="logo-dropzone" onclick="document.getElementById('logoFile').click()">
+                  <i class="fas fa-cloud-upload-alt drop-icon"></i>
+                  <p data-translate="click_to_upload">Click to upload image</p>
+                  <p data-translate="upload_formats">PNG, JPG or SVG (Max 2MB)</p>
+                  <input type="file" id="logoFile" accept="image/*" style="display: none;">
+                </div>
+                <div id="logoPreviewContainer" style="margin-top: 14px; display: none; align-items: center; gap: 14px; padding: 12px; background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);">
+                  <img id="logoPreview" style="width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border);">
+                  <span style="font-size: 0.82rem; color: var(--success); font-weight: 600;"><i class="fas fa-check-circle"></i> <span data-translate="file_uploaded">File uploaded</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <div></div>
+              <div class="actions-buttons">
+                <button class="btn btn-ghost" onclick="prevStep()">
+                  <i class="fas fa-chevron-left"></i> <span data-translate="previous_button">Previous</span>
+                </button>
+                <button class="btn btn-primary" onclick="nextStep()">
+                  <span data-translate="continue_button">Continue</span> <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="setup-step" id="step3-content">
+            <div class="form-step-header">
+              <div class="step-counter">Step 3 of 4</div>
+              <h2 data-translate="access_control">Access Control</h2>
+              <p data-translate="create_admin_account">Establish the primary administrator credentials.</p>
+              <p class="warning-text" data-translate="admin_account_warning">
+                <i class="fas fa-exclamation-triangle"></i> This account has full system access. Keep credentials safe.
+              </p>
+            </div>
+            <div class="scrollable">
+              <div class="form-group">
+                <label class="form-label" data-translate="owner_name_label">Admin Full Name <span class="required">*</span></label>
+                <input type="text" id="ownerName" class="input-control" placeholder="John Doe">
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" data-translate="username_label">Username <span class="required">*</span></label>
+                  <input type="text" id="username" class="input-control" placeholder="admin_user">
+                  <div id="usernameSuggestion"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-translate="password_label">Password <span class="required">*</span></label>
+                  <div class="password-wrapper">
+                    <input type="password" id="password" class="input-control" placeholder="••••••••" style="padding-right: 44px;">
+                    <span class="password-toggle" onclick="togglePasswordVisibility('password', this)">
+                      <i class="fas fa-eye"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-translate="confirm_password_label">Confirm Password <span class="required">*</span></label>
+                <div class="password-wrapper">
+                  <input type="password" id="confirmPassword" class="input-control" placeholder="••••••••" style="padding-right: 44px;">
+                  <span class="password-toggle" onclick="togglePasswordVisibility('confirmPassword', this)">
+                    <i class="fas fa-eye"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <div></div>
+              <div class="actions-buttons">
+                <button class="btn btn-ghost" onclick="prevStep()">
+                  <i class="fas fa-chevron-left"></i> <span data-translate="previous_button">Previous</span>
+                </button>
+                <button class="btn btn-primary" onclick="nextStep()">
+                  <span data-translate="finalize_button">Continue</span> <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="setup-step" id="step4-content">
+            <div class="form-step-header">
+              <div class="step-counter">Step 4 of 4</div>
+              <h2 data-translate="system_configuration">Configuration</h2>
+              <p data-translate="configure_shop_settings">Set your operational defaults and localization.</p>
+            </div>
+            <div class="scrollable">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" data-translate="default_currency_label">Base Currency</label>
+                  <select id="currency" class="input-control">
+                    <optgroup label="🌍 Africa (Popular)">
+                      <option value="XAF">FCFA (XAF) - Central Africa</option>
+                      <option value="XOF">CFA (XOF) - West Africa</option>
+                      <option value="NGN">₦ NGN - Nigeria</option>
+                      <option value="GHS">₵ GHS - Ghana</option>
+                      <option value="KES">KSh KES - Kenya</option>
+                      <option value="UGX">USh UGX - Uganda</option>
+                      <option value="TZS">TSh TZS - Tanzania</option>
+                      <option value="ZAR">R ZAR - South Africa</option>
+                    </optgroup>
+                    <optgroup label="🌍 Africa (All)">
+                      <option value="MAD">MAD - Morocco</option>
+                      <option value="EGP">E£ EGP - Egypt</option>
+                      <option value="RWF">FRw RWF - Rwanda</option>
+                      <option value="BIF">FBu BIF - Burundi</option>
+                      <option value="ETB">Br ETB - Ethiopia</option>
+                    </optgroup>
+                    <optgroup label="🌏 Asia (Popular)">
+                      <option value="INR">₹ INR - India</option>
+                      <option value="BDT">৳ BDT - Bangladesh</option>
+                      <option value="PKR">₨ PKR - Pakistan</option>
+                      <option value="PHP">₱ PHP - Philippines</option>
+                    </optgroup>
+                    <optgroup label="🌍 Middle East">
+                      <option value="SAR">﷼ SAR - Saudi Arabia</option>
+                      <option value="AED">د.إ AED - UAE</option>
+                      <option value="QAR">﷼ QAR - Qatar</option>
+                    </optgroup>
+                    <optgroup label="🌎 Americas">
+                      <option value="USD">$ USD - United States</option>
+                      <option value="CAD">$ CAD - Canada</option>
+                      <option value="MXN">$ MXN - Mexico</option>
+                    </optgroup>
+                    <optgroup label="🌍 Europe">
+                      <option value="EUR">€ EUR - Eurozone</option>
+                      <option value="GBP">£ GBP - United Kingdom</option>
+                      <option value="CHF">CHF - Switzerland</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-translate="default_language_label">System Language</label>
+                  <select id="language" class="input-control">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="sw">Kiswahili</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="ms">Bahasa Melayu</option>
+                    <option value="ar">العربية</option>
+                    <option value="es">Español</option>
+                    <option value="zh">中文 (简体)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <div></div>
+              <div class="actions-buttons">
+                <button class="btn btn-ghost" onclick="prevStep()">
+                  <i class="fas fa-chevron-left"></i> <span data-translate="previous_button">Previous</span>
+                </button>
+                <button class="btn btn-primary" id="finishBtn" onclick="completeSetup()">
+                  <span data-translate="launch_system">Launch System</span> <i class="fas fa-rocket"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUCCESS -->
+          <div class="setup-step" id="success-content">
+            <div class="success-state">
+              <div class="success-icon"><i class="fas fa-check"></i></div>
+              <h1 data-translate="setup_complete">System Initialized</h1>
+              <p data-translate="system_ready">Your workspace is ready. Redirecting to login...</p>
+              <div style="margin-top: 28px;">
+                <i class="fas fa-spinner fa-spin" style="color: var(--primary); font-size: 1.3rem;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="setupMessageModal">
+    <div>
+      <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 data-translate="check_requirements">Check Requirements</h3>
+      <p id="setupMessageText"></p>
+      <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="closeSetupMessageModal()" data-translate="understood_button">Understood</button>
+    </div>
+  </div>
+
+
+<script>
+
+
+function getSetupDB() {
+    if (setupDB && setupDB.from) {
+        return setupDB;
+    }
+    
+    if (!window.supabase || !window.supabase.createClient) {
+        console.error('❌ Supabase CDN library not loaded yet. Retrying...');
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (window.supabase && window.supabase.createClient) {
+                    setupDB = window.supabase.createClient(MYSUPABASE_URL, MY_ANON_KEY);
+                    console.log('✅ Setup Supabase client created (retry)');
+                    resolve(setupDB);
+                } else {
+                    console.error('❌ Supabase CDN still not available');
+                    resolve(null);
+                }
+            }, 1000);
+        });
+    }
+    
+    setupDB = window.supabase.createClient(MYSUPABASE_URL, MY_ANON_KEY);
+    console.log('✅ Setup Supabase client created for YOUR project');
+    return setupDB;
+}
+
+// ============================================
+// VARIABLES
+// ============================================
+let currentStep = 0;
+const totalSteps = 4;
+let setupData = {};
+let logoFile = null;
+let selectedBackupFile = null;
+let setupStartTime = null;
+
+function applyGoogleSetupPrefill() {
+    const rawGoogleUser = localStorage.getItem('pendingGoogleUser');
+    if (!rawGoogleUser) return;
+
+    try {
+        const user = JSON.parse(rawGoogleUser);
+        const email = (user.email || '').trim();
+        const fullName = (user.full_name || user.name || '').trim();
+        const username = (user.username || (email ? email.split('@')[0] : '') || '').trim();
+        const photoUrl = user.photo_url || user.picture || '';
+
+        const emailInput = document.getElementById('businessEmail');
+        if (emailInput && email) {
+            emailInput.value = email;
+        }
+
+        const ownerNameInput = document.getElementById('ownerName');
+        if (ownerNameInput && fullName) {
+            ownerNameInput.value = fullName;
+        }
+
+        const usernameInput = document.getElementById('username');
+        if (usernameInput && username) {
+            usernameInput.value = username;
+            usernameInput.setAttribute('data-google-username', username);
+        }
+
+        if (email) {
+            currentVerificationEmail = email;
+            emailVerified = true;
+            emailVerificationCode = '000000';
+            const status = document.getElementById('verificationStatus');
+            if (status) {
+                status.textContent = '✅ Google email verified.';
+                status.style.color = 'var(--success)';
+            }
+            hideEmailVerificationBlock();
+        }
+
+        if (photoUrl) {
+            localStorage.setItem('incomingGooglePhotoUrl', photoUrl);
+        }
+    } catch (error) {
+        console.warn('Could not prefill setup form from Google user:', error);
+    }
+}
+
+// Debounce timer for suggestions
+let usernameCheckTimer = null;
+let emailCheckTimer = null;
+
+// ============================================
+// CHECK USERNAME EXISTENCE WITH SUGGESTIONS
+// ============================================
+async function checkUsernameAvailability(username) {
+    if (!username || username.length < 3) {
+        const suggestionEl = document.getElementById('usernameSuggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+            suggestionEl.innerHTML = '';
+        }
+        return null;
+    }
+    
+    try {
+        let client = getSetupDB();
+        if (client && typeof client.then === 'function') {
+            client = await client;
+        }
+        
+        if (!client) return null;
+        
+        const { data, error } = await client
+            .from('users')
+            .select('username')
+            .eq('username', username)
+            .maybeSingle();
+        
+        const usernameInput = document.getElementById('username');
+        const suggestionEl = document.getElementById('usernameSuggestion');
+        
+        if (data) {
+            // Username exists - generate suggestions
+            const suggestions = await generateUsernameSuggestions(username);
+            if (suggestionEl) {
+                suggestionEl.style.display = 'block';
+                suggestionEl.innerHTML = `
+                    <div class="mt-2 text-sm text-amber-400">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <span data-translate="username_taken">Username already taken. Try one of these:</span>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            ${suggestions.map(sug => 
+                                `<button type="button" onclick="suggestUsername('${sug}')" 
+                                    class="px-2 py-1 text-xs bg-gray-700 hover:bg-primary rounded transition text-white">
+                                    ${sug}
+                                </button>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            return false;
+        } else {
+            // Username available
+            if (suggestionEl) {
+                suggestionEl.style.display = 'block';
+                suggestionEl.innerHTML = `
+                    <div class="mt-2 text-sm text-green-400">
+                        <i class="fas fa-check-circle"></i> 
+                        <span data-translate="username_available">Username available!</span>
+                    </div>
+                `;
+            }
+            return true;
+        }
+    } catch (error) {
+        console.error('Username check error:', error);
+        return null;
+    }
+}
+
+async function generateUsernameSuggestions(baseUsername) {
+    const suggestions = [];
+    const suffixes = ['1', '2', '3', '_shop', '_store', '_admin', '2024', '2025'];
+    
+    for (const suffix of suffixes) {
+        const suggestion = baseUsername + suffix;
+        // Check if suggestion is available
+        try {
+            let client = getSetupDB();
+            if (client && typeof client.then === 'function') {
+                client = await client;
+            }
+            if (client) {
+                const { data } = await client
+                    .from('users')
+                    .select('username')
+                    .eq('username', suggestion)
+                    .maybeSingle();
+                
+                if (!data && suggestions.length < 5) {
+                    suggestions.push(suggestion);
+                }
+            }
+        } catch(e) {
+            suggestions.push(baseUsername + suffix);
+        }
+    }
+    
+    // Add random number suggestions
+    for (let i = 1; i <= 3 && suggestions.length < 5; i++) {
+        const randomNum = Math.floor(Math.random() * 900) + 100;
+        suggestions.push(baseUsername + randomNum);
+    }
+    
+    return suggestions.slice(0, 5);
+}
+
+function suggestUsername(username) {
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.value = username;
+        usernameInput.focus();
+        // Trigger validation
+        checkUsernameAvailability(username);
+    }
+}
+    function updateStepper(step) {
+        for (let i = 0; i <= totalSteps; i++) {
+            const item = document.getElementById(`stepper-${i}`);
+            if (!item) continue;
+            item.classList.remove('active', 'completed');
+            if (i < step) item.classList.add('completed');
+            else if (i === step) item.classList.add('active');
+        }
+    }
+
+
+// ============================================
+// CHECK EMAIL EXISTENCE WITH SUGGESTIONS
+// ============================================
+async function checkEmailAvailability(email) {
+    if (!email || !email.includes('@')) {
+        const suggestionEl = document.getElementById('emailSuggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+            suggestionEl.innerHTML = '';
+        }
+        resetEmailVerificationState();
+        return null;
+    }
+
+    const emailFormat = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+    if (!emailFormat.test(email)) {
+        resetEmailVerificationState();
+        return null;
+    }
+    
+    try {
+        let client = getSetupDB();
+        if (client && typeof client.then === 'function') {
+            client = await client;
+        }
+        
+        if (!client) return null;
+        
+        const { data, error } = await client
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle();
+        
+        const emailInput = document.getElementById('businessEmail');
+        const suggestionEl = document.getElementById('emailSuggestion');
+        
+        if (data) {
+            // Email exists - generate suggestions
+            const suggestions = generateEmailSuggestions(email);
+            if (suggestionEl) {
+                suggestionEl.style.display = 'block';
+                suggestionEl.innerHTML = `
+                    <div class="mt-2 text-sm text-amber-400">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <span data-translate="email_taken">Email already registered. Suggestions:</span>
+                        <p class="text-xs mt-2 text-gray-400">
+                            <i class="fas fa-info-circle"></i> 
+                            <span data-translate="already_have_account">Already have an account? <a href="/shop/" style="color: #3b82f6;">Login here</a></span>
+                        </p>
+                    </div>
+                `;
+            }
+            resetEmailVerificationState();
+            return false;
+        } else {
+            // Email available
+            if (suggestionEl) {
+                suggestionEl.style.display = 'block';
+                const safeEmail = email.replace(/'/g, "\\'");
+                suggestionEl.innerHTML = `
+                    <div class="mt-2 text-sm text-green-400">
+                        <i class="fas fa-check-circle"></i>
+                        <span data-translate="email_available">Email available!</span>
+                    </div>
+                    <button type="button" id="sendEmailVerificationBtn" class="btn btn-primary" style="margin-top: 10px;">Send verification code</button>
+                `;
+                setTimeout(() => {
+                    const sendBtn = document.getElementById('sendEmailVerificationBtn');
+                    if (sendBtn) {
+                        sendBtn.addEventListener('click', () => sendVerificationCode(safeEmail));
+                    }
+                }, 0);
+            }
+            hideEmailVerificationBlock();
+            return true;
+        }
+    } catch (error) {
+        console.error('Email check error:', error);
+        return null;
+    }
+}
+
+function generateEmailSuggestions(email) {
+}
+
+function suggestEmail(email) {
+    const emailInput = document.getElementById('businessEmail');
+    if (emailInput) {
+        emailInput.value = email;
+        emailInput.focus();
+        // Trigger validation
+        checkEmailAvailability(email);
+    }
+}
+
+let emailVerificationCode = '';
+let currentVerificationEmail = '';
+let emailVerified = false;
+let emailVerificationSentAt = null;
+let emailResendTimerId = null;
+const emailResendCooldownSeconds = 60;
+
+function generateVerificationCode() {
+    return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+function showEmailVerificationBlock(email) {
+    const block = document.getElementById('emailVerificationBlock');
+    const target = document.getElementById('emailVerificationTarget');
+    if (target) target.textContent = email;
+    if (block) block.style.display = 'block';
+}
+
+function hideEmailVerificationBlock() {
+    const block = document.getElementById('emailVerificationBlock');
+    const status = document.getElementById('verificationStatus');
+    const prompt = document.getElementById('emailVerificationPrompt');
+    const input = document.getElementById('emailVerificationInput');
+    const resendBtn = document.getElementById('resendVerificationBtn');
+    if (block) block.style.display = 'none';
+    if (status) {
+        status.textContent = '';
+        status.style.color = '';
+    }
+    if (prompt) prompt.textContent = '';
+    if (input) input.value = '';
+    if (resendBtn) {
+        resendBtn.disabled = false;
+        resendBtn.textContent = translate('resend_code') || 'Resend Code';
+    }
+}
+
+function resetEmailVerificationState() {
+    emailVerificationCode = '';
+    currentVerificationEmail = '';
+    emailVerified = false;
+    emailVerificationSentAt = null;
+    if (emailResendTimerId) {
+        clearInterval(emailResendTimerId);
+        emailResendTimerId = null;
+    }
+    hideEmailVerificationBlock();
+}
+
+function startEmailResendCooldown() {
+    const resendBtn = document.getElementById('resendVerificationBtn');
+    const status = document.getElementById('verificationStatus');
+    let countdown = emailResendCooldownSeconds;
+
+    if (emailResendTimerId) {
+        clearInterval(emailResendTimerId);
+    }
+
+    if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = `${translate('resend_code') || 'Resend Code'} (${countdown}s)`;
+    }
+
+    emailResendTimerId = setInterval(() => {
+        countdown -= 1;
+        if (resendBtn) {
+            resendBtn.textContent = `${translate('resend_code') || 'Resend Code'} (${countdown}s)`;
+        }
+
+        if (countdown <= 0) {
+            clearInterval(emailResendTimerId);
+            emailResendTimerId = null;
+            if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = translate('resend_code') || 'Resend Code';
+            }
+            if (status) {
+                status.textContent = translate('email_verification_ready') || 'You can resend the code now.';
+                status.style.color = 'var(--text-dim)';
+            }
+        }
+    }, 1000);
+}
+
+async function sendVerificationCode(email) {
+    if (!email) return false;
+
+    if (currentVerificationEmail !== email) {
+        resetEmailVerificationState();
+        currentVerificationEmail = email;
+    }
+
+    if (emailVerified && currentVerificationEmail === email) {
+        showEmailVerificationBlock(email);
+        return true;
+    }
+
+    emailVerificationCode = generateVerificationCode();
+    showEmailVerificationBlock(email);
+
+    const status = document.getElementById('verificationStatus');
+    const resendBtn = document.getElementById('resendVerificationBtn');
+    const prompt = document.getElementById('emailVerificationPrompt');
+    if (status) {
+        status.textContent = translate('sending_code_text') || 'Sending verification code...';
+        status.style.color = 'var(--text-dim)';
+    }
+    if (resendBtn) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = translate('resending_code') || 'Resending...';
+    }
+    if (prompt) {
+        prompt.innerHTML = `A verification code has been sent to <strong>${email}</strong>.`;
+    }
+
+    try {
+        let client = getSetupDB();
+        if (client && typeof client.then === 'function') {
+            client = await client;
+        }
+        if (!client || !client.functions) {
+            throw new Error('Unable to initialize Supabase functions client.');
+        }
+
+        const { data, error } = await client.functions.invoke('send-verification-code', {
+            body: JSON.stringify({ email, code: emailVerificationCode }),
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        emailVerificationSentAt = Date.now();
+        if (status) {
+            status.textContent = translate('verification_code_sent_to') || `Verification code sent to ${email}`;
+            status.style.color = 'var(--text-main)';
+        }
+        startEmailResendCooldown();
+        return true;
+    } catch (error) {
+        console.error('Verification email error:', error);
+        if (status) {
+            status.textContent = translate('send_verification_failed') || 'Failed to send verification email.';
+            status.style.color = '#f87171';
+        }
+        if (resendBtn) {
+            resendBtn.disabled = false;
+            resendBtn.textContent = translate('resend_code') || 'Resend Code';
+        }
+        return false;
+    }
+}
+
+function verifyEmailCode() {
+    const codeInput = document.getElementById('emailVerificationInput');
+    const status = document.getElementById('verificationStatus');
+    const enteredCode = codeInput?.value.trim();
+
+    if (!enteredCode || enteredCode.length !== 6) {
+        showMessageModal(translate('enter_verification_code') || '❌ Please enter the 6-digit verification code.');
+        return false;
+    }
+
+    if (enteredCode !== emailVerificationCode) {
+        if (status) {
+            status.textContent = translate('verification_code_invalid') || '❌ Invalid verification code. Please try again.';
+            status.style.color = '#f97316';
+        }
+        return false;
+    }
+
+    emailVerified = true;
+    if (status) {
+        status.textContent = translate('email_verified_success') || '✅ Email verified successfully!';
+        status.style.color = 'var(--success)';
+    }
+    const suggestionEl = document.getElementById('emailSuggestion');
+    if (suggestionEl) {
+        suggestionEl.style.display = 'block';
+        suggestionEl.innerHTML = `
+            <div class="mt-2 text-sm text-green-400">
+                <i class="fas fa-check-circle"></i>
+                <span data-translate="email_verified">Email verified!</span>
+            </div>
+        `;
+    }
+    return true;
+}
+
+function resendVerificationCode() {
+    if (!currentVerificationEmail) return;
+    sendVerificationCode(currentVerificationEmail);
+}
+
+// ============================================
+// STEP NAVIGATION
+// ============================================
+function startSetup() {
+    console.log('🚀 Starting setup process');
+    setupStartTime = Date.now();
+    
+    if (currentStep === 0) {
+        currentStep = 1;
+        document.getElementById('step0-content')?.classList.remove('active');
+        document.getElementById('nav0')?.classList.remove('active');
+        document.getElementById('step1-content')?.classList.add('active');
+        document.getElementById('nav1')?.classList.add('active');
+        updateProgress();
+        updateStepper(1);
+    }
+}
+
+async function nextStep() {
+    if (!(await validateCurrentStep())) return;  // ✅ Now properly awaits
+    saveStepData();
+    
+    if (currentStep < totalSteps) {
+        document.getElementById(`step${currentStep}-content`)?.classList.remove('active');
+        document.getElementById(`nav${currentStep}`)?.classList.remove('active');
+        currentStep++;
+        document.getElementById(`step${currentStep}-content`)?.classList.add('active');
+        document.getElementById(`nav${currentStep}`)?.classList.add('active');
+        updateProgress();
+         updateStepper(currentStep);
+
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        document.getElementById(`step${currentStep}-content`)?.classList.remove('active');
+        document.getElementById(`nav${currentStep}`)?.classList.remove('active');
+        currentStep--;
+        document.getElementById(`step${currentStep}-content`)?.classList.add('active');
+        document.getElementById(`nav${currentStep}`)?.classList.add('active');
+        updateProgress();
+         updateStepper(currentStep);
+    }
+}
+
+function updateProgress() {
+    for (let i = 1; i <= totalSteps; i++) {
+        const step = document.getElementById(`nav${i}`);
+        if (step) {
+            if (i < currentStep) {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            } else if (i === currentStep) {
+                step.classList.add('active');
+                step.classList.remove('completed');
+            } else {
+                step.classList.remove('active', 'completed');
+            }
+        }
+    }
+}
+
+// ============================================
+// VALIDATION WITH EXISTENCE CHECKS
+// ============================================
+async function validateCurrentStep() {
+    try {
+        switch(currentStep) {
+            case 1:
+                const businessName = document.getElementById('businessName')?.value.trim();
+                const primaryPhone = document.getElementById('primaryPhone')?.value.trim();
+                const businessEmail = document.getElementById('businessEmail')?.value.trim();
+                
+                // Business name validation
+                if (!businessName) {
+                    showMessageModal(translate('enter_business_name') || '❌ Please enter your business name.');
+                    return false;
+                }
+                if (businessName.length < 2) {
+                    showMessageModal(translate('business_name_too_short') || '❌ Business name must be at least 2 characters.');
+                    return false;
+                }
+                if (businessName.length > 25) {
+                    showMessageModal(translate('business_name_too_long') || '❌ Business name is too long (max 25 characters).');
+                    return false;
+                }
+                
+                // Phone validation
+                if (!primaryPhone) {
+                    showMessageModal(translate('enter_primary_phone') || '❌ Please enter a phone number.');
+                    return false;
+                }
+                if (primaryPhone.length < 6) {
+                    showMessageModal(translate('phone_too_short') || '❌ Phone number must be at least 6 characters.');
+                    return false;
+                }
+                
+                // Email validation (if provided)
+                if (businessEmail) {
+                    const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+                    if (!emailRegex.test(businessEmail)) {
+                        showMessageModal(translate('invalid_email_format') || '❌ Please enter a valid email address (e.g., name@company.com).');
+                        return false;
+                    }
+                    
+                    // Check email availability in database
+                    const isEmailAvailable = await checkEmailAvailability(businessEmail);
+                    if (isEmailAvailable === false) {
+                        showMessageModal(translate('email_taken_message') || '❌ Email already registered! Please use a different email or <a href="/index.html" style="color: #3b82f6;">login here</a>.');
+                        return false;
+                    }
+                    if (!emailVerified || currentVerificationEmail !== businessEmail) {
+                        showMessageModal(translate('email_verification_required') || '❌ Please verify your business email before continuing.');
+                        return false;
+                    }
+                }
+                return true;
+                
+            case 2:
+                const businessDescription = document.getElementById('businessDescription')?.value.trim() || '';
+                if (businessDescription.length > 143) {
+                    showMessageModal(translate('description_too_long') || '❌ Description is too long (max 143 characters).');
+                    return false;
+                }
+                return true;
+                
+            case 3:
+                const ownerName = document.getElementById('ownerName')?.value.trim();
+                const username = document.getElementById('username')?.value.trim();
+                const password = document.getElementById('password')?.value;
+                const confirmPassword = document.getElementById('confirmPassword')?.value;
+                const step3BusinessEmail = setupData.business?.email || document.getElementById('businessEmail')?.value.trim() || '';
+                
+                // Owner name validation
+                if (!ownerName) {
+                    showMessageModal(translate('enter_owner_name') || '❌ Please enter your full name.');
+                    return false;
+                }
+                if (ownerName.length < 3) {
+                    showMessageModal(translate('owner_name_too_short') || '❌ Name must be at least 3 characters.');
+                    return false;
+                }
+                
+                // Username validation
+                if (!username) {
+                    showMessageModal(translate('enter_username') || '❌ Please enter a username.');
+                    return false;
+                }
+                if (username.length < 3) {
+                    showMessageModal(translate('username_too_short') || '❌ Username must be at least 3 characters.');
+                    return false;
+                }
+                if (username.length > 20) {
+                    showMessageModal(translate('username_too_long') || '❌ Username is too long (max 20 characters).');
+                    return false;
+                }
+                
+                // Username character validation (only letters, numbers, underscore)
+                const usernameRegex = /^[a-zA-Z0-9_]+$/;
+                if (!usernameRegex.test(username)) {
+                    showMessageModal(translate('username_invalid_chars') || '❌ Username can only contain letters, numbers, and underscores.');
+                    return false;
+                }
+                
+                // Check username availability in database
+                const isUsernameAvailable = await checkUsernameAvailability(username);
+                if (isUsernameAvailable === false) {
+                    showMessageModal(translate('username_taken_message') || '❌ Username already taken! Please choose a different username or use one of the suggestions above.');
+                    return false;
+                }
+                
+                // Password validation
+                if (!password) {
+                    showMessageModal(translate('enter_password') || '❌ Please enter a password.');
+                    return false;
+                }
+                if (password.length < 6) {
+                    showMessageModal(translate('password_min_length') || '❌ Password must be at least 6 characters long.');
+                    return false;
+                }
+                if (password.length > 50) {
+                    showMessageModal(translate('password_too_long') || '❌ Password is too long (max 50 characters).');
+                    return false;
+                }
+                
+                // Password strength check
+                let passwordStrength = 0;
+                if (/[a-z]/.test(password)) passwordStrength++;
+                if (/[A-Z]/.test(password)) passwordStrength++;
+                if (/[0-9]/.test(password)) passwordStrength++;
+                if (/[^a-zA-Z0-9]/.test(password)) passwordStrength++;
+                
+                if (passwordStrength < 2) {
+                    showMessageModal(translate('password_weak') || '⚠️ Password is weak! Use at least: uppercase letters, numbers, or special characters.');
+                    return false;
+                }
+                
+                // Confirm password
+                if (password !== confirmPassword) {
+                    showMessageModal(translate('passwords_no_match') || '❌ Passwords do not match.');
+                    return false;
+                }
+                
+                // Email validation again for step 3
+                if (step3BusinessEmail) {
+                    const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+                    if (!emailRegex.test(step3BusinessEmail)) {
+                        showMessageModal(translate('invalid_email_format') || '❌ Please enter a valid email address.');
+                        return false;
+                    }
+                    
+                    const isEmailAvailable = await checkEmailAvailability(step3BusinessEmail);
+                    if (isEmailAvailable === false) {
+                        showMessageModal(translate('email_taken_message') || '❌ Email already registered! Please use a different email or login.');
+                        return false;
+                    }
+                }
+                return true;
+                
+            case 4:
+                const currency = document.getElementById('currency')?.value;
+                const language = document.getElementById('language')?.value;
+                
+                if (!currency) {
+                    showMessageModal(translate('select_currency') || '❌ Please select a currency.');
+                    return false;
+                }
+                if (!language) {
+                    showMessageModal(translate('select_language') || '❌ Please select a language.');
+                    return false;
+                }
+                return true;
+                
+            default:
+                return true;
+        }
+    } catch (error) {
+        console.error('Validation error:', error);
+        showMessageModal(translate('validation_error') || '❌ An error occurred during validation. Please try again.');
+        return false;
+    }
+}
+
+function saveStepData() {
+    switch(currentStep) {
+        case 1:
+            setupData.business = {
+                name: document.getElementById('businessName')?.value.trim() || '',
+                address: document.getElementById('businessAddress')?.value.trim() || '',
+                email: document.getElementById('businessEmail')?.value.trim() || '',
+                website: document.getElementById('businesswebsite')?.value.trim() || '',
+                primaryPhone: document.getElementById('primaryPhone')?.value.trim() || '',
+                emailVerified: emailVerified && currentVerificationEmail === (document.getElementById('businessEmail')?.value.trim() || '')
+            };
+            // Trigger email check if email exists
+            if (setupData.business.email) {
+                checkEmailAvailability(setupData.business.email);
+            }
+            break;
+        case 2:
+            setupData.business = {
+                ...setupData.business,
+                description: document.getElementById('businessDescription')?.value.trim() || ''
+            };
+            break;
+        case 3:
+            setupData.owner = {
+                name: document.getElementById('ownerName')?.value.trim() || '',
+                username: document.getElementById('username')?.value.trim() || '',
+                password: document.getElementById('password')?.value || ''
+            };
+            break;
+        case 4:
+            setupData.settings = {
+                currency: document.getElementById('currency')?.value || 'XAF',
+                language: document.getElementById('language')?.value || 'en'
+            };
+            break;
+    }
+    console.log('Saved step data:', setupData);
+}
+
+// ============================================
+// COMPLETE SETUP - SAVE TO SUPABASE
+// ============================================
+async function completeSetup() {
+    if (!await validateCurrentStep()) return;
+    saveStepData();
+
+    const completeBtn = document.getElementById('finishBtn');
+    if (!completeBtn) return;
+    
+    completeBtn.innerHTML = (translate('saving_text') || 'Saving...') + ' <i class="fas fa-spinner fa-spin"></i>';
+    completeBtn.disabled = true;
+
+    try {
+        let client = getSetupDB();
+        if (client && typeof client.then === 'function') {
+            client = await client;
+        }
+        
+        if (!client || !client.from) {
+            throw new Error('Database connection failed. Please refresh the page and try again.');
+        }
+
+        console.log('✅ Client ready');
+
+        const selectedLanguage = setupData.settings?.language || 'en';
+        localStorage.setItem('language', selectedLanguage);
+        localStorage.setItem('systemLanguage', selectedLanguage);
+        currentLanguage = selectedLanguage;
+
+        // ============================================
+        // STEP 1: Upload logo if exists
+        // ============================================
+          // Simple upload using your existing preset
+      let logoUrl = '';
+      if (logoFile) {
+          try {
+              const formData = new FormData();
+              formData.append('file', logoFile);
+              formData.append('upload_preset', 'stockapp_logos');  // Your preset name
+              
+              const response = await fetch(
+                  `https://api.cloudinary.com/v1_1/${window.ENV.CLOUDINARY_CLOUD_NAME}/image/upload`,
+                  { method: 'POST', body: formData }
+              );
+              
+              if (!response.ok) {
+                  throw new Error(`Upload failed: ${response.status}`);
+              }
+              
+              const result = await response.json();
+              logoUrl = result.secure_url;  // Cloudinary URL
+              console.log('✅ Logo uploaded to Cloudinary:', logoUrl);
+              
+          } catch (uploadErr) {
+              console.warn('⚠️ Logo upload error (non-critical):', uploadErr);
+              logoUrl = '';  // Set empty on error
+          }
+      }
+
+      const adminEmail = setupData.business.email || `${setupData.owner.username.toLowerCase()}@StockApp.local`;
+      const adminPassword = setupData.owner.password;
+      const adminUsername = setupData.owner.username;
+      const adminFullName = setupData.owner.name;
+      const adminPhoto = localStorage.getItem('incomingGooglePhotoUrl') || 'image/THE ADMIN.png';
+
+      // ============================================
+      // STEP 2: Create business FIRST
+      // ============================================
+      const newBusinessInfo = {
+          name: setupData.business.name || '',
+          address: setupData.business.address || '',
+          phone: setupData.business.primaryPhone || '',
+          email: setupData.business.email || '',
+          website: setupData.business.website || '',
+          description: setupData.business.description || '',
+          logo_url: logoUrl,  // Cloudinary URL
+          currency: setupData.settings?.currency || 'XAF',
+          language: selectedLanguage,
+          setup_completed: true,
+          owner_name: adminFullName,
+          created_at: new Date().toISOString()
+      };
+
+        console.log('📤 Creating business...');
+        const { data: newBiz, error: bizInsertError } = await client
+            .from('business_info')
+            .insert([newBusinessInfo])
+            .select()
+            .single();
+
+        if (bizInsertError) {
+            throw new Error('Failed to create business: ' + bizInsertError.message);
+        }
+        const newBusinessId = newBiz.id;
+        console.log('✅ Business created:', newBusinessId, '-', newBiz.name);
+
+        // ============================================
+        // STEP 3: Create user via Supabase Auth
+        // ============================================
+        console.log('📤 Creating user via Supabase Auth...');
+        
+        const { data: authData, error: authError } = await client.auth.signUp({
+            email: adminEmail,
+            password: adminPassword,
+            options: {
+                data: {
+                    username: adminUsername,
+                    full_name: adminFullName,
+                    role: 'administrator',
+                    business_id: newBusinessId
+                }
+            }
+        });
+
+        if (authError) {
+            console.error('❌ Auth signup failed:', authError);
+            throw new Error('Failed to create account: ' + authError.message);
+        }
+
+        const newUserId = authData.user?.id;
+        console.log('✅ Auth user created:', newUserId);
+
+        // ============================================
+        // STEP 4: Save user profile to users table
+        // ============================================
+        const userProfile = {
+            id: newUserId,
+            password: adminPassword,
+            username: adminUsername,
+            full_name: adminFullName,
+            role: 'administrator',
+            email: adminEmail,
+            phone: setupData.business.primaryPhone || '',
+            address: setupData.business.address || '',
+            is_owner: true,
+            photo_url: adminPhoto,
+            business_id: newBusinessId,
+            created_at: new Date().toISOString()
+        };
+
+        console.log('📤 Saving user profile...');
+        
+        const { error: profileError } = await client
+            .from('users')
+            .upsert([userProfile], { onConflict: 'id' });
+
+        if (profileError) {
+            console.warn('⚠️ Profile save warning:', profileError);
+            // Don't throw - auth user already created
+        } else {
+            console.log('✅ User profile saved');
+        }
+
+        // ============================================
+        // STEP 5: Create 7-day free trial
+        // ============================================
+        const trialExpires = new Date();
+        trialExpires.setDate(trialExpires.getDate() + 7);
+
+        console.log('🎁 Creating 7-day free trial...');
+        
+        const { error: licenseError } = await client
+            .from('business_info')
+            .update({
+                license_plan: 'trial',
+                license_status: 'active',
+                license_activated_at: new Date().toISOString(),
+                license_expires_at: trialExpires.toISOString()
+            })
+            .eq('id', newBusinessId);
+
+        if (licenseError) {
+            console.warn('⚠️ Trial activation warning:', licenseError);
+        } else {
+            console.log('✅ 7-day trial active! Expires:', trialExpires.toLocaleDateString());
+        }
+
+        // ============================================
+        // STEP 6: Track setup in user_setups table
+        // ============================================
+        try {
+            const setupTracking = {
+                username: adminUsername,
+                email: adminEmail,
+                owner_name: adminFullName,
+                business_name: setupData.business.name,
+                business_address: setupData.business.address || '',
+                business_phone: setupData.business.primaryPhone || '',
+                business_website: setupData.business.website || '',
+                business_description: setupData.business.description || '',
+                language: selectedLanguage,
+                currency: setupData.settings?.currency || 'XAF',
+                device_id: localStorage.getItem('deviceId') || 'web',
+                user_agent: navigator.userAgent,
+                setup_completed_at: new Date().toISOString()
+            };
+
+            await client.from('user_setups').insert([setupTracking]);
+            console.log('✅ Setup tracked in user_setups');
+        } catch (trackErr) {
+            console.warn('⚠️ Setup tracking warning:', trackErr);
+        }
+
+        // ============================================
+        // STEP 7: Save to localStorage
+        // ============================================
+        localStorage.setItem('businessId', newBusinessId);
+        localStorage.setItem('businessInfo', JSON.stringify({ ...newBusinessInfo, id: newBusinessId }));
+        localStorage.setItem('licensePlan', 'trial');
+        localStorage.setItem('licenseStatus', 'active');
+        localStorage.setItem('licenseExpires', trialExpires.toISOString());
+        localStorage.setItem('currentUserId', newUserId);
+        localStorage.setItem('currentUsername', adminUsername);
+        localStorage.setItem('currentRole', 'administrator');
+
+        localStorage.setItem('StockApp_setup', JSON.stringify({
+            isFirstTime: false,
+            completedAt: new Date().toISOString(),
+            businessName: setupData.business.name,
+            ownerName: adminFullName,
+            ownerUsername: adminUsername,
+            businessId: newBusinessId,
+            userId: newUserId,
+            language: selectedLanguage,
+            version: '5.3.5'
+        }));
+        localStorage.setItem('setup_completed', 'true');
+
+        // ============================================
+        // STEP 8: Track event
+        // ============================================
+        if (typeof trackAppEvent === 'function') {
+            trackAppEvent('setup_complete', { 
+                businessName: setupData.business.name, 
+                language: selectedLanguage, 
+                trial: '7days' 
+            }, adminUsername);
+        }
+
+        // ============================================
+        // STEP 9: Send welcome email
+        // ============================================
+        console.log('📧 Triggering welcome email...');
+        try {
+            const welcomeResponse = await fetch(AUTH_setup_URL,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        business_id: newBusinessId,
+                        user_id: newUserId
+                    })
+                }
+            );
+            
+            const welcomeData = await welcomeResponse.json();
+            
+            if (welcomeData.success) {
+                console.log('✅ Welcome email sent to:', adminEmail);
+            } else {
+                console.warn('⚠️ Welcome email:', welcomeData.message || welcomeData.error);
+            }
+        } catch (welcomeErr) {
+            console.warn('⚠️ Welcome email trigger failed:', welcomeErr.message);
+        }
+
+        // ============================================
+        // STEP 10: Show "Check Your Email" screen
+        // ============================================
+        document.querySelectorAll('.setup-step').forEach(step => {
+            step.classList.remove('active');
+            step.style.display = 'none';
+        });
+
+        const successEl = document.getElementById('success-content');
+        if (successEl) {
+            // Update success message to mention email
+            const successTitle = successEl.querySelector('h1');
+            const successMsg = successEl.querySelector('p');
+            
+            if (successTitle) {
+                successTitle.textContent = translate('setup_complete') || '🎉 Setup Complete!';
+            }
+            if (successMsg) {
+                if (adminEmail && adminEmail.includes('@')) {
+                    successMsg.innerHTML = `
+                        <strong>${translate('check_your_email') || '📧 Check your email!'}</strong><br/><br/>
+                        ${translate('verification_sent_to') || 'We sent a welcome email to'}:<br/>
+                        <span style="color: #3b82f6; font-weight: bold;">${adminEmail}</span><br/><br/>
+                        ${translate('check_email_to_continue') || 'Please check your inbox and click the link to verify your account.'}<br/>
+                        <small style="color: #94a3b8;">${translate('redirecting_soon') || 'Redirecting to login in a moment...'}</small>
+                    `;
+                } else {
+                    successMsg.textContent = translate('system_ready') || 'Your workspace is ready. Redirecting to login...';
+                }
+            }
+            
+            successEl.style.display = 'block';
+            successEl.classList.add('active');
+        }
+
+        console.log('✅ Setup complete!');
+        console.log('   Business:', newBusinessId, '-', setupData.business.name);
+        console.log('   User:', adminUsername, '(', newUserId, ')');
+        console.log('   Trial: 7 days | Expires:', trialExpires.toLocaleDateString());
+        console.log('   Email:', adminEmail);
+
+        // ============================================
+        // STEP 11: Redirect after delay (enough time to read)
+        // ============================================
+        setTimeout(() => {
+            window.location.href = `/shop/?newSetup=true&trial=7days&lang=${encodeURIComponent(selectedLanguage)}`;
+        }, 9000); // 9 seconds - enough time to read "check email" message
+
+    } catch (error) {
+        console.error('❌ Setup error:', error);
+        showMessageModal((translate('setup_failed_prefix') || 'Setup failed') + ': ' + error.message);
+        if (completeBtn) {
+            completeBtn.innerHTML = (translate('launch_system') || 'Launch System') + ' <i class="fas fa-rocket"></i>';
+            completeBtn.disabled = false;
+        }
+    }
+}
+// ============================================
+// TOGGLE PASSWORD VISIBILITY
+// ============================================
+function togglePasswordVisibility(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input) {
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+
+// ============================================
+// MESSAGE MODAL
+// ============================================
+function showMessageModal(message) {
+    const modal = document.getElementById('setupMessageModal');
+    const text = document.getElementById('setupMessageText');
+    if (modal && text) {
+        text.textContent = message;
+        modal.style.display = 'flex';
+    } else {
+        alert(message);
+    }
+}
+
+function closeSetupMessageModal() {
+    const modal = document.getElementById('setupMessageModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ============================================
+// TRANSLATION SUPPORT
+// ============================================
+function translateSetupPage() {
+    if (typeof translations === 'undefined') return;
+    const langTranslations = translations[currentLanguage] || translations.en;
+    if (!langTranslations) return;
+    
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (langTranslations[key]) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.setAttribute('placeholder', langTranslations[key]);
+            } else {
+                element.textContent = langTranslations[key];
+            }
+        }
+    });
+}
+
+
+// ============================================
+// INITIALIZATION
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Pre-initialize setup database
+    const client = getSetupDB();
+    if (client && typeof client.then === 'function') {
+        client.then(c => console.log('✅ Setup DB ready:', !!c.from));
+    }
+    
+    updateProgress();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlLang = urlParams.get('lang');
+    const storedLang = localStorage.getItem('language');
+    currentLanguage = urlLang || storedLang || 'en';
+    
+    translateSetupPage();
+
+    applyGoogleSetupPrefill();
+    
+    const languageSelect = document.getElementById('language');
+    if (languageSelect) {
+        languageSelect.value = currentLanguage;
+        languageSelect.addEventListener('change', function() {
+            currentLanguage = this.value;
+            translateSetupPage();
+        });
+    }
+    
+    const logoFileInput = document.getElementById('logoFile');
+    if (logoFileInput) {
+        logoFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                showMessageModal(translate('file_too_large') || 'File too large. Max 2MB.');
+                return;
+            }
+            logoFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('logoPreview').src = e.target.result;
+                document.getElementById('logoPreviewContainer').style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    const backupInput = document.getElementById('backupFileInput');
+    if (backupInput) {
+        backupInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) handleFileSelect(e.target.files[0]);
+        });
+    }
+    
+    const restoreDropzone = document.getElementById('restoreDropzone');
+    if (restoreDropzone) {
+        restoreDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            restoreDropzone.classList.add('drag-over');
+        });
+        restoreDropzone.addEventListener('dragleave', () => {
+            restoreDropzone.classList.remove('drag-over');
+        });
+        restoreDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            restoreDropzone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+    }
+    
+    // Add input event listeners for username and email real-time validation
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function(e) {
+            if (usernameCheckTimer) clearTimeout(usernameCheckTimer);
+            usernameCheckTimer = setTimeout(() => {
+                checkUsernameAvailability(e.target.value.trim());
+            }, 500);
+        });
+    }
+    
+    const emailInput = document.getElementById('businessEmail');
+    if (emailInput) {
+        emailInput.addEventListener('input', function(e) {
+            if (emailCheckTimer) clearTimeout(emailCheckTimer);
+            emailCheckTimer = setTimeout(() => {
+                checkEmailAvailability(e.target.value.trim());
+            }, 500);
+        });
+    }
+
+    const verifyEmailBtn = document.getElementById('verifyEmailCodeBtn');
+    if (verifyEmailBtn) {
+        verifyEmailBtn.addEventListener('click', function() {
+            verifyEmailCode();
+        });
+    }
+
+    const resendVerificationBtn = document.getElementById('resendVerificationBtn');
+    if (resendVerificationBtn) {
+        resendVerificationBtn.addEventListener('click', function() {
+            resendVerificationCode();
+        });
+    }
+
+    const verificationInput = document.getElementById('emailVerificationInput');
+    if (verificationInput) {
+        verificationInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                verifyEmailCode();
+            }
+        });
+    }
+});
+
+
+function clearMyLocalStorage() {
+    localStorage.clear();
+    console.log("Local storage has been successfully emptied.");
+}
+
+// To use it, just call the function:
+clearMyLocalStorage();
+
+
+console.log('📡 Setup page ready - using Supabase project:', MYSUPABASE_URL);
+</script>
+</body>
+</html>

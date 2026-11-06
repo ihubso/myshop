@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign in with Google — StocksalesApp</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a; color: #f8fafc;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; margin: 0; padding: 24px; box-sizing: border-box;
+  }
+  .card {
+    background: #1e293b; border-radius: 20px; padding: 40px 32px;
+    max-width: 420px; width: 100%; text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,.4);
+  }
+  h1 { font-size: 1.4rem; margin: 0 0 12px; }
+  p  { color: #94a3b8; line-height: 1.6; margin: 0 0 24px; }
+  #g_id_onload, #g_id_signin { margin-top: 8px; }
+  .err { color: #f87171; margin-top: 16px; font-size: 0.85rem; }
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="card">
+    <h1>Sign in with Google</h1>
+    <p>Pick your Google account to continue to StocksalesApp.</p>
+
+    <!-- GIS button renders here -->
+    <div id="g_id_onload"
+         data-auto_prompt="false"></div>
+    <div id="g_id_signin" data-type="standard" data-shape="pill"></div>
+
+    <div id="err" class="err"></div>
+  </div>
+
+<script>
+(function () {
+  const params  = new URLSearchParams(location.search);
+  const clientId = params.get('client_id');
+  const state    = params.get('state') || '';
+  const deepLink = params.get('redirect') || 'myapp://auth/callback';
+
+  function fail(msg) {
+    document.getElementById('err').textContent = msg;
+    const u = new URL(deepLink);
+    u.searchParams.set('error', msg);
+    u.searchParams.set('state', state);
+    // Fallback: if deep link doesn't fire, user still sees it
+    setTimeout(() => { location.href = u.toString(); }, 800);
+  }
+
+  if (!clientId) return fail('Missing client_id.');
+
+  // Wait for GIS to load
+  const wait = setInterval(() => {
+    if (typeof google === 'undefined' || !google.accounts) return;
+    clearInterval(wait);
+
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: (response) => {
+        if (!response?.credential) return fail('No credential returned.');
+
+        const u = new URL(deepLink);
+        u.searchParams.set('credential', response.credential);
+        u.searchParams.set('state', state);
+        location.href = u.toString();
+
+        // Show a "you can close this tab" hint
+        document.querySelector('.card').innerHTML =
+          '<h1>✅ Signed in</h1><p>You can close this tab and return to StocksalesApp.</p>';
+      },
+      auto_select: false,
+      cancel_on_tap_outside: false,
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById('g_id_signin'),
+      { type: 'standard', shape: 'pill', theme: 'filled_blue',
+        text: 'continue_with', size: 'large', width: 320 }
+    );
+  }, 100);
+
+  // Safety: if GIS never loads, still give the user a way out
+  setTimeout(() => {
+    clearInterval(wait);
+    if (typeof google === 'undefined') fail('Google sign-in could not load.');
+  }, 15000);
+})();
+</script>
+</body>
+</html>

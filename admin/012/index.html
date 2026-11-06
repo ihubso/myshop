@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Broadcast Control</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/meiou.js"></script>
+<script src="/envofgethoing.js"></script>
+<script src="/supabase-rpc-proxy.js"></script>
+<style>
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc; 
+    color: #0f172a; 
+    padding: 24px; 
+    max-width: 640px; 
+    margin: 0 auto; 
+  }
+  h1 { font-size: 24px; margin-bottom: 4px; font-weight: 700; }
+  .sub { color: #64748b; font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
+  
+  .card { 
+    background: white; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 12px; 
+    padding: 24px; 
+    margin-bottom: 16px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+  input[type="text"], input[type="url"], input[type="datetime-local"], textarea, select { 
+    width: 100%; 
+    box-sizing: border-box; 
+    padding: 10px 12px;
+    border: 1.5px solid #e2e8f0; 
+    border-radius: 8px; 
+    font-family: inherit; 
+    font-size: 14px; 
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  textarea { min-height: 90px; resize: vertical; }
+  
+  button { 
+    padding: 11px 20px; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    font-size: 14px;
+    cursor: pointer; 
+    border: 0; 
+    transition: background 0.2s, transform 0.1s;
+  }
+  button:active { transform: translateY(1px); }
+  .primary { background: #2563eb; color: white; }
+  .primary:hover { background: #1d4ed8; }
+  .primary:disabled { background: #93c5fd; cursor: not-allowed; }
+  .danger  { background: #dc2626; color: white; }
+  .danger:hover { background: #b91c1c; }
+  .danger:disabled { background: #fca5a5; cursor: not-allowed; }
+  
+  .row { display: flex; gap: 12px; align-items: center; margin: 16px 0; }
+  
+  .status { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; font-weight: 500; }
+  .status.on { background: #f0fdf4; color: #14532d; border: 1px solid #86efac; }
+  .status.off { background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
+  
+  .preview { padding: 16px; border-radius: 8px; font-size: 14px; margin-top: 16px; text-align: center; line-height: 1.5; }
+  .preview.info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .preview.warning { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+  .preview.danger  { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+  .preview.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+  
+  .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 16px; cursor: pointer; }
+  .checkbox-wrapper input { width: 18px; height: 18px; accent-color: #2563eb; cursor: pointer; }
+  .checkbox-wrapper label { margin: 0; font-weight: 500; cursor: pointer; color: #334155; }
+
+  /* ═══ Owner gate overlay ═══ */
+  @keyframes gateSpin { to { transform: rotate(360deg); } }
+  #gatePageContent { visibility: hidden; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     OWNER-ONLY GATE
+     The real admin UI sits hidden inside #gatePageContent below.
+     This overlay is all that's visible until the session check passes.
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="gateScreen" style="
+  position: fixed; inset: 0; z-index: 999999;
+  background: #f8fafc;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0f172a; padding: 24px; text-align: center;
+">
+  <div id="gateIcon" style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+  <h2 id="gateTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">
+    Checking access…
+  </h2>
+  <p id="gateMessage" style="color: #64748b; font-size: 14px; max-width: 420px; line-height: 1.5;">
+    Verifying that you're the platform owner. This takes a moment.
+  </p>
+  <div id="gateSpinner" style="
+    width: 32px; height: 32px; margin-top: 20px;
+    border: 3px solid #e2e8f0; border-top-color: #2563eb;
+    border-radius: 50%; animation: gateSpin 0.8s linear infinite;
+  "></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     The real admin page — hidden until the gate passes
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="gatePageContent">
+
+  <h1>Broadcast Control</h1>
+  <p class="sub">Send a real-time message to every user in the app.</p>
+
+  <div id="statusBar" class="status off">Loading current state…</div>
+
+  <div class="card">
+    <label for="message">Message</label>
+    <textarea id="message" maxlength="500" placeholder="e.g. We'll be doing maintenance at 2 AM UTC. Expect brief downtime."></textarea>
+    <div style="font-size:12px; color:#64748b; margin-top:6px; text-align:right;" id="charCount">0 / 500</div>
+
+    <label style="margin-top:20px;" for="level">Style</label>
+    <select id="level">
+      <option value="info">Info (blue) — General notice</option>
+      <option value="warning">Warning (amber) — Heads up</option>
+      <option value="danger">Danger (red) — Urgent action required</option>
+      <option value="success">Success (green) — Good news</option>
+    </select>
+
+    <div class="checkbox-wrapper">
+      <input type="checkbox" id="dismissible">
+      <label for="dismissible">Allow users to dismiss this notification</label>
+    </div>
+
+    <label style="margin-top:20px;" for="endsAt">Auto-end (optional)</label>
+    <input type="datetime-local" id="endsAt">
+
+    <label style="margin-top:20px;" for="linkUrl">Link URL (optional)</label>
+    <input type="url" id="linkUrl" placeholder="https://youtube.com/watch?v=... or any https URL">
+
+    <label style="margin-top:20px;" for="linkLabel">Link button text (optional)</label>
+    <input type="text" id="linkLabel" maxlength="60" placeholder="Watch video">
+
+    <div id="preview" class="preview info" style="display:none;"></div>
+
+    <div style="margin-top:24px; display: flex; gap: 12px;">
+      <button class="primary" id="publishBtn" style="flex: 1;">Publish to all users</button>
+      <button class="danger" id="offBtn">Turn off</button>
+    </div>
+  </div>
+
+  <script>
+  const FN_URL = (window.ENV?.MYSHOPSUPABASE_URL || '') + '/functions/v1/set-broadcast';
+  const ANON = window.ENV?.MYSHOPSUPABASE_ANON_KEY || '';
+
+  const $ = (id) => document.getElementById(id);
+
+  function auth() {
+    const sessionToken = localStorage.getItem('sessionToken');
+    if (!sessionToken) {
+      alert('You must be logged in as the platform owner.');
+      window.location.href = '/login/';
+      return null;
+    }
+    return sessionToken;
+  }
+
+  async function callSet(payload) {
+    const sessionToken = auth();
+    if (!sessionToken) return null;
+
+    try {
+      const res = await fetch(FN_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${ANON}` 
+        },
+        body: JSON.stringify({ sessionToken, ...payload }),
+      });
+      return await res.json();
+    } catch (err) {
+      console.error('Fetch error:', err);
+      return { success: false, error: 'Network error' };
+    }
+  }
+
+  async function refreshStatus() {
+    try {
+      const url = (window.ENV?.MYSHOPSUPABASE_URL || '') + '/functions/v1/get-active-broadcast';
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${ANON}` } });
+      const data = await res.json();
+      const bar = $('statusBar');
+
+      if (data.active && data.broadcast) {
+        bar.className = 'status on';
+        const msg = data.broadcast.message || '';
+        bar.textContent = '🟢 Live: "' + msg.slice(0, 80) + (msg.length > 80 ? '..."' : '"');
+        
+        $('message').value = msg;
+        $('level').value = data.broadcast.level || 'info';
+        $('linkUrl').value = data.broadcast.linkUrl || '';
+        $('linkLabel').value = data.broadcast.linkLabel || '';
+        
+        if ($('dismissible')) {
+          $('dismissible').checked = !!data.broadcast.dismissible;
+        }
+        
+        $('charCount').textContent = msg.length + ' / 500';
+        updatePreview();
+      } else {
+        bar.className = 'status off';
+        bar.textContent = '⚪ No active broadcast.';
+      }
+    } catch (err) {
+      console.error('Failed to refresh status:', err);
+      $('statusBar').textContent = '⚠️ Failed to load status.';
+    }
+  }
+
+  function youtubeId(url) {
+    if (!url) return null;
+    try {
+      const u = new URL(url);
+      if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('/')[0] || null;
+      if (u.hostname.endsWith('youtube.com')) {
+        const v = u.searchParams.get('v');
+        if (v) return v;
+        const m = u.pathname.match(/^\/(embed|shorts|live)\/([A-Za-z0-9_-]+)/);
+        if (m) return m[2];
+      }
+    } catch {}
+    return null;
+  }
+
+  function updatePreview() {
+    const msg = $('message').value.trim();
+    const link = $('linkUrl').value.trim();
+    const label = $('linkLabel').value.trim();
+    const preview = $('preview');
+
+    if (!msg) { 
+      preview.style.display = 'none'; 
+      return; 
+    }
+
+    preview.style.display = 'block';
+    preview.className = 'preview ' + $('level').value;
+
+    let html = '';
+    html += '<div style="font-weight: 500;">' + msg.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>';
+
+    if (link) {
+      const yt = youtubeId(link);
+      const btnLabel = label || (yt ? 'Watch video' : 'Open link');
+      const icon = yt ? '▶ ' : '→ ';
+      html += '<div style="margin-top:12px;"><span style="display:inline-block; padding:8px 16px; border-radius:6px; background:rgba(0,0,0,0.08); font-weight:600; font-size:13px; color: inherit;">'
+        + icon + btnLabel + '</span></div>';
+    }
+
+    preview.innerHTML = html;
+  }
+
+  $('linkUrl').addEventListener('input', updatePreview);
+  $('linkLabel').addEventListener('input', updatePreview);
+
+  $('message').addEventListener('input', () => {
+    $('charCount').textContent = $('message').value.length + ' / 500';
+    updatePreview();
+  });
+  $('level').addEventListener('change', updatePreview);
+
+  $('publishBtn').addEventListener('click', async () => {
+    const message = $('message').value.trim();
+    if (!message) { 
+      alert('Please enter a message first.'); 
+      return; 
+    }
+
+    const endsAt = $('endsAt').value ? new Date($('endsAt').value).toISOString() : null;
+    
+    const dismissibleEl = $('dismissible');
+    const isDismissible = dismissibleEl ? dismissibleEl.checked : false;
+
+    $('publishBtn').disabled = true;
+    $('publishBtn').textContent = 'Publishing…';
+
+    const result = await callSet({
+      message,
+      level: $('level').value,
+      isActive: true,
+      dismissible: isDismissible,
+      endsAt,
+      linkUrl:   $('linkUrl').value.trim() || null,
+      linkLabel: $('linkLabel').value.trim() || null,
+    });
+
+    $('publishBtn').disabled = false;
+    $('publishBtn').textContent = 'Publish to all users';
+
+    if (result?.success) {
+      alert('Published successfully! Every user will see it within a minute.');
+      refreshStatus();
+    } else {
+      alert('Failed to publish: ' + (result?.error || 'Unknown error'));
+    }
+  });
+
+  $('offBtn').addEventListener('click', async () => {
+    if (!confirm('Are you sure you want to turn off the current broadcast?')) return;
+    
+    $('offBtn').disabled = true;
+    $('offBtn').textContent = 'Turning off…';
+
+    const result = await callSet({ isActive: false });
+    
+    $('offBtn').disabled = false;
+    $('offBtn').textContent = 'Turn off';
+
+    if (result?.success) {
+      alert('Broadcast turned off successfully.');
+      refreshStatus();
+    } else {
+      alert('Failed to turn off: ' + (result?.error || 'Unknown error'));
+    }
+  });
+
+  refreshStatus();
+  </script>
+
+</div>
+
+
+<script>
+(function () {
+  'use strict';
+
+  const GATE = document.getElementById('gateScreen');
+  const CONTENT = document.getElementById('gatePageContent');
+
+  function showDenied(icon, title, message, redirectTo) {
+    document.getElementById('gateIcon').textContent = icon;
+    document.getElementById('gateTitle').textContent = title;
+    document.getElementById('gateMessage').textContent = message;
+    document.getElementById('gateSpinner').style.display = 'none';
+
+    if (redirectTo) {
+      setTimeout(() => { window.location.href = redirectTo; }, 150);
+    }
+  }
+
+  function pass() {
+    GATE.remove();
+    CONTENT.style.visibility = 'visible';
+  }
+
+  async function checkAccess() {
+    const sessionToken = localStorage.getItem('sessionToken');
+
+    if (!sessionToken) {
+      showDenied(
+        '🔒',
+        'Sign in required',
+        'You need to sign in as the platform owner to access this page. Redirecting…',
+        '/login/?singaginpls=1'
+      );
+      return;
+    }
+
+    const url = (window.ENV?.MYSHOPSUPABASE_URL || '') + '/functions/v1/auth-login';
+    const anon = window.ENV?.MYSHOPSUPABASE_ANON_KEY || '';
+
+    if (!url || !anon) {
+      showDenied('⚠️', 'Server not configured',
+        'Environment variables are missing. Refresh and try again.', null);
+      return;
+    }
+
+    let result;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${anon}`,
+        },
+        body: JSON.stringify({
+          action: 'check_owner',       // ← use the lightweight action
+          sessionToken,
+        }),
+      });
+      result = await res.json();
+    } catch (err) {
+      console.error('Gate: check failed', err);
+      showDenied('⚠️', 'Could not reach server',
+        'Check your connection and refresh the page.', null);
+      return;
+    }
+
+
+    if (!result?.success || !result?.valid || !result?.userData) {
+      showDenied('🔒', 'Session invalid',
+        'Your session has expired. Please sign in again. Redirecting…',
+        '/login/?singaginpls=2');
+      return;
+    }
+
+    // ⭐ THE GATE — bigmouse must be true
+    const allowed = result.userData.bigmouse === true;
+
+    if (!allowed) {
+      showDenied('⛔', 'Access denied',
+        'This page is restricted. Redirecting to the shop…',
+        '/shop/');
+      return;
+    }
+
+    console.log('✅ Owner gate passed for', result.userData.username);
+    pass();
+  }
+
+  checkAccess();
+})();
+</script>
+
+</body>
+</html>

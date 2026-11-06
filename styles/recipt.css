@@ -1,0 +1,374 @@
+/* === PRINT STYLES FOR RECEIPT === */
+
+/* ----- Base resets ----- */
+#receiptModal * {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif !important;
+     z-index: 2147483617 !important;
+}
+
+/* ----- Watermark (screen) ----- */
+#receiptWatermark {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 0.15 !important;                 /* single, consistent value */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;                   /* behind content */
+    pointer-events: none !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+/* ----- Main table styling (screen AND print base) ----- */
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto !important;           /* allow columns to expand */
+    color: #000000 !important;
+    background-color: #ffffff;
+}
+
+/* Table headers */
+.receipt-table th, 
+#receiptModal th {
+    background-color: #b4b6b4; /* Green header */
+    color: #ffffff;
+    padding: 8px 4px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #000000;
+    border-bottom: 3px solid green;
+}
+
+/* Table cells */
+.receipt-table td,
+#receiptItemsTableBody td {
+    padding: 6px 4px;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #ff8c00;        /* brighter orange */
+    text-align: left;
+    color: #000000 !important;
+    word-wrap: break-word;
+    overflow: visible !important;
+    max-width: none !important;
+}
+
+/* Row background */
+.receipt-table tbody tr {
+    background-color: #ffffff;
+}
+
+/* ----- Guarantee text (always red) ----- */
+#receiptGuaranteevalidity p {
+    color: red !important;
+    font-weight: bold !important;
+}
+
+/* ----- Close button ----- */
+.receipt-modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #000000 !important;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* ----- Flash animation (unchanged) ----- */
+@keyframes receiptFlash {
+    0%   { background-color: transparent; }
+    30%  { background-color: rgba(30, 255, 0, 0.3); }
+    70%  { background-color: rgba(0, 47, 255, 0.2); }
+    100% { background-color: transparent; }
+}
+.receipt-flash {
+    animation: receiptFlash 0.8s ease-out;
+}
+
+/* ----- Festive badge (unchanged) ----- */
+.festive-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 15px;
+    border-radius: 40px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    border: 2px solid gold;
+    transform: rotate(3deg);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+.badge-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+.badge-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+    stroke: currentColor;
+}
+.festive-badge.christmas {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    border-color: #27ae60;
+}
+.festive-badge.newyear {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border-color: #f1c40f;
+}
+.festive-badge.birthday {
+    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+    border-color: #f39c12;
+}
+
+/* ====================== PRINT ONLY ====================== */
+/* ====================== PRINT ONLY ====================== */
+@media print {
+    @page {
+        size: auto;
+        margin: 10mm;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Hide UI elements */
+    body[data-print-section="receipt"] #printHeader,
+    body[data-print-section="receipt"] #printFooter,
+    body[data-print-section="receipt"] #printReceiptBtn,
+    body[data-print-section="receipt"] .modal-close-btn,
+    body[data-print-section="receipt"] .hidden,
+    body[data-print-section="receipt"] #downloadPdfBtn,
+    body[data-print-section="receipt"] .receipt-modal-close-btn,
+    body[data-print-section="receipt"] .receiptEditInput,
+    body[data-print-section="receipt"] #customReceiptModal {
+        display: none !important;
+    }
+/* Hide the loan receipt print area when printing a regular receipt */
+body[data-print-section="receipt"] #loanReceiptPrintArea,
+body[data-print-section="receipt"] #loanReceiptModal {
+    display: none !important;
+}
+
+/* If you ever print a loan receipt, hide the regular one */
+body[data-print-section="loan"] #receiptPrintArea,
+body[data-print-section="loan"] #receiptModal {
+    display: none !important;
+}
+    /* DUPLICATION FIX: hide any print‑only copy */
+    #printPreview,
+    #printReceiptContainer,
+    .print-only-receipt,
+    [id^="print-receipt-"],
+    .receipt-modal + .receipt-modal,
+    #receiptPrintArea:not(:first-of-type) {
+        display: none !important;
+    }
+
+    body[data-print-section="receipt"] {
+        background: #fff !important;
+        color: #000000 !important;
+    }
+
+    div#receiptModal {
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        z-index: auto !important;
+        align-items: unset !important;
+        justify-content: unset !important;
+    }
+
+    div#receiptModal .receipt-content {
+        overflow: visible !important;
+        max-height: none !important;
+        height: auto !important;
+        width: 100% !important;
+        max-width: 210mm !important;
+        padding: 10mm !important;
+        margin: 0 auto !important;
+        background: #fff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        font-size: medium !important;
+        position: static !important;
+        page-break-after: auto !important;
+    }
+
+    #receiptWatermark {
+        visibility: visible !important;
+        opacity: 0.20 !important;
+        background-size: contain !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 100 !important;
+        pointer-events: none !important;
+        display: block !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-image: var(--watermark-image, none);
+    }
+
+    #receiptModal table thead {
+        display: table-header-group !important;
+        background-color: #b4b6b4 !important;
+        color: #ffffff !important;
+    }
+#receiptPrintArea div[style*="repeating-linear-gradient"] {
+    opacity: 1 !important;
+    filter: none !important;
+}
+    .receipt-table th {
+        background-color: #b4b6b4 !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        border-bottom: 3px solid #0b5e20;
+    }
+
+    .receipt-table td {
+        border-bottom: 2px solid #ff8c00 !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        padding: 6px 4px;
+        word-wrap: break-word;
+        overflow: visible !important;
+    }
+
+    .receipt-table tbody tr {
+        background-color: #ffffff !important;
+        page-break-inside: avoid;
+    }
+
+    .receipt-table {
+        table-layout: auto !important;
+        width: 100% !important;
+        border-collapse: collapse;
+    }
+
+    /* TOTAL AREA */
+    #reptotel {
+        font-size: 20px !important;
+        font-family: 'Times New Roman', Times, serif !important;
+        font-weight: 900 !important;
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        overflow: visible !important;
+        color: #000000 !important;
+    }
+
+    #receiptfooter2 .text-right.w-1\/2,
+    #receiptfooter2 .text-right {
+        min-width: 40% !important;
+        overflow: visible !important;
+    }
+
+    #receiptTotalAmount {
+        font-size: 28px !important;
+        font-weight: 900 !important;
+    }
+
+    /* FOOTER KEEP‑TOGETHER */
+    #receiptfooter2 .flex.justify-between {
+        align-items: flex-start;
+    }
+
+    #receiptfooter2 .text-right {
+        line-height: 1.2;
+        margin-top: 0 !important;
+    }
+
+    #receiptfooter2 {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        widows: 4;
+        orphans: 4;
+        margin-top: 5px !important;
+    }
+
+    #receiptfooter {
+        page-break-before: avoid !important;
+        break-before: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-top: 2px !important;
+        orphans: 3;
+        widows: 3;
+    }
+
+    #receiptItemsTableBody tr:last-child,
+    #receiptItemsTableBody tr:nth-last-child(-n+3) {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    /* Guarantee */
+    #receiptGuaranteeSection span#receiptGuaranteeDate {
+        color: red !important;
+        font-weight: bold !important;
+    }
+    #receiptGuaranteeSection p {
+        color: black !important;
+    }
+
+    h3#receiptBusinessName {
+        font-size: 52px;
+        font-weight: bold;
+    }
+
+    #receiptItemsTableBody tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    #receiptItemsTableBody tr:nth-child(20n) {
+        page-break-after: always;
+        break-after: page;
+    }
+
+    .table-container {
+        width: 100% !important;
+        margin: 0 auto !important;
+        height: auto !important;
+        max-height: 100%;
+        border: none;
+        padding: 0;
+    }
+
+    /* Hide preview watermark */
+    body[data-print-section="receipt"] #printPreviewWatermark {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+}

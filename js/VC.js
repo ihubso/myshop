@@ -1,0 +1,86 @@
+// ============================================
+// 🔒 FEATURE LOCKING LOGIC
+// ============================================
+
+// 1. Define the hierarchy (Higher number = better plan)
+const LICENSE_LEVELS = {
+    'none': 0,
+    'starter': 1,
+    'professional': 2,
+    'enterprise': 3,
+    'trial': 4
+
+};
+
+// 2. Define what features each plan unlocks (for the modal UI)
+const PLAN_HIGHLIGHTS = {
+    'professional': [
+        '✅ Unlimited Products & Inventory',
+        '✅ Advanced Sales Reports',
+        '✅ Up to 3 Devices / Cashiers',
+        '✅ Priority Email Support',
+        '✅ Full Sales & Stock History',
+        '✅ Credit, Refund & P&L Reports',
+        '✅ Weekly & Monthly Reports',
+        '✅ Export & Printing Tools'
+    ],
+    'enterprise': [
+        '✅ All Professional Features',
+        '✅ Up to 5 Devices / Cashiers',
+        '✅ Full Expense & P&L Tracking',
+        '✅ Custom API Integrations',
+        '✅ Dedicated Account Manager'
+    ]
+};
+
+// 3. THE MASTER BOUNCER FUNCTION
+function checkFeatureAccess(requiredPlan) {
+    const currentPlan = (window.businessInfo?.license_plan || 'starter').toLowerCase();
+    const currentLevel = LICENSE_LEVELS[currentPlan] || 1;
+    const requiredLevel = LICENSE_LEVELS[requiredPlan.toLowerCase()] || 1;
+    
+    // ✅ ALLOW: User's plan is equal to or higher than required
+    if (currentLevel >= requiredLevel) {
+        return true; 
+    }
+    
+    // 🛑 BLOCK: Show the upgrade modal
+    showUpgradeModal(currentPlan, requiredPlan);
+    return false;
+}
+
+// 4. MODAL CONTROLLERS
+function showUpgradeModal(currentPlan, requiredPlan) {
+    const modal = document.getElementById('upgradeModal');
+    if (!modal) return;
+
+    document.getElementById('currentPlanText').textContent = capitalizeFirstLetter(currentPlan);
+    document.getElementById('requiredPlanText').textContent = capitalizeFirstLetter(requiredPlan);
+    
+    // Populate the feature list
+    const featuresList = document.getElementById('upgradeFeaturesList');
+    const features = PLAN_HIGHLIGHTS[requiredPlan.toLowerCase()] || [];
+    
+    if (features.length > 0) {
+        featuresList.innerHTML = `<p class="font-semibold mb-2 text-gray-900 dark:text-white">What you get with ${capitalizeFirstLetter(requiredPlan)}:</p>` + 
+            features.map(f => `<div class="flex items-center mb-1">${f}</div>`).join('');
+        featuresList.classList.remove('hidden');
+    } else {
+        featuresList.classList.add('hidden');
+    }
+
+    modal.classList.remove('hidden');
+}
+
+function closeUpgradeModal() {
+    document.getElementById('upgradeModal')?.classList.add('hidden');
+}
+
+function goToPricingPage() {
+    closeUpgradeModal();
+    movetopricing();
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
