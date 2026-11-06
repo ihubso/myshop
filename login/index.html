@@ -10,9 +10,62 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles/language-direction.css">
+  <script>
+(function () {
+  'use strict';
+  console.log('🚀 Booting StocksalesApp...');
+
+  // ── safe helpers (localStorage can throw in private mode / quota) ──
+  function safeGet(k) {
+    try { return localStorage.getItem(k); } catch (e) { return null; }
+  }
+  function safeRemove(k) {
+    try { localStorage.removeItem(k); } catch (e) {}
+  }
+
+  // ── 1. Read the session token ──
+  var token = safeGet('sessionTokenfordiveris');
+
+  // ── 2. Check expiry (token payload is base64-encoded JSON) ──
+  var expired = false;
+  if (token) {
+    try {
+      var payload = JSON.parse(decodeURIComponent(atob(token)));
+      if (payload && payload.expiresAt) {
+        var exp = Date.parse(payload.expiresAt);
+        if (!isNaN(exp) && exp < Date.now()) {
+          expired = true;
+        }
+      }
+    } catch (e) {
+      // Not a base64-JSON token (e.g. Supabase JWT) — skip expiry check
+    }
+  }
+
+  // ── 3. Decide ──
+  var hasValidSession = !!token && token.length > 10 && !expired;
+
+  // ── 4. Preserve language preference on the outgoing URL ──
+  var lang = safeGet('language') || 'en';
+
+  if (hasValidSession) {
+    // Returning user — go straight to shop
+    location.replace('/shop/?lang=' + encodeURIComponent(lang) + '&from=boot');
+  } else {
+    // First launch or after logout — wipe any stale tokens and go to login
+    if (token) {
+      safeRemove('sessionTokenfordiveris');
+      safeRemove('rememberMeSessionToken');
+      safeRemove('rememberedUser');
+    }
+    location.href = 'http://myshop.stocksalesapp.store/login/';
+  }
+})();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase-rpc-proxy.js"></script>
 <script src="bcrypt.min.js"></script>
+
 
   <script src="../js/env.js"></script>
   <script src="translations.js"></script>
