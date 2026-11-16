@@ -6,98 +6,56 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ============================================================
-// Translation Helper (Mirrors translations.js)
+// Translation Helper
 // ============================================================
-// We paste the translation object here so the server can use it for 
-// Open Graph descriptions.
 const TRANSLATIONS = {
   en: {
-    itemsSingular: 'item',
-    itemsPlural: 'items',
-    andMore: 'and {count} more',
-    forCustomer: 'For: {name}',
-    happyNewYear: '🎉 Happy New Year!',
-    merryChristmas: '🎄 Merry Christmas!',
-    eidMubarak: '🌙 Eid Mubarak!',
-    happyDiwali: '🪔 Happy Diwali!',
-    happyHolidays: '🎉 Happy Holidays!'
+    itemsSingular: 'item', itemsPlural: 'items', andMore: 'and {count} more',
+    forCustomer: 'For: {name}', happyNewYear: '🎉 Happy New Year!',
+    merryChristmas: '🎄 Merry Christmas!', eidMubarak: '🌙 Eid Mubarak!',
+    happyDiwali: '🪔 Happy Diwali!', happyHolidays: '🎉 Happy Holidays!'
   },
   fr: {
-    itemsSingular: 'article',
-    itemsPlural: 'articles',
-    andMore: 'et {count} de plus',
-    forCustomer: 'Pour : {name}',
-    happyNewYear: '🎉 Bonne année !',
-    merryChristmas: '🎄 Joyeux Noël !',
-    eidMubarak: '🌙 Aïd Moubarak !',
-    happyDiwali: '🪔 Joyeux Diwali !',
-    happyHolidays: '🎉 Joyeuses fêtes !'
+    itemsSingular: 'article', itemsPlural: 'articles', andMore: 'et {count} de plus',
+    forCustomer: 'Pour : {name}', happyNewYear: '🎉 Bonne année !',
+    merryChristmas: '🎄 Joyeux Noël !', eidMubarak: '🌙 Aïd Moubarak !',
+    happyDiwali: '🪔 Joyeux Diwali !', happyHolidays: '🎉 Joyeuses fêtes !'
   },
   sw: {
-    itemsSingular: 'bidhaa',
-    itemsPlural: 'bidhaa',
-    andMore: 'na {count} zaidi',
-    forCustomer: 'Kwa: {name}',
-    happyNewYear: '🎉 Mwaka Mpya Njema!',
-    merryChristmas: '🎄 Krismasi Njema!',
-    eidMubarak: '🌙 Eid Mubarak!',
-    happyDiwali: '🪔 Diwali Njema!',
-    happyHolidays: '🎉 Sikukuu Njema!'
+    itemsSingular: 'bidhaa', itemsPlural: 'bidhaa', andMore: 'na {count} zaidi',
+    forCustomer: 'Kwa: {name}', happyNewYear: '🎉 Mwaka Mpya Njema!',
+    merryChristmas: '🎄 Krismasi Njema!', eidMubarak: '🌙 Eid Mubarak!',
+    happyDiwali: '🪔 Diwali Njema!', happyHolidays: '🎉 Sikukuu Njema!'
   },
   hi: {
-    itemsSingular: 'वस्तु',
-    itemsPlural: 'वस्तुएं',
-    andMore: 'और {count} अधिक',
-    forCustomer: 'के लिए: {name}',
-    happyNewYear: '🎉 नववर्ष की शुभकामनाएं!',
-    merryChristmas: '🎄 क्रिसमस की शुभकामनाएं!',
-    eidMubarak: '🌙 ईद मुबारक!',
-    happyDiwali: '🪔 दीपावली की शुभकामनाएं!',
-    happyHolidays: '🎉 शुभ छुट्टियां!'
+    itemsSingular: 'वस्तु', itemsPlural: 'वस्तुएं', andMore: 'और {count} अधिक',
+    forCustomer: 'के लिए: {name}', happyNewYear: '🎉 नववर्ष की शुभकामनाएं!',
+    merryChristmas: '🎄 क्रिसमस की शुभकामनाएं!', eidMubarak: '🌙 ईद मुबारक!',
+    happyDiwali: '🪔 दीपावली की शुभकामनाएं!', happyHolidays: '🎉 शुभ छुट्टियां!'
   },
   ms: {
-    itemsSingular: 'barang',
-    itemsPlural: 'barang',
-    andMore: 'dan {count} lagi',
-    forCustomer: 'Untuk: {name}',
-    happyNewYear: '🎉 Selamat Tahun Baru!',
-    merryChristmas: '🎄 Selamat Hari Krismas!',
-    eidMubarak: '🌙 Selamat Hari Raya!',
-    happyDiwali: '🪔 Selamat Hari Deepavali!',
-    happyHolidays: '🎉 Selamat Bercuti!'
+    itemsSingular: 'barang', itemsPlural: 'barang', andMore: 'dan {count} lagi',
+    forCustomer: 'Untuk: {name}', happyNewYear: '🎉 Selamat Tahun Baru!',
+    merryChristmas: '🎄 Selamat Hari Krismas!', eidMubarak: '🌙 Selamat Hari Raya!',
+    happyDiwali: '🪔 Selamat Hari Deepavali!', happyHolidays: '🎉 Selamat Bercuti!'
   },
   ar: {
-    itemsSingular: 'عنصر',
-    itemsPlural: 'عناصر',
-    andMore: 'و {count} المزيد',
-    forCustomer: 'لـ: {name}',
-    happyNewYear: '🎉 سنة جديدة سعيدة!',
-    merryChristmas: '🎄 عيد ميلاد مجيد!',
-    eidMubarak: '🌙 عيد مبارك!',
-    happyDiwali: '🪔 ديوالي سعيد!',
-    happyHolidays: '🎉 عطلات سعيدة!'
+    itemsSingular: 'عنصر', itemsPlural: 'عناصر', andMore: 'و {count} المزيد',
+    forCustomer: 'لـ: {name}', happyNewYear: '🎉 سنة جديدة سعيدة!',
+    merryChristmas: '🎄 عيد ميلاد مجيد!', eidMubarak: '🌙 عيد مبارك!',
+    happyDiwali: '🪔 ديوالي سعيد!', happyHolidays: '🎉 عطلات سعيدة!'
   },
   es: {
-    itemsSingular: 'artículo',
-    itemsPlural: 'artículos',
-    andMore: 'y {count} más',
-    forCustomer: 'Para: {name}',
-    happyNewYear: '🎉 ¡Feliz Año Nuevo!',
-    merryChristmas: '🎄 ¡Feliz Navidad!',
-    eidMubarak: '🌙 ¡Feliz Eid!',
-    happyDiwali: '🪔 ¡Feliz Diwali!',
-    happyHolidays: '🎉 ¡Felices Fiestas!'
+    itemsSingular: 'artículo', itemsPlural: 'artículos', andMore: 'y {count} más',
+    forCustomer: 'Para: {name}', happyNewYear: '🎉 ¡Feliz Año Nuevo!',
+    merryChristmas: '🎄 ¡Feliz Navidad!', eidMubarak: '🌙 ¡Feliz Eid!',
+    happyDiwali: '🪔 ¡Feliz Diwali!', happyHolidays: '🎉 ¡Felices Fiestas!'
   },
   zh: {
-    itemsSingular: '件商品',
-    itemsPlural: '件商品',
-    andMore: '以及另外 {count} 件',
-    forCustomer: '致：{name}',
-    happyNewYear: '🎉 新年快乐！',
-    merryChristmas: '🎄 圣诞快乐！',
-    eidMubarak: '🌙 开斋节吉庆！',
-    happyDiwali: '🪔 排灯节快乐！',
-    happyHolidays: '🎉 节日快乐！'
+    itemsSingular: '件商品', itemsPlural: '件商品', andMore: '以及另外 {count} 件',
+    forCustomer: '致：{name}', happyNewYear: '🎉 新年快乐！',
+    merryChristmas: '🎄 圣诞快乐！', eidMubarak: '🌙 开斋节吉庆！',
+    happyDiwali: '🪔 排灯节快乐！', happyHolidays: '🎉 节日快乐！'
   }
 };
 
@@ -113,7 +71,6 @@ function buildReceiptDescription(data, biz, lang) {
   const currency = biz.currency || 'XAF';
   const formatPrice = (n) => `${currency} ${Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-  // 1. Calculate totals & items
   const items = Array.isArray(data.items) && data.items.length
     ? data.items
     : (data.product_name || data.productname ? [{ 
@@ -128,7 +85,6 @@ function buildReceiptDescription(data, biz, lang) {
   const total = subtotal + taxTotal;
   const totalText = formatPrice(total);
 
-  // 2. Build Item String (Item 1, Item 2 +2 more)
   let itemsText = '';
   const itemNames = items.map(i => i.name || 'Item');
   const count = itemNames.length;
@@ -143,34 +99,27 @@ function buildReceiptDescription(data, biz, lang) {
     itemsText = `${firstTwo} ${t('andMore', lang).replace('{count}', moreCount)}`;
   }
 
-  // 3. Add Customer Name
   const customer = data.customer_name || data.customerName;
   let customerText = '';
   if (customer) {
     customerText = t('forCustomer', lang).replace('{name}', customer);
   }
 
-  // 4. Add Festive Greeting (based on badge)
   let festiveText = '';
   const badgeIndex = biz.currentBadgeIndex;
   if (biz.festiveBadgeEnabled && badgeIndex > 0) {
-    // Map specific badge indices to greetings
-    // Note: You can add more specific mappings based on your badgeOptions
-    if (badgeIndex === 11) festiveText = t('happyNewYear', lang);       // New Year
-    else if (badgeIndex === 13) festiveText = t('merryChristmas', lang); // Christmas
-    else if (badgeIndex === 14) festiveText = t('eidMubarak', lang);    // Eid al-Fitr
-    else if (badgeIndex === 15) festiveText = t('eidMubarak', lang);    // Eid al-Adha
-    else if (badgeIndex === 16) festiveText = t('happyDiwali', lang);   // Diwali
-    else festiveText = t('happyHolidays', lang);                        // Generic
+    if (badgeIndex === 11) festiveText = t('happyNewYear', lang);
+    else if (badgeIndex === 13) festiveText = t('merryChristmas', lang);
+    else if (badgeIndex === 14) festiveText = t('eidMubarak', lang);
+    else if (badgeIndex === 15) festiveText = t('eidMubarak', lang);
+    else if (badgeIndex === 16) festiveText = t('happyDiwali', lang);
+    else festiveText = t('happyHolidays', lang);
   }
 
-  // 5. Combine into the final string
   const parts = [totalText, itemsText];
   if (customerText) parts.push(customerText);
   
   let description = parts.join(' • ');
-  
-  // Add festive greeting on a new line if it exists
   if (festiveText) {
     description = `${festiveText}\n${description}`;
   }
@@ -204,7 +153,6 @@ export default async function handler(req, res) {
     const data = payload.data;
     const biz = payload.businessInfo || {};
 
-    // 🔥 GET LANGUAGE & BUILD DESCRIPTION
     const lang = biz.currentLanguage || 'en';
     const ogDescription = buildReceiptDescription(data, biz, lang);
 
@@ -216,14 +164,15 @@ export default async function handler(req, res) {
     const baseUrl = `${protocol}://${host}`;
     
     const canonicalUrl = `${baseUrl}/api/receipt?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
-    const redirectUrl = `/api/receipt?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
+    const redirectUrl = `/api/receiptpage/?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
 
-    // ---------- BOT DETECTION ----------
     const userAgent = req.headers['user-agent'] || '';
     const isBot = /facebook|twitter|whatsapp|telegram|linkedin|slack|discord|pinterest|reddit|instagram|googlebot|bingbot/i.test(userAgent);
 
+    // ✅ FIXED: Set header first, then send status and body
     if (isBot) {
-      return res.status(200).setHeader('Content-Type', 'text/html').send(`
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(`
         <!DOCTYPE html>
         <html lang="${lang}">
         <head>
@@ -250,7 +199,8 @@ export default async function handler(req, res) {
     }
 
     // Human redirect (SW + JS)
-    return res.status(200).setHeader('Content-Type', 'text/html').send(`
+    res.setHeader('Content-Type', 'text/html');
+    return res.status(200).send(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -271,6 +221,8 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Error:', error);
+    // ✅ FIXED: Set header before sending 500
+    res.setHeader('Content-Type', 'text/plain');
     return res.status(500).send('Server error');
   }
 }
