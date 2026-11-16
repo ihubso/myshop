@@ -1,9 +1,8 @@
+
 {
-   "type": "module",
-  "devDependencies": {
-    "supabase": "^2.98.2"
-  },
+  "type": "module",
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.2",
     "node-appwrite": "^25.2.0"
   }
 }

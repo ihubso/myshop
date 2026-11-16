@@ -164,7 +164,7 @@ export default async function handler(req, res) {
     const baseUrl = `${protocol}://${host}`;
     
     const canonicalUrl = `${baseUrl}/api/receipt?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
-    const redirectUrl = `/api/receiptpage/?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
+    const redirectUrl = `${baseUrl}/receiptpage/?receipt=${encodeURIComponent(receipt)}${bid ? `&bid=${encodeURIComponent(bid)}` : ''}`;
 
     const userAgent = req.headers['user-agent'] || '';
     const isBot = /facebook|twitter|whatsapp|telegram|linkedin|slack|discord|pinterest|reddit|instagram|googlebot|bingbot/i.test(userAgent);
