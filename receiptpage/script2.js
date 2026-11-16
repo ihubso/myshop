@@ -542,7 +542,7 @@ async function showReceiptFromData(data) {
           const bizId = data.business_id || currentBusinessId || "unknown";
           const baseUrl = window.location.origin + window.location.pathname;
           const viewUrl = `${baseUrl}?receipt=${encodeURIComponent(receiptId)}&bid=${encodeURIComponent(bizId)}`;
-          const qr = new QRious({ value: viewUrl, size: 160, level: "M" });
+          const qr = new QRious({ value: viewUrl, size: 400, level: "M" });
           qrImg.src = qr.toDataURL();
           qrImg.classList.remove("hidden");
           qrImg.style.cursor = "pointer";

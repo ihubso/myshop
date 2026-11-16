@@ -1,18 +1,12 @@
 /* ============================================================
-   STYLES FOR RECEIPT PAGE (receiptContainer fragment)
-   Cleaned — only classes/IDs present in the HTML are kept
+   BASE STYLES & UTILITIES
    ============================================================ */
-
-/* ---------- Base body ---------- */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #18181b !important;
 }
 
-/* ---------- Utility: hidden ---------- */
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 /* ---------- Loading state ---------- */
 .loading {
@@ -21,12 +15,10 @@ body {
     padding: 2rem 1rem;
     color: #e5e7eb;
 }
-
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50%      { opacity: 0.5; }
 }
-
 .spinner {
     width: 58px;
     height: 58px;
@@ -36,34 +28,9 @@ body {
     margin: 0 auto 18px;
     animation: spin 1s linear infinite;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ---------- Not found state ---------- */
-.not-found {
-    width: 100%;
-}
-
-/* ---------- Receipt notification ---------- */
-.receipt-notification {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(17, 24, 39, 0.95);
-    color: #f9fafb;
-    padding: 0.75rem 1.25rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
-    z-index: 99999;
-    font-size: 0.9rem;
-    max-width: 90vw;
-    text-align: center;
-}
-
-/* ---------- Modal overlay ---------- */
+/* ---------- Modal & Receipt Container ---------- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -77,14 +44,12 @@ body {
     padding: 1rem;
 }
 
-/* ---------- Receipt content panel ---------- */
 .receipt-content {
     background-color: #ffffff !important;
     padding: 2rem;
     color: #020617 !important;
     border-radius: 0.75rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     max-width: 90%;
     max-height: 90%;
     overflow-y: auto;
@@ -92,19 +57,11 @@ body {
     animation: modalSlideIn 0.3s ease-out;
     border: 1px solid rgb(255, 255, 255);
 }
-
 @keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ---------- Modal close button ---------- */
 .receipt-modal-close-btn {
     position: absolute;
     top: 1rem;
@@ -119,42 +76,133 @@ body {
     animation: pulse 2s infinite ease-in-out;
 }
 
-/* ---------- Print / screen helpers ---------- */
-.print-visible {
-    /* visible on print; hidden on screen by default if needed */
+/* ============================================================
+   EXACT RECEIPT TABLE MATCH (Black grid, gray header, green top, orange rows)
+   ============================================================ */
+.table-container {
+    margin-bottom: 1rem;
+    width: 100%;
+    overflow-x: auto;
 }
 
-@media screen {
-    /* watermark hidden on screen */
-    #receiptWatermark {
-        display: none;
-    }
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 0.75rem;
+    border: 1px solid #000 !important; /* Outer black border */
+    border-top: 3px solid #10b981 !important; /* Green top bar */
 }
 
-@media print {
-    #receiptWatermark {
-        display: block !important;
-    }
-    .text-blue-700 {
-        color: #000 !important;
-    }
-    .receipt-content {
-        box-shadow: none;
-        border: none;
-        max-height: none;
-        max-width: 100%;
-        width: 100%;
-        padding: 0;
-    }
-    .receipt-modal-close-btn,
-    #printReceiptBtn,
-    #downloadPdfBtn,
-    #shareReceiptBtn {
-        display: none !important;
-    }
+/* Header row: gray background, black text */
+.receipt-table .table-header th {
+    background-color: #d1d5db !important; /* Gray */
+    color: #000000 !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 8px !important;
+    border: 1px solid #000 !important; /* Black grid lines */
+    border-top: none !important; 
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
-/* ---------- Festive badge ---------- */
+/* Hide the old divider row if it exists in HTML */
+.receipt-table .table-header tr:last-child {
+    display: none !important;
+}
+
+/* Body cells */
+.receipt-table .table-body td {
+    padding: 8px !important;
+    font-size: 0.85rem;
+    vertical-align: middle;
+    word-break: break-word;
+    border: 1px solid #000 !important; /* Black grid lines */
+    border-bottom: 2px solid #f97316 !important; /* Orange bottom border */
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Zebra striping (light gray for even rows, white for odd) */
+.receipt-table .table-body tr:nth-child(odd) td {
+    background-color: #ffffff !important;
+}
+.receipt-table .table-body tr:nth-child(even) td {
+    background-color: #e5e7eb !important; 
+}
+
+/* Type Badges - Simple text, no colored bubbles */
+.receipt-type-badge {
+    display: inline-block;
+    font-weight: 500;
+    color: #000 !important;
+}
+
+/* Qty column */
+.receipt-table .table-body td.qty-cell {
+    font-weight: 500;
+    text-align: center;
+    color: #000 !important;
+}
+
+/* Subtotal column */
+.receipt-table .table-body td.subtotal-cell {
+    font-weight: 700;
+    text-align: right;
+    color: #000 !important;
+}
+
+/* Unit price */
+.receipt-table .table-body td.unit-cell {
+    text-align: right;
+    color: #000 !important;
+}
+
+/* Empty filler rows (keep them clean, but keep the orange border) */
+.receipt-table .table-body tr.empty-row td {
+    background: #ffffff !important;
+    border-bottom: 2px solid #f97316 !important; 
+}
+
+/* ============================================================
+   TOTALS & FOOTER
+   ============================================================ */
+#receiptfooter2 {
+    background: #f9fafb !important; /* Very light gray instead of blue */
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+#reptotel {
+    background: #000000 !important; /* Black for a formal receipt look */
+    color: #ffffff !important;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
+    float: right;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+#reptotel span { color: #ffffff !important; }
+
+#receiptBalanceDue {
+    background: #fef2f2 !important;
+    border-left: 3px solid #dc2626;
+    padding: 3px 8px;
+    border-radius: 4px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* ============================================================
+   INSTALL MODAL & OTHER STYLES
+   ============================================================ */
 .festive-badge-receipt {
     display: flex;
     align-items: center;
@@ -170,58 +218,6 @@ body {
     width: fit-content;
 }
 
-/* ---------- Receipt table ---------- */
-.table-container {
-    margin-bottom: 1rem;
-    width: 100%;
-    overflow-x: auto;
-}
-
-.receipt-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-
-.receipt-table .table-header th {
-    padding-bottom: 0.25rem;
-    border-bottom: 1px solid currentColor;
-}
-
-.receipt-table .table-body tr {
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.receipt-table .table-body td {
-    padding: 0.25rem 0;
-    vertical-align: top;
-    word-break: break-word;
-}
-
-/* ---------- Receipt edit inputs ---------- */
-.receiptEditInput {
-    font-size: 0.75rem;
-    line-height: 1.2;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    padding: 2px 4px;
-    background: #ffffff;
-    color: #111827;
-}
-
-/* ---------- Print watermark (fixed positioning for print) ---------- */
-#printWatermark {
-    position: fixed;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* ---------- Receipt install overlay (modal) ---------- */
 .receipt-install-overlay {
     position: fixed;
     inset: 0;
@@ -247,7 +243,6 @@ body {
     color: #f9fafb;
     animation: modalSlideIn 0.3s ease-out;
 }
-
 .receipt-install-close {
     position: absolute;
     top: 0.75rem;
@@ -259,11 +254,7 @@ body {
     cursor: pointer;
     color: #9ca3af;
 }
-
-.receipt-install-close:hover {
-    color: #ffffff;
-}
-
+.receipt-install-close:hover { color: #ffffff; }
 .receipt-install-loading {
     display: flex;
     flex-direction: column;
@@ -271,7 +262,6 @@ body {
     gap: 12px;
     padding: 1rem 0;
 }
-
 .receipt-install-progress {
     width: 100%;
     height: 6px;
@@ -279,22 +269,12 @@ body {
     border-radius: 999px;
     overflow: hidden;
 }
-
 .receipt-install-progress-bar {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #10b981, #3b82f6);
     transition: width 0.3s ease;
 }
-
-.receipt-install-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0.5rem 0;
-}
-
 .receipt-install-primary {
     margin-top: 1rem;
     padding: 0.75rem 1.25rem;
@@ -306,11 +286,7 @@ body {
     cursor: pointer;
     transition: background 0.2s ease;
 }
-
-.receipt-install-primary:hover {
-    background: #1d4ed8;
-}
-
+.receipt-install-primary:hover { background: #1d4ed8; }
 .receipt-install-store-link {
     display: inline-block;
     margin-top: 0.75rem;
@@ -319,222 +295,130 @@ body {
     font-size: 0.85rem;
 }
 
-/* ---------- Dark mode / night mode for receipt page ---------- */
-body.night-mode {
-    background-color: #18181b !important;
-    color: #e5e7eb !important;
-}
-
-body.night-mode .receipt-notification {
-    background: rgba(35, 35, 42, 0.95);
-    color: #e5e7eb;
-}
-
-body.night-mode .receipt-install-dialog {
-    background: linear-gradient(135deg, #23232a 0%, #1a1a2e 100%);
-}
-/* ============================================================
-   COLORFUL RECEIPT TABLE
-   ============================================================ */
-
-.receipt-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    margin-bottom: 0.75rem;
-}
-
-/* Header row: blue gradient */
-.receipt-table .table-header th {
-    background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%);
-    color: #ffffff !important;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    padding: 8px 8px !important;
-    border-bottom: none !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-/* Remove the old divider row under header */
-.receipt-table .table-header tr:last-child {
-    display: none;
-}
-
-/* Body cells */
-.receipt-table .table-body td {
-    padding: 7px 8px !important;
-    font-size: 0.85rem;
-    vertical-align: middle;
-    word-break: break-word;
-    border-bottom: 1px solid #e5e7eb;
-    color: #111827;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-/* Zebra striping */
-.receipt-table .table-body tr:nth-child(odd) td {
-    background: #f8fafc;
-}
-.receipt-table .table-body tr:nth-child(even) td {
-    background: #eef2ff;
-}
-
-/* Hover (screen only) */
-.receipt-table .table-body tr:hover td {
-    background: #dbeafe;
-    transition: background 0.15s ease;
-}
-
-/* Type badges */
-.receipt-type-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-.receipt-type-badge.product {
-    background: #dcfce7;
-    color: #166534;
-}
-.receipt-type-badge.service {
-    background: #ede9fe;
-    color: #5b21b6;
-}
-
-/* Qty column accent */
-.receipt-table .table-body td.qty-cell {
-    font-weight: 600;
-    color: #1e40af;
-}
-
-/* Subtotal column */
-.receipt-table .table-body td.subtotal-cell {
-    font-weight: 700;
-    color: #047857;
-    text-align: right;
-}
-
-/* Unit price */
-.receipt-table .table-body td.unit-cell {
-    text-align: right;
-    color: #334155;
-}
-
-/* Empty filler rows — keep clean, no zebra */
-.receipt-table .table-body tr.empty-row td {
-    background: #ffffff !important;
-    color: transparent;
-}
-
-/* Totals block tint */
-#receiptfooter2 {
-    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
-    border-radius: 8px;
-    padding: 10px 12px;
-    border: 1px solid #dbeafe;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-
-/* Total amount highlight */
-#reptotel {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: #ffffff !important;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-top: 4px;
-    display: inline-block;
-    float: right;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-}
-#reptotel span { color: #ffffff !important; }
-
-/* Balance due red accent */
-#receiptBalanceDue {
-    background: #fef2f2;
-    border-left: 3px solid #dc2626;
-    padding: 3px 8px;
+.receipt-edit-input {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border: 1px solid #d1d5db;
     border-radius: 4px;
+    padding: 2px 4px;
+    background: #ffffff;
+    color: #111827;
+}
+
+/* ============================================================
+   QR CODE — screen sizes
+   ============================================================ */
+.qr-container {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.receipt-qr {
+    width: 140px;
+    height: 140px;
+    border: 2px solid #000;
+    padding: 4px;
+    background: #fff;
+    display: block;
+    margin: 0 auto;
+    image-rendering: pixelated;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-/* Print safety for colors */
+.receipt-qr.hidden {
+    display: none !important;
+}
+
+.qr-container p {
+    font-size: 10px;
+    margin-top: 4px;
+    color: #374151;
+}
+
+/* ============================================================
+   PRINT STYLES (Single clean block, no duplicates)
+   ============================================================ */
 @media print {
+    #receiptWatermark { display: block !important; }
+    .text-blue-700 { color: #000 !important; }
+    
+    .receipt-content {
+        box-shadow: none !important;
+        border: none !important;
+        max-height: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    .receipt-modal-close-btn,
+    #printReceiptBtn,
+    #downloadPdfBtn,
+    #shareReceiptBtn {
+        display: none !important;
+    }
+    
+    /* Force the exact table colors to print */
+    .receipt-table {
+        border: 1px solid #000 !important;
+        border-top: 3px solid #10b981 !important;
+    }
     .receipt-table .table-header th {
-        background: #2563eb !important;
-        color: #ffffff !important;
+        background: #d1d5db !important; 
+        color: #000 !important; 
+        border: 1px solid #000 !important;
     }
-    .receipt-table .table-body tr:nth-child(odd) td {
-        background: #f8fafc !important;
+    .receipt-table .table-body tr:nth-child(odd) td { background: #ffffff !important; }
+    .receipt-table .table-body tr:nth-child(even) td { background: #e5e7eb !important; }
+    .receipt-table .table-body td {
+        border: 1px solid #000 !important;
+        border-bottom: 2px solid #f97316 !important;
     }
-    .receipt-table .table-body tr:nth-child(even) td {
-        background: #eef2ff !important;
+    .receipt-type-badge { color: #000 !important; }
+    
+    #receiptfooter2 { background: #f9fafb !important; border: 1px solid #e5e7eb !important; }
+    #reptotel { background: #000000 !important; color: #ffffff !important; }
+
+    /* --- QR CODE PRINT FIX --- */
+    .qr-container {
+        display: block !important;
+        width: auto !important;
+        margin: 0 auto 8px !important;
     }
-    #receiptfooter2 {
-        background: #eff6ff !important;
+    
+    /* 🚨 THIS FORCES THE QR CODE TO STAY BIG */
+    img.receipt-qr, 
+    #receiptQRCode {
+        width: 160px !important;
+        height: 160px !important;
+        max-width: 160px !important;
+        max-height: 160px !important; /* Overrides the generic 36px limit */
+        min-width: 160px !important;
+        min-height: 160px !important;
+        border: 1.5px solid #000 !important;
+        padding: 4px !important;
+        background: #fff !important;
+        image-rendering: pixelated !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
-    #reptotel {
-        background: #2563eb !important;
-        color: #ffffff !important;
-    }
-    .receipt-type-badge.product {
-        background: #dcfce7 !important;
-        color: #166534 !important;
-    }
-    .receipt-type-badge.service {
-        background: #ede9fe !important;
-        color: #5b21b6 !important;
+    
+    .qr-container p {
+        font-size: 9pt !important;
+        color: #000 !important;
+        margin-top: 2px !important;
     }
 }
-/* ---------- Responsive tweaks for receipt fragment ---------- */
+
+/* ---------- Responsive Tweaks ---------- */
 @media (max-width: 640px) {
-    .receipt-content {
-        padding: 1.25rem;
-        max-width: 100%;
-        max-height: 95vh;
-        border-radius: 0.5rem;
-    }
-
-    .receipt-modal-close-btn {
-        top: 0.5rem;
-        right: 0.5rem;
-        font-size: 1.5rem;
-    }
-
-    .receipt-table {
-        font-size: 0.85rem;
-    }
-
-    .receipt-install-dialog {
-        padding: 1.25rem;
-        border-radius: 1rem;
-    }
+    .receipt-content { padding: 1.25rem; max-width: 100%; max-height: 95vh; border-radius: 0.5rem; }
+    .receipt-modal-close-btn { top: 0.5rem; right: 0.5rem; font-size: 1.5rem; }
+    .receipt-install-dialog { padding: 1.25rem; border-radius: 1rem; }
 }
 
 @media (max-width: 479px) {
-    .receipt-content {
-        padding: 1rem;
-        border-radius: 0.5rem;
-    }
-
-    .receipt-table {
-        font-size: 0.8rem;
-    }
-
-    .receipt-install-dialog {
-        padding: 1rem;
-    }
+    .receipt-content { padding: 1rem; border-radius: 0.5rem; }
+    .receipt-install-dialog { padding: 1rem; }
 }
