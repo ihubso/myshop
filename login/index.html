@@ -49,8 +49,7 @@
   var lang = safeGet('language') || 'en';
 
   if (hasValidSession) {
-    // Returning user — go straight to shop
-    location.replace('/shop/?lang=' + encodeURIComponent(lang) + '&from=boot');
+  
   } else {
     // First launch or after logout — wipe any stale tokens and go to login
     if (token) {
