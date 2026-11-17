@@ -1,3 +1,4 @@
+
 {
   "version": 5,
   "rewrites": [
@@ -5,16 +6,6 @@
       "source": "/r/:receiptId",
       "destination": "/api/receipt?receipt=:receiptId"
     }
-  ],
-  "headers": [
-    {
-      "source": "/js/bundle.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, must-revalidate, max-age=0"
-        }
-      ]
-    }
   ]
+
 }
